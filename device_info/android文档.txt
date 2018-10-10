@@ -1,0 +1,45 @@
+安卓根目录 ./android/deviceinfo
+git 地址git@developer.playcrab.com:linying/device_info.git
+开发工具 eclipse
+实现功能：根据要求，定时获取设备信息发送到后台服务器，部分机器能实现开机自启动，杀死后自启动。
+小米等手机对原生安卓做过修改,所以这类手机无法实现开启启动，杀不死等功能
+发送间隔：可配置，读取后台的配置时间
+{
+    "moddel": "H60-L12",  //机器名字
+    "system": {           //设备的一些硬件信息
+        "id": "HDH60-L12",
+        "HOST": "wuhcitculx00413",
+        "androidApiVersion": 19,
+        "dviceid": "864367021400765",
+        "hardware": "hi3630",
+        "cpu": "armeabi-v7a",
+        "SERIAL": "DU2NKM151S014063",
+        "PRODUCT": "H60-L12",
+        "dvicenettype": 13,
+        "dvicePhoneType": 1,
+        "cpdevicename": "hwH60"
+    },
+    "osVersion": "4.4.2",//操作系统版本号
+    "location": {        //设备gps位置
+        "timeStamp": 1435998155587,
+        "altitude": 0,
+        "longitude": 116.304405,
+        "latitude": 39.975982
+    },
+    "netLocationUseable": true,
+    "disk": {            //硬盘使用情况
+        "disk_total": 1560133632,
+        "disk_used": "91.2164078006364%",
+        "disk_free": 137035776
+    },
+    "power": "39.0%",    //当前电量
+    "macAddress": "24:09:95:3a:95:7e",  //当前mac地址
+    "memory": {          //内存使用情况
+        "memIsLow": false,    //是否低内存
+        "free": 1759100928 //可用内存
+        "total": 19759100928 //总内存
+        "memory_used": 0.61   //使用的比例
+    },
+    "gpsUseable": true
+}
+
