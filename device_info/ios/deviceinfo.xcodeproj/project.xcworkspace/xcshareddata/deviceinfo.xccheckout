@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>20720E04-6A35-46BD-BA3D-40BC2D1A9F77</string>
+	<key>IDESourceControlProjectName</key>
+	<string>deviceinfo</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5ED0D27E-4BFD-4CE7-BF90-2D98E2FB6A6F</key>
+		<string>ssh://developer.playcrab.com/linying/device_info</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ios/deviceinfo/deviceinfo.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5ED0D27E-4BFD-4CE7-BF90-2D98E2FB6A6F</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://developer.playcrab.com/linying/device_info</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5ED0D27E-4BFD-4CE7-BF90-2D98E2FB6A6F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5ED0D27E-4BFD-4CE7-BF90-2D98E2FB6A6F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>device_info</string>
+		</dict>
+	</array>
+</dict>
+</plist>
