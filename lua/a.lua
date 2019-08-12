@@ -13,7 +13,7 @@ b.__add=function(x1,x2) return x1.x+x2.x end
 _G.setmetatable(b,a)
 c={}
 c.f4=function() _G.print(4) end
---c.x=10
+-- c.x=10
 _G.setmetatable(c,b)
 d={}
 d.x=20
@@ -25,5 +25,6 @@ for i,v in _G.pairs(c) do
 end
 local yyy=1
 _G.a=_M
+_G.c=c
 print(a+c)
 print(_M)
