@@ -1,4 +1,4 @@
-
+-----绾挎�у悓浣欐硶姹傞殢鏈烘暟
 RandomGenerator = {}
 
 local q1 = 8039
@@ -14,7 +14,7 @@ local function random(lastseed)
 end
 
 --[[
-    @desc 设置随机种子。
+    @desc 脡猫脰脙脣忙禄煤脰脰脳脫隆拢
 ]]
 function RandomGenerator:randomseed(seed)
     if seed==nil then
@@ -35,11 +35,11 @@ function RandomGenerator:rand()
 end
 
 --[[
-    @desc 产生一个特定范围内的按平均分布随机数。
-    @param n, m 指定随机数范围。
-        如果n,m都为nil，则返回0~1的浮点随机数；
-        如果仅m为nil，则返回1~n的随机整数；
-        如果n,m都不为nil，则返回n~m的随机整数。
+    @desc 虏煤脡煤脪禄赂枚脤脴露篓路露脦搂脛脷碌脛掳麓脝陆戮霉路脰虏录脣忙禄煤脢媒隆拢
+    @param n, m 脰赂露篓脣忙禄煤脢媒路露脦搂隆拢
+        脠莽鹿没n,m露录脦陋nil拢卢脭貌路碌禄脴0~1碌脛赂隆碌茫脣忙禄煤脢媒拢禄
+        脠莽鹿没陆枚m脦陋nil拢卢脭貌路碌禄脴1~n碌脛脣忙禄煤脮没脢媒拢禄
+        脠莽鹿没n,m露录虏禄脦陋nil拢卢脭貌路碌禄脴n~m碌脛脣忙禄煤脮没脢媒隆拢
 ]]
 function RandomGenerator:random(n, m)
     if n==nil then
@@ -52,12 +52,12 @@ function RandomGenerator:random(n, m)
 end
 
 --[[
-    @desc 根据特定分布产生一个离散随机变量
-    @param distribution 离散概率分布函数，用数组表示，其第i个元素的值
+    @desc 赂霉戮脻脤脴露篓路脰虏录虏煤脡煤脪禄赂枚脌毛脡垄脣忙禄煤卤盲脕驴
+    @param distribution 脌毛脡垄赂脜脗脢路脰虏录潞炉脢媒拢卢脫脙脢媒脳茅卤铆脢戮拢卢脝盲碌脷i赂枚脭陋脣脴碌脛脰碌
         P[i] = P(X in {X1,X2,...Xi})
-        返回Xi的概率
+        路碌禄脴Xi碌脛赂脜脗脢
         P(X=Xi) = P[i]-P[i-1]
-    @return 产生的随机变量的下标
+    @return 虏煤脡煤碌脛脣忙禄煤卤盲脕驴碌脛脧脗卤锚
 ]]
 function RandomGenerator:discreteRandom(distribution)
     assert(distribution~=nil)

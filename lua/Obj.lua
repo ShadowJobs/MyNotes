@@ -7,10 +7,10 @@ module(...,package.seeall)
 Obj={}
 function newindex(t,k,v)
 --        local isFuc= type(v)=="function"
-    if rawget(t,"isClass") then
+    if rawget(t,"isClass") then-----rawget()不会访问__index
 
 --        if isFuc then
-            rawset(t,k,v)
+            rawset(t,k,v)-----设置t里k字段的值，类似于(但是不等于)t[k]=v,但是rawset不会访问__newindex字段。
             local env=getfenv(v)
             setfenv(v,setmetatable({super=t._SuperClass},{__index=env,__newindex = env}))
 --        else
