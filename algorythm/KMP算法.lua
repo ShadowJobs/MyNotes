@@ -1,23 +1,26 @@
-local s1='BBC ABCDAB ABCDABCDABDE'
-local s2='ABCDABD'
+local s1='BBC ABCDAB ABCDABCDABDAE'
+local s2='ABCDABDA'
 function getNext(str)
 	local next={0}
 	local len=string.len(str)
 	local i=1
 	local j=2
 	local num=0
+	local lastEq
 	while i<=len and j<=len do
 		if string.sub(str,i,i)==string.sub(str,j,j) then 
+			lastEq=true
 			num=num+1
 			next[j]=num
 			i=i+1
-			j=j+1
 		else
+			if lastEq then num=0;lastEq=false end 
 			next[j]=0
 			i=1
-			j=j+1
 		end 
+		j=j+1
 	end
+	--bug num的值没有重置，next最后一个应为1
 	return next
 end
 function kmp(str1,str2)
