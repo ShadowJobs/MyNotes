@@ -1,0 +1,42 @@
+
+10,vue 
+如果你完整引入了 Element，它会为 Vue.prototype 添加如下全局方法：$msgbox, $alert, $confirm 和 $prompt。因此在 Vue instance 中可以采用本页面中的方式调用 MessageBox。调用参数为：
+$msgbox(options)
+$alert(message, title, options) 或 $alert(message, options)
+$confirm(message, title, options) 或 $confirm(message, options)
+$prompt(message, title, options) 或 $prompt(message, options)
+
+11，微信小程序优化 （于明昊）1，preFech，冷启动预拉数据
+2，npm i miniprogram-compiler 微信的编译小程序工具 （wxml wcss编译速度跟组件数量成正比）
+	性能损坏可以用 1分包 2lazyCodeLoading(查官方文档）解决组件过多
+4，微信里面的dom树分析：会对所有的setData变化都更新dom,有线程间通信，解决：1首屏只渲染视频 2通过装饰器，骗过微信不让微信触发dom的遍历
+
+12，gitlab webhook 提交后自动执行一个命令
+npm,yarn会缓存安装过的包
+webpack编译也会缓存部分文件
+解决： 去机器上执行 free -h 查内存状态，如果内存不够，可重启机器，一般能好
+如果前端报 获取用户名失败 ，而后端能收到请求，能返回，则是因为flask出问题，安装sshpass要依赖 mitmproxy，而它需要的flask版本为1.1.1~1.2,而krp后端的版本为1.0.2所以需单独为krp后端安装virtual env 控制版本（为什么不为mitmproxy修改？因为安装的时候改命令显示不支持venv环境运行）。
+pip命令 pip list/freeze是查看装了哪些包，pip show flask查看flask的版本等信息
+安装venv 环境的步骤的 python -m venv venvdir 会在自定指定的venvdir 下生成一个venv环境，只修改某个pip包版本，而其他版本与系统共用的话，需进入venvdir/pyvenv.cfg里将include-system-site-packages设置为true，
+然后使用source venvdir/bin/activate,激活这个venv环境，注意，这里只是激活本zsh里的环境，在此环境下，每次命令行里都会显示（venv),但是新建的console就不行了，必须重新source。
+如何配置vs的venv https://jingyan.baidu.com/article/cd4c2979a531b1356f6e600f.html
+如果使用了kafka导致报simple.py里的self.async报错的问题，原因是python3.6以后的版本没有了async导致的，需要把版本降级到3.6.8（因为测试服和online是3.6.8），同时：如果使用了venv的话，venv里的版本还是不对，需要删掉文件夹，重新部署venv环境（包括安装各种包）
+Python报错module找不到，而文件路径明明存在。原因：有可能是自己的目录跟pip安装的库同名了，优先用了pip的库，所以导致自己的文件夹写的都失效了
+
+Vue项目启动，可以vscode从package.json里，点三角形debug 
+Linux命令1： df -h 整个磁盘的使用情况 2： du -sh当前文件夹的大小 3： du -h –max-depth=1 * 所有文件夹的大小统计
+
+Python坑，闭包内部函数不能修改外部变量的值，如果出现修改变量的操作，那么会出现变量未定义的bug，直接屏蔽了变量
+csscomb自动排列css，使性能最优
+router.push可在浏览器历史记录里加上记录
+
+sudo du -hsx <你的路径>* | sort -rh | head -n 40
+你可以试试这个命令，查一下具体哪个文件夹，哪个文件占得空间太大。
+
+Ant-design  a-table 如果要用过滤 则columns里要用filters和onFilter，如果用搜索，则要同时设置 scopedSlots 和 onFilter 。 参考groupResource.vue
+$ screen npm run dev & 测试服启动前端
+export PYTHONPATH=/data/projectt/code
+
+join的时候，重复关联键少的表放到左边，性能更优
+
+<font color="purple" size=3>我</font> <font color="yellow" size=5>再</font> <font color="blue" size=3>试</font>
