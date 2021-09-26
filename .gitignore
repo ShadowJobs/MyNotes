@@ -3,4 +3,4 @@
 *.a
 *.exe
 C,C++/cmake/CMakeFiles/
-
+*.pyc

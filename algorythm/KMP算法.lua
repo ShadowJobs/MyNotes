@@ -1,5 +1,11 @@
 local s1='BBC ABCDAB ABCDABCDABDAE'
 local s2='ABCDABDA'
+
+local s1="aabaacaabaaf"
+local s2="aabaaf" -- 0,1,0,1,2,0
+
+-- local s1="aabaacdecaabaaf"
+-- local s2="aabaacdef" -- 0,1,0,1,2,0,0,0,0
 function getNext(str)
 	local next={0}
 	local len=string.len(str)
@@ -39,10 +45,13 @@ function kmp(str1,str2)
 			return i1-s2len+1
 		end
 	end
+	return -1
 end
 
 function printT(t)
-	for k,v in ipairs(t) do print(k,v ) end 
+	local result=""
+	for k,v in ipairs(t) do result=result..v..',' end 
+	print(result)
 end
 printT(getNext(s2))
 

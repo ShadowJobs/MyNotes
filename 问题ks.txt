@@ -1,0 +1,49 @@
+
+1，环境搭建
+1），安装npm，node(一般npm会自带node）
+2），执行npm install
+npm laya
+npm app
+gulp laya
+gulp app
+npm i reload -g #安装reload
+reload -b -d Product/   启动游戏
+如果改了代码想重启，需要先编译 
+gulp app
+然后reload，一般gulp之后浏览器就会自动刷新。
+
+
+2,启动   reload -b -d Product/   ，在游戏根目录/WXXiaoYouXi/Laya/下执行，会自动生生node_modules目录，重装的时候要删除laya下的node_modules目录。
+laya/Source/下可以软链接跟Laya同级的Games目录，Games目录下再软链与Games同级的Framework目录
+
+3，网络接口NetWork.ts, send(command,params?)
+
+4，laya的包重命名 LayaAir.d.ts
+
+6，网络请求：Network.js的监听，registerLinkHandler 和 unLinkHandler ，第一个参数可以任意定义，因为在返回的地方handleLinkMessage()里会遍历所有的注册的linkHandler，去匹配查找带有command信息的函数。
+Notification里的register和unRegister原理都一样，也是遍历
+区别是，Notification里的监听可以加多个，每个都会执行，Network里的监听是覆盖。
+
+7，微信游戏启动和建立连接
+(1)Game.js->App.js->加监听Notification.register("Get_UserInfo_Finish")->Network.js->new Network()->constructor()里先给wxsocket加监听->test.js->SessionManager.startLogin()->先请求微信用户信息wx.login(),wx.getUserInfo()->监听"Login_Success"信息，"Login_Fail"信息
+(2)进入wx.login()里的success回调,(第一步调用时会写回调监听）->loginPassport()->wx.request()，"host+pass/game/login/sns/smallApp/login"登录游戏
+(3)进入wx.getUserInfo()的sucess回调->存储回调信息，wx.setStorage()->Notification.post("Get_UserInfo_Finish"),进入第(1)步的回调
+(4)进入第(2)步wx.quest()的success回调->存储部分信息，loginLinkServer()->Network.connectSocket(this.linkHost, this.userId, this.serviceToken, data.ssecurity)->wx.connectSocket()
+(5)进入wx.connectSocket的success回调()
+(6)socket连接成功后，会进入第1步Network的constructor()里加的socket监听->wx.onSocketOpen()->onConnected()->registerLink()->sendLink()->wx.sendSocketMessage()->success监听...
+(7)收到其他的消息统一走wx.onSocketMessage()的success,已在第一步Network的constructor()里加过监听->根据情况走onRegisterLink,handleGameMessage,linkHandlers
+*以onRegisterLink为例:onRegisterLink的第一个回调为Basic.Register->startHeartBeat()->？？？？
+(8)进入第一步监听的Notification->login_success
+
+8 ts冗余信息检查 在tsconfig.json里加
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true
+
+9,proto导出，会将下划线转成大小写:例如bg_color会变成bgColor。
+
+10 默认的微信小程序id 
+	// "appid": "wx9e5c0e64bbb2f62e",
+
+12svn地址：svn://172.17.143.202
+共享文件夹：smb://172.17.143.202/share
+creator插件位置 /Users/linying/.CocosCreator/packages/CreatorPlugin
