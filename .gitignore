@@ -2,5 +2,6 @@
 *.so
 *.a
 *.exe
+*.o
 C,C++/cmake/CMakeFiles/
 *.pyc
