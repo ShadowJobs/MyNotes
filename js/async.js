@@ -30,18 +30,19 @@ if (false)
     }, 1000);
 }); 
 console.log("end")
-if (true) {
+if (false) {
     function print(delay, message) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 console.log(message);
-                resolve();
+                resolve("bbb");
             }, delay);
         });
     }
     async function asyncFunc() {
-        await print(1000, "First");
+        var result=await print(1000, "First");
         console.log("1")
+        console.log(result)
         await print(1000, "Second");
         console.log("2")
         await new Promise(function (resolve, reject) {
@@ -53,4 +54,23 @@ if (true) {
         console.log("3")
     }
     asyncFunc();
+}
+
+if(true){
+    async function test1() { console.log('start test1');  //output1
+            console.log(await test2());
+            console.log('end test1');}
+        async function test2() {
+            console.log('test2');  //output2
+            return await 'return test2 value' //不输出，await会加入队列
+        }
+        test1();
+        console.log('start async');
+        setTimeout(() => console.log('setTimeout'), 0);
+        let p=new Promise((resolve, reject) => {
+            console.log('promise1');
+            resolve();
+        }).then(() => console.log('promise2'));
+        console.log('end async');
+
 }

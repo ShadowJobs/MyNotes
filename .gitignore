@@ -5,3 +5,7 @@
 *.o
 C,C++/cmake/CMakeFiles/
 *.pyc
+*.dSYM/
+.vscode/
+*/node_modules/
+*/dist/
