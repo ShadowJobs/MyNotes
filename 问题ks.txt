@@ -16,8 +16,6 @@ gulp app
 2,启动   reload -b -d Product/   ，在游戏根目录/WXXiaoYouXi/Laya/下执行，会自动生生node_modules目录，重装的时候要删除laya下的node_modules目录。
 laya/Source/下可以软链接跟Laya同级的Games目录，Games目录下再软链与Games同级的Framework目录
 
-3，网络接口NetWork.ts, send(command,params?)
-
 4，laya的包重命名 LayaAir.d.ts
 
 6，网络请求：Network.js的监听，registerLinkHandler 和 unLinkHandler ，第一个参数可以任意定义，因为在返回的地方handleLinkMessage()里会遍历所有的注册的linkHandler，去匹配查找带有command信息的函数。
@@ -44,6 +42,4 @@ Notification里的register和unRegister原理都一样，也是遍历
 10 默认的微信小程序id 
 	// "appid": "wx9e5c0e64bbb2f62e",
 
-12svn地址：svn://172.17.143.202
-共享文件夹：smb://172.17.143.202/share
 creator插件位置 /Users/linying/.CocosCreator/packages/CreatorPlugin

@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <style>
+            .red {background-color: red; height: 100px;}
+            .blue {background-color: blue;height: 100px;}
+            .width {width: 100px; }
+
+            #pink {background-color: pink;height: 100px;width:100px;}
+            #yellow {background-color: yellow;height: 100px;width:100px;}
+            #idw {width:100px}
+            p {color:blue}
+
+            .block{height: 100px;width:100px;display: block;background-color: #00ee00;}
+            .inline{height: 100px;width:100px;display: inline;background-color: #00ee00;}
+            .inlineblock{height: 100px;width:100px;display: inline-block;background-color: #00ee00;}
+            /* display为block或inline表示转换元素性质 */
+
+            .img{background-image: url(./bg.jpg); background-color: rgba(255,0,0,0.1);background-repeat: no-repeat;
+                background-attachment:fixed; 
+                background-position: 20px 10px;
+                width:200px;height:200px;}
+        </style>
+    </head>     
+<body>
+画3个矩形
+    <div class="red width"></div> 多个class用空格分割
+    <div class="blue width"></div>
+    <div id="pink"></div>  id表示只有这个标签用，下面一行的id不能再使用pink这个id了
+    <div id="yellow"></div> 
+    <div style="color: yellow;">style在标签内的写法</div>
+    <div><p>aaaaa</p></div>
+
+    <a href="#" class="block">块级元素设置宽高</a>
+    <div class="inline">块元素转行内元素1</div>
+    <div class="inline">块元素转行内元素2,2行会并行显示，且宽高失效</div>
+    <br />
+    <span class="inlineblock">块元素转行内块元素1,行居中显示</span>
+    <span class="inlineblock">块元素转行内块元素2,2行会并行显示，且宽高不失效</span>
+
+    <div class="img">背景图<br/>背景图<br/>背景图
+        层次：文字在最上层，其次为图片，其次为背景色，如果要用透明度，用rgba的方式，
+    </div>
+    <p style="background-color: #7bc77b;">
+        <div style="padding: 20px;background: rgb(53, 95, 16);">
+            本标签不会撑开父组件的宽度
+        </div>
+    </p>
+    <p style="background-color: #7bc77b;">
+        <div style="padding: 20px;width:100%;background: rgb(53, 95, 16);">
+            由于子标签设置了width，所以会导致子组件超过了父组件的宽度，由于父组件默认是100%，所以导致整个组件超过了屏幕的宽度
+        </div>
+    </p>
+</body>
+</html>
