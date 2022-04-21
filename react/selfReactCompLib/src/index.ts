@@ -1,0 +1,1 @@
+export {MyVideo} from "./components/MyVideo"

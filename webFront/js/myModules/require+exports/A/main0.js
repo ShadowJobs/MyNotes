@@ -1,4 +1,4 @@
-const a=()=>console.log("momenta self defined components library")
+const a=()=>console.log("liny self defined components library")
 console.log("aaaaa")
 console.log(module) //module1里
 let b=9999
