@@ -10,6 +10,17 @@
         .right1{float: right;background-color: rgb(80, 219, 115);margin-left: 10px;}
         .big{width: 500px;height: 30px;margin-left: 10px;}
         .small{width: 10px;height: 30px;margin-left: 10px;}
+
+        .box1{float: left;width: 30px;height: 30px;background-color: rgb(228, 88, 88);margin-left: 3px;}
+        .box2{float: left;width: 30px;height: 60px;background-color: rgb(228, 88, 88);margin-left: 3px;}
+
+        .clearfix::after,.clearfix::before {
+            content:"";display: block;height: 0;clear: both;visibility: hidden;
+        }
+        .clearfix{
+            /* 本行主要是ie6,7的兼容需要添加的 */
+            *zoom: 1;
+        }
     </style>
 </head>
 <body>
@@ -19,6 +30,32 @@
     <div class="right1 big">br</div>
     <div class="left1 big">bl2</div>
     <div class="right1 big">br2</div>
-    <div>浮动布局左右对齐，下一个左，会自动对齐到上一个左的右边，直到遇到右边缘或者右对齐的左边缘，然后换行，换行后还是居左</div>
+    <div>案例1：浮动布局左右对齐，下一个左，会自动对齐到上一个左的右边，直到遇到右边缘或者右对齐的左边缘，然后换行，换行后还是居左</div>
+
+    <div>
+        <div style="overflow: hidden;">
+            <div class="box1">a</div>
+            <div class="box1">b</div>
+            使用overflow清除浮动 ,原理是默认添加了一个待clear:both的div标签
+        </div>
+        <div>ddd</div>
+
+        <div>
+            <div class="box1">a</div>
+            <div class="box2">b</div>
+            <div class="box1">c</div>
+            使用overflow清除浮动
+        </div>
+        <div  style="clear:both">使用div或者br来显示清除浮动</div>  
+        <div>ddd</div>
+
+
+        <div class="clearfix">
+            <div class="box1">a</div>
+            <div class="box1">b</div>
+            使用before或者after清除浮动，可以只设置1个，可以用::或:，并列的写法见上
+        </div>
+        <div>ddd</div>
+    </div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const a=()=>console.log("momenta self defined components library")
+const a=()=>console.log("liny self defined components library")
 export const b=()=>console.log("this is func b");
 export default a;
 console.log("aaaaa")

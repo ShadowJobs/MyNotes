@@ -1,0 +1,1 @@
+注意这里面没写package.json,因为原项目的package.json是在上一层目录，利用node_module会往上层目录查找的特点

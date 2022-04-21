@@ -3,12 +3,8 @@ import os
 import json
 import random
 import re
-import io
-import subprocess
-import hashlib
 import requests
 import sys
-import traceback
 
 reload(sys)
 sys.setdefaultencoding("utf-8")

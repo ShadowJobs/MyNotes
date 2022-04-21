@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box1{width:60px;height: 60px;background: url(wangzhe.png) no-repeat -182px 0;}
+    </style>
+
+    <style>
+        @font-face {
+        font-family: 'icomoon';
+        src:  url('fonts/icomoon.eot?k8jx3d');
+        src:  url('fonts/icomoon.eot?k8jx3d#iefix') format('embedded-opentype'),
+            url('fonts/icomoon.ttf?k8jx3d') format('truetype'),
+            url('fonts/icomoon.woff?k8jx3d') format('woff'),
+            url('fonts/icomoon.svg?k8jx3d#icomoon') format('svg');
+        font-weight: normal;
+        font-style: normal;
+        font-display: block;
+        }
+    </style>
+    <style>
+        .triangle {width:0;height: 0;border-top: 10px solid pink;
+            border-left: 10px solid red;
+            border-right: 10px solid gray;
+            border-bottom: 10px solid green;}
+        .triangle2 {width:0;height: 0;border-top: 10px solid rgba(255,0,0,0);
+            border-left: 10px solid rgba(0,0,0,255);
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid rgba(255,0,0,0);}
+        .triangle3 {width:0;height: 0;border:50px solid transparent;border-left-color: black;} 
+        /* 注意w,h必须为0. triangle2和triangle3等价 transparent表示透明 rgba第4个参数0也是透明，第三个写法是4面透明，但是指定left的颜色不透明 
+        如果不兼容，需要再加line-height:0;font-size:0;
+        */
+        .triangle4 {width:0;height: 0;border:5px solid transparent;border-bottom-color: pink;position: absolute;right: 10px;top:-10px} 
+    </style>
+</head>
+<body>
+    texture packer：<div class="box1"></div>
+    字体图：
+    <li>1，下载字体文件， <a href="https://icomoon.io/">https://icomoon.io/</a>  
+        或 <a href="https://www.iconfont.cn/"> https://www.iconfont.cn/ </a>
+        <br/>
+        点击icoMoon app选择icon，然后点击generate font然后download，然后fonts文件夹里就是要的东西，放到工程的根目录下。
+        <br/>
+        有4个字体文件，不同的浏览器支持不同
+    </li>
+    <li> 将字体文件用style的方式引入下载的style.css里的内容，如上 ，声明</li>
+    <br/>
+    <span style="font-family: icomoon;font-size: 50;font-display: block;"></span>
+    <br/>
+    追加：在icomoon网站中选Import icons，选择selection.json，这样就可以选择新的图标
+    <h3>制作三角形的矩形框，宽高必须为0</h3>
+    <div class="triangle"></div>
+    <div class="triangle2"></div>
+    <div style="width:100px;height:100px;background-color:pink;position:relative">
+        <span class="triangle4"></span>
+    </div>
+</body>
+</html>

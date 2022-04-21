@@ -5,6 +5,36 @@ import { Column } from '@ant-design/charts';
 
 const { Statistic } = StatisticCard;
 
+//将长字符串折行显示
+export function splitStr(str:string,len:number){
+  let strArr = str.split("")
+  let strLen = strArr.length
+  let strArr2 = []
+  let str2 = ""
+  for(let i=0;i<strLen;i++){
+    if(i%len==0&&i!=0){
+      strArr2.push(str2)
+      str2=""
+    }
+    str2+=strArr[i]
+  }
+  strArr2.push(str2)
+  return strArr2.join("\n")
+}
+export const BarChart: React.FC<{ data:any[],options:{isHorizontal:boolean} }> = ({ data,options }) => {
+  const config = { //横向条形图
+    data,
+    xField: 'value', yField: 'type',
+    seriesField: 'type',
+    legend: { position: 'top-left' },
+    color:chart.data[0]?.color,
+    yAxis: { label: { formatter: (v) => splitStr(v,20) } }, // 前面的label，分行显示,原理就是将长字符串拆成\n拼接的字符串，即可实现换行
+    axis:{position:"top",title:{text:"aaa",position:"start"}},  
+    barStyle:{ cursor: 'pointer', height:20, }
+  };
+  return <Bar {...config} />
+}
+
 const MyCard: React.FC<{ data?: any[]; title:string;unit:string;danwei:string;formater?:Function;color:string }> = 
   ({ data, title, unit, danwei,formater,color}) => {
   const now = new Date();
