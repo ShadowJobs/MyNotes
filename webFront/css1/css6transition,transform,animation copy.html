@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .rect{
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+            transition: all 1.5s ease 0.5s;
+            /* all表示所有的属性在hover时都会变化 */
+        }
+        .rect:hover{
+            background-color: red;
+            width: 150px;
+            height: 150px;
+        }
+        .trans{
+            width: 50px;
+            height: 50px;
+            color: red;
+            background-color: blue;
+            transform: translate(10px,50%);
+            /* 类似于相对布局的偏移，占用的布局大小和位置还是原来的位置，50%是相对于自己的， 
+            translate对于行内元素无效*/
+        }
+        .trans2{
+            width: 50px;
+            height: 50px;
+            color: red;
+            background-color: blue;
+            transform: translate(10px,50%);
+            transform: rotate(50deg);
+            transform-origin: 50% right; /* 可以指定旋转的中心点,可以用像素，百分比，方位词 */
+            /* 多个transform写法,可以写2行，也可以一行，中间用空格分割。注意多个效果同时用时，顺序会影响最终效果
+            所以多个效果同时用，需要将位移放到第一个*/
+        }
+        @keyframes move {
+            0% {/*开始状态 可以用from代替0%*/
+                transform: translateX(0px);}
+            100% {    /*结束状态，等价于to*/
+                transform: translateX(1000px);}
+        }   
+        .anim {width: 200px;height: 200px;background-color: pink;
+            animation-name: move;
+            animation-duration: 5s;
+        }
+        .anim:hover{animation-play-state: paused;}
+
+    </style>
+</head>
+<body>
+    <div class="rect"> </div>
+    <div class="trans">a</div>
+    <div class="rect"> </div>
+    <div class="trans2">b</div>
+
+    <div class="anim">anim</div>
+</body>
+</html>

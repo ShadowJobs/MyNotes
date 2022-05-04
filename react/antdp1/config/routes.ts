@@ -25,6 +25,12 @@
     component: './Welcome',
   },
   {
+    path: '/dashboard',
+    name: 'dashboard',
+    icon: 'smile',
+    component: './Dashboard/analysis',
+  },
+  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
@@ -47,6 +53,34 @@
     icon: 'table',
     path: '/list',
     component: './TableList',
+  },
+  {
+    path: '/LinYing',
+    name: 'LinYing',
+    icon: 'crown',
+    routes: [
+      {
+        name: "log",
+        icon: "smile",
+        path: "/LinYing/log",
+        component: "./LinYing/LogInfo",
+      },{
+        name:"react json配合form表单",
+        icon: "smile",
+        path: "/LinYing/react-json-form",
+        component: "./LinYing/JsonEditorAndForm",
+      },{
+        name:"上传文件，函数式确认框",
+        icon: "smile",
+        path: "/LinYing/updload",
+        component: "./LinYing/UploadFile",
+      },{
+        name:"代码编辑",
+        icon: "smile",
+        path: "/LinYing/code-editor",
+        component: "./LinYing/MonacoEditor",
+      }
+    ]
   },
   {
     path: '/',

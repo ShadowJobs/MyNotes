@@ -5,6 +5,7 @@ import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 const { REACT_APP_ENV } = process.env;
 
@@ -19,6 +20,7 @@ export default defineConfig({
     locale: true,
     siderWidth: 208,
     ...defaultSettings,
+    collapsedButtonRender: false,//这个是隐藏菜单的收起按钮。具体定义是在ProLayout里
   },
   // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
@@ -69,4 +71,12 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+  chainWebpack: (memo) => {
+    // 更多配置 https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+    memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
+      // 按需配置
+      { languages: ['javascript','json','python'] },
+    ]);
+    return memo;
+  }
 });
