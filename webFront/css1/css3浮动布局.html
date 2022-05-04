@@ -24,6 +24,13 @@
     </style>
 </head>
 <body>
+    <div>第一行，不会影响后面的浮动。后面的浮动会在下一行排列</div>
+    <div class="left1">line2</div>
+    <div>第二行，会与上一个div的line2并列而不折行，因为上一个是浮动布局</div>
+    <p>默认宽度是占1行，高度是文字高度</p>
+    <p style="width:300px;height:50px;background-color:yellow">默认宽度是占1行，高度是文字高度，这里手动设置了宽度</p>
+    <p style="float:left;background-color:yellow;height: 50px;">添加了浮动的p，会按文字的宽度计算标签的宽度，并且不再独占一行</p>
+    <div style="clear: both;"> 添加clear:both后，可以清除上下的float布局，否则就会乱 </div>
     <div class="left1 small">a</div>
     <div class="right1 small">a2</div>
     <div class="left1 big">bl</div>
@@ -36,7 +43,7 @@
         <div style="overflow: hidden;">
             <div class="box1">a</div>
             <div class="box1">b</div>
-            使用overflow清除浮动 ,原理是默认添加了一个待clear:both的div标签
+            使用overflow清除浮动 ,原理是默认添加了一个带clear:both的div标签
         </div>
         <div>ddd</div>
 

@@ -47,6 +47,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@ant-design/charts": "^0.9.13",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.10.0",
     "@ant-design/pro-form": "^1.52.0",
@@ -57,6 +58,7 @@
     "classnames": "^2.3.0",
     "lodash": "^4.17.0",
     "moment": "^2.29.0",
+    "numeral": "^2.0.6",
     "omit.js": "^2.0.2",
     "rc-menu": "^9.1.0",
     "rc-util": "^5.16.0",
@@ -64,7 +66,11 @@
     "react-dev-inspector": "^1.7.0",
     "react-dom": "^17.0.0",
     "react-helmet-async": "^1.2.0",
-    "umi": "^3.5.0"
+    "jsoneditor": "^9.2.0",
+    "jsoneditor-react": "^3.1.1",
+    "umi": "^3.5.0",
+    "monaco-editor": "^0.26.0",
+    "monaco-editor-webpack-plugin": "^4.0.1"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.0",

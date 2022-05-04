@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            perspective: 300px; 
+            /* 设置透视的视角,镜头距离屏幕的距离，本属性需设置在父元素上 */
+        }
+        .rect{
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            margin-left: -50px;
+            transform: translate3d(10px,100px,100px); 
+            /* 透视要配合translate3d的第三个值使用，第三个值是物体距离屏幕的距离。默认是0.
+            如果z是0，那么perspective无论设置为多少，都不会有效果 */
+        }
+        .rotate{
+            transition: all 1s;
+        }
+        .rotate:hover{
+            transform: rotateX(45deg); 
+            /* rateX(45deg)等价于rotate3d(1,0,0,45deg) ,如果填rotate3d(1,1,0,45deg)那么会沿着xy合成的直线旋转，
+            即一条向下45度的直线。合成的方法是矢量合成的方式*/
+            /* 加了透视后就能看到旋转的3d效果，x的正方向：左手法则 */
+            /* transform: rotateY(45deg); */
+            /* transform: rotateZ(45deg); */
+        }
+        .parent{
+            position: relative;
+            transition: all 1s;
+            perspective: 300px;  
+            /* 注意：这里必须写pers，虽然body也开启了pers,但是body只会影响子节点，不会影响孙节点*/
+            transform-style: preserve-3d;
+            /* style的含义是：让旋转的时候子元素也展示成3d的效果，否则子元素会先转换成投影，再旋转，就失去了3d效果 
+                注意点：要写到父节点上
+            */
+        }
+        .parent div{
+            width: 150px;
+            height: 150px;
+            background-color: red;
+            position: absolute;
+            left:100px;
+        }
+        .parent .child2{
+            transform: rotate3d(1,0,0,90deg);
+            background-color: yellow;
+        }
+        .parent:hover{
+            transform: rotateY(-45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="rect"> rect </div>
+    <img src="bg.jpg" class="rotate"/>
+    <div class="parent">
+        立体交叉的子元素
+        <div class="child1"></div>
+        <div class="child2"></div>
+
+    </div>
+</body>
+</html>

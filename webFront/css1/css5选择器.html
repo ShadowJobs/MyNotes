@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 选择第一个元素*/
+        .a1 :first-child{
+            background-color: yellow;
+            color: blue;
+        }
+        /* 第n个子元素选择器 */
+        .a1 :nth-child(2){
+            background-color: red;
+            color: yellow;
+        }
+        .a1 :last-child{
+            background-color: blue;
+            color: white;
+        }
+        input[value]{color:pink}
+        input[type=text]{color:yellow}
+        div[class^=a]{color:red}
+
+        /* 选择技术 */
+        .a2 :nth-child(even){
+            background-color: red;
+            color: yellow;
+        }
+        /* 选择了第偶数的子 */
+        .a2 :nth-child(odd){
+            background-color: blue;
+            color: white;
+        }
+
+        /* 选择所有的：直接写nth-child(n) 
+        选择偶数的：nth-child(2n)
+        选择奇数的：nth-child(2n+1)
+        同理可以写关于n的表达式
+        第五个到最后一个：nth-child(n+5)
+        前5个：nth-child(-n+5)
+        */
+
+        /* 只将div选择出来变色，p标签不参与技术。
+        写法区别 .a3 div:nth-child()会先找到第n个原色，在判断是否为div
+        .a3 div:nth-of-type()会先找到所有div，在设置第n个颜色
+        而nth-of-type会先看：前面指定的标签 */
+        .a3 div:nth-of-type(even){
+            background-color: red;
+            color: yellow;
+        }
+
+        .imageparent{
+            width:200px;height:200px;
+            display: inline-block;
+            background-color: gray;
+        }
+        .image{
+            width: calc(100% - 100px);/* 计算宽度 100%指相对于父标签，注意运算符前后一定要空格，否则不生效*/
+            height: 130px;/* 计算高度 */
+            background-color: yellow;
+            filter:blur(5px); /* 模糊 */
+        }
+    </style>
+</head>
+<body>
+    <input type="text" value="请输入">
+    <div class="a1">a1</div> <div class="a2">a2</div>
+
+    <div class="a1">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+    </div>
+
+    <br/>
+        <div class="a2">
+            <p>隔元素变色，p和div不区分</p>
+            <div>b</div>
+            <div>c</div>
+            <div>d</div>
+        </div>
+
+    <br/>
+        <div class="a3">
+            <p>含有不同类型的</p>
+            <div>aa</div>
+            <div>bb</div>
+            <div>cc</div>
+        </div>
+    <br/>
+    <div class="imageparent">
+        <img src="bg.jpg" class="image" alt="aaa"/>
+    </div>
+</body>
+</html>
