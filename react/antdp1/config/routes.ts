@@ -79,6 +79,16 @@
         icon: "smile",
         path: "/LinYing/code-editor",
         component: "./LinYing/MonacoEditor",
+      },{
+        name:"echarts",
+        icon: "smile",
+        path: "/LinYing/echarts",
+        component: "./LinYing/AntChartEchartScatter",
+      },{
+        name:"tablemerge",
+        icon: "smile",
+        path: "/LinYing/MergeAntTable",
+        component: "./LinYing/MergeAntTable",
       }
     ]
   },

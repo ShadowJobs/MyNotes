@@ -17,7 +17,7 @@ export default defineConfig({
   },
   layout: {
     // https://umijs.org/zh-CN/plugins/plugin-layout
-    locale: true,
+    locale: false,
     siderWidth: 208,
     ...defaultSettings,
     collapsedButtonRender: false,//这个是隐藏菜单的收起按钮。具体定义是在ProLayout里

@@ -137,7 +137,11 @@ export class antProtable extends Component {
                         return { data: this.state.data, success: true }
                     }}
                     pagination={false} /////去掉分页
-                    search={{ labelWidth: 'auto', filterType: 'light' }}
+                    search={{ labelWidth: 'auto', filterType: 'light' ,collapsed: false, 
+                        span:{xs: 24,sm: 24,md:12,lg:12,xl:8,xxl:6,
+                            //span是用于控制各个搜索组件的间隔，值为24表示一行只显示一个，只能整体设置，不能单独设置
+                        }
+                    }}
                     scroll={{ x: 1000 }} >
                 </ProTable>
             </div>

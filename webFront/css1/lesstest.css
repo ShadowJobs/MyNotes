@@ -1,0 +1,21 @@
+a {
+  color: black;
+}
+a:hover {
+  color: red;
+}
+a + a {
+  color: blue;
+}
+a-children {
+  color: green;
+}
+.component {
+  width: 300px;
+  color: white;
+}
+@media (min-width: 768px) {
+  .component {
+    width: 600px;
+  }
+}
