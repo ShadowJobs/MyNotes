@@ -1,0 +1,20 @@
+a{
+    color:black;
+    &:hover{
+        color:red;
+    }
+    &+&{
+        color:blue;
+    }
+    &-children{
+        color:green;
+    }
+}
+
+.component {
+    width:300px;
+    color:white;
+    @media (min-width: 768px) {  // 等于复写一个@media>.component，已有的color属性将写入，width将覆盖
+        width:600px;
+    }
+}

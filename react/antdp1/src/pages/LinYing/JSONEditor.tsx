@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { JsonEditor as Editor } from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
+import { getLocale } from 'umi';
 
 export function deepCompareTwoObj(obj1:any,obj2:any){
   if(typeof obj1!="object"||typeof obj2!="object"){
@@ -94,6 +95,7 @@ const JsonEditor: React.FC<EditorInputProps> = ({
       onValidationError={onContentValidationError}
       statusBar={configProps?.statusBar}
       mode={configProps?.mode ? configProps.mode : 'view'} //code编辑模式 view查看模式 text
+      language={getLocale()=="zh-CN"?"zh-cn":"en"} //国际化设置
       htmlElementProps={{
         style: {
           width: '100%',

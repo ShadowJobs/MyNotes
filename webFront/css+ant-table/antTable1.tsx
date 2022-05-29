@@ -63,7 +63,7 @@ export class AntTable1 extends Component {
         },{
             // 单元格颜色通过normal-column来控制
           title: '版本', dataIndex: 'version', width: '10%',key:"version",className:"tableHead normal-column",
-          onCell: (row, index) => ({ rowSpan: row.versionRow, }),
+          onCell: (row, index) => ({ rowSpan: row.versionRow,colSpan:index==3?2:1 }),
         },{
             title: '类型', dataIndex: 'myvtype', width: '10%', key:"myvtype",className:"tableHead normal-column",
             render:(d,row,idx)=>{/*d是dataIndex指定的值，row是整个行的obj,idx是索引*/},
