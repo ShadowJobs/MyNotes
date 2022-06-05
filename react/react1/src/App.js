@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import './a.css'
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
-import {Home} from './pages/Home'
+import Home from './pages/Home'
 import {List} from './pages/List'
 import {User} from './pages/User'
 import { NameList } from './pages/subpages/NameList';
@@ -12,6 +12,8 @@ import CounterPage2 from './pages/CounterPage2';
 import CounterPage3 from './pages/CounterPage3';
 import AuthComponent from './pages/AuthComponent';
 import { Login } from './pages/login';
+import { ReactSetState } from './pages/ReactSetState';
+import { NativeEventPage } from './pages/NativeEvent';
 
 
 function App() {
@@ -21,7 +23,8 @@ function App() {
       <BrowserRouter>
       <ul>
         <li>最简路由，多级路由的简单使用</li>
-        <li>使用mobx实现跨组件的通信,store模块化</li>
+        <li>第一种跨组件的通信方式：mobx,可以模块化store</li>
+        <li>第二种跨组件的通信方式：redux</li>
         <li>
           <ul>路由鉴权：
             <li>用AuthComponent来封装需要鉴权的路径（定义见AuthComponent,使用见App.js）</li>
@@ -67,6 +70,8 @@ function App() {
         <CounterPage3/>
       </div>
       <br/>
+      <ReactSetState></ReactSetState>
+      <NativeEventPage></NativeEventPage>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
