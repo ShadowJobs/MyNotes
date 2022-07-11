@@ -16,11 +16,13 @@ const App = () => {
   // 所以直接用window.location.pathname
   return ( <BrowserRouter>
       <div style={{display:"inline-block",marginLeft:200}}>
+        <pre style={{whiteSpace:"pre-line"}}>
       知识点：1 craco配置，craco.config.js,jsconfig.json,package.json
       2，自己写的spa：包含菜单，菜单和地址栏的双向更新，路由
       3, 使用react-redux实现通信
       4，使用eventBus的消息发布订阅模式，自写实现组件间通信
       5，react 18, 入口使用createRoot创建，与17不同
+      </pre>
       </div>
     <Layout>
       <Sider breakpoint="lg" 

@@ -22,3 +22,9 @@ export default function reducer(state=initStore,action){
             return state
     }
 }
+
+
+//多个reducer如何分层，并带数据响应？
+// import { combineReducers } from 'redux';
+// export const rootReducer = combineReducers({
+//     entities})
