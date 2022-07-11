@@ -27,13 +27,13 @@
   {
     path: '/dashboard',
     name: 'dashboard',
-    icon: 'smile',
+    icon: 'dashboard',
     component: './Dashboard/analysis',
   },
   {
     path: '/admin',
     name: 'admin',
-    icon: 'crown',
+    icon: 'contacts',
     access: 'canAdmin',
     component: './Admin',
     routes: [
@@ -91,6 +91,29 @@
         component: "./LinYing/MergeAntTable",
       }
     ]
+  },
+  {
+    path: '/Three',
+    name: 'Three',
+    icon: 'dropbox',
+    routes: [
+      {
+        name:"three",
+        path: "/Three/three",
+        component: "./Three/Three1",
+      },{
+        name:"earch",
+        path: "/Three/Earth",
+        component: "./Three/Earth",
+      },{
+        name:"city",
+        path: "/Three/City",
+        component: "./Three/City/CityIndex",
+      },{
+        name:"carTrajectory",
+        path: "/Three/CarTrajectory",
+        component: "./Three/CarTrajectory",
+      }]
   },
   {
     path: '/',

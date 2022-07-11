@@ -5,7 +5,6 @@ import store from '../redux/store';
 import {Provider,connect} from "react-redux"
 import { Comp1 } from "../Components/Comp1";
 import { Comp2 } from "../Components/Comp2";
-import { message } from "antd";
 class Home extends React.Component{
     state={count:1}
     static getDerivedStateFromProps(props,state){
@@ -49,7 +48,6 @@ class Home extends React.Component{
                 }}>changeState</button>
                 <button onClick={this.countAdd}>countAdd</button>
                 <button onClick={this.addInTimer}>addInTimer</button>
-
             </div>
         </div>
     }
