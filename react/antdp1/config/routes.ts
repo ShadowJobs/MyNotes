@@ -61,34 +61,69 @@
     routes: [
       {
         name: "log",
-        icon: "smile",
         path: "/LinYing/log",
         component: "./LinYing/LogInfo",
       },{
+        name: "小组件",
+        path: "/LinYing/SmallComps",
+        component: "./LinYing/SmallComps",
+      },{
         name:"react json配合form表单",
-        icon: "smile",
         path: "/LinYing/react-json-form",
         component: "./LinYing/JsonEditorAndForm",
       },{
         name:"上传文件，函数式确认框",
-        icon: "smile",
         path: "/LinYing/updload",
         component: "./LinYing/UploadFile",
       },{
         name:"代码编辑",
-        icon: "smile",
         path: "/LinYing/code-editor",
         component: "./LinYing/MonacoEditor",
       },{
         name:"echarts",
-        icon: "smile",
         path: "/LinYing/echarts",
         component: "./LinYing/AntChartEchartScatter",
       },{
         name:"tablemerge",
-        icon: "smile",
         path: "/LinYing/MergeAntTable",
         component: "./LinYing/MergeAntTable",
+      },{
+        name:"charts",
+        path: "/LinYing/Charts",
+        component: "./LinYing/Charts",
+      },{
+        name:"nesting",
+        icon: "smile",
+        path: "/LinYing/NestingForm",
+        component: "./LinYing/NestingForm",
+      },{
+        name:"htmlTable",
+        path: "/LinYing/HtmlTable",
+        component: "./LinYing/HtmlTable",
+      },{
+        name:"htmlTable2-feishu",
+        path: "/LinYing/HtmlTable2",
+        component: "./LinYing/HtmlTable2",
+      },{
+        name:"proformtest",
+        path: "/LinYing/ProFormTest",
+        component: "./LinYing/ProFormListTest",
+      },{
+        name:"高德",
+        path: "/LinYing/Gaode",
+        component: "./LinYing/Gaode",
+      },{
+        name:"高德热力图",
+        path: "/LinYing/GaodeHeatmap",
+        component: "./LinYing/GaodeHeatmap",
+      },{
+        name:"antTable",
+        path: "/LinYing/AntTable",
+        component: "./LinYing/AntTable",
+      },{
+        name:"图文混排",
+        path: "PicAndWord",
+        component: "./LinYing/PicAndWord",
       }
     ]
   },
@@ -102,7 +137,7 @@
         path: "/Three/three",
         component: "./Three/Three1",
       },{
-        name:"earch",
+        name:"earth",
         path: "/Three/Earth",
         component: "./Three/Earth",
       },{

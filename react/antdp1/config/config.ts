@@ -78,5 +78,7 @@ export default defineConfig({
       { languages: ['javascript','json','python'] },
     ]);
     return memo;
+  },devServer:{
+    port: 8100,
   }
 });
