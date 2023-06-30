@@ -247,7 +247,7 @@ const TableList: React.FC = () => {
         actionRef={actionRef}
         rowKey="key"
         search={{
-          labelWidth: 120,
+          labelWidth: 120, //顶部搜索栏的label宽度
         }}
         toolBarRender={() => [
           <Button

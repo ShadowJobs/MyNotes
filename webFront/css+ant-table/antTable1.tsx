@@ -67,7 +67,10 @@ export class AntTable1 extends Component {
         },{
             title: '类型', dataIndex: 'myvtype', width: '10%', key:"myvtype",className:"tableHead normal-column",
             render:(d,row,idx)=>{/*d是dataIndex指定的值，row是整个行的obj,idx是索引*/},
-            onCell: (row, index) => ({className:row.mpd=="+∞"?"unitColor":null}) //修改某一个单元格的背景色，通过onCell设置className+css来控制
+            onCell: (row, index) => ({
+                className:row.mpd=="+∞"?"unitColor":null,//修改某一个单元格的背景色，通过onCell设置className+css来控制
+                style:{color:"red"},//也可以直接修改这里的单元格颜色
+            }) 
         },{
             title: 'Good', dataIndex: 'myv1', width: '10%', key:"myv1",className:"tableHead normal-column",
         }];

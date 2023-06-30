@@ -49,7 +49,7 @@ const DataLakeJob: React.FC<{req:any}> = ({req}) => {
           <Col span={12}>
             data_filter:
             <Form.Item name="data_filter">
-              <JsonEditor  setref={setrefData} configProps={{ mode: 'code' }} height={300}/>
+              <JsonEditor setref={setrefData} configProps={{ mode: 'code' }} height={300}/>
             </Form.Item>
           </Col>
         </Row>

@@ -1,8 +1,9 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Alert, Typography } from 'antd';
+import { Card, Alert, Typography, Button } from 'antd';
 import { useIntl, FormattedMessage } from 'umi';
 import styles from './Welcome.less';
+import { savePageWithStyles } from '@/utils';
 
 const CodePreview: React.FC = ({ children }) => (
   <pre className={styles.pre}>
@@ -17,6 +18,7 @@ const Welcome: React.FC = () => {
 
   return (
     <PageContainer>
+      <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
       <Card>
         <Alert
           message={intl.formatMessage({
