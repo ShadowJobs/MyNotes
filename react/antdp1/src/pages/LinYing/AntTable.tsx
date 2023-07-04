@@ -23,48 +23,62 @@ const AntTable: React.FC<{ tableResult: any; isMerged: boolean, metricID?: numbe
 const downloadIcon=(
   <DownloadOutlined
     onClick={() => {
-      const csv: (number | string)[] = [];
-      const table = tableResult;
-      console.log(table.values);
-      let headers = table.headers;
-      if (!headers) {
-        headers = [];
-        table.indicators.map((indicator) => {
-          Object.keys(table.values[indicator]).map((header) =>
-            (headers as string[]).push(header),
-          );
-        });
-        headers = [...new Set(headers)];
-      }
-      csv.push(['', ...headers].join(','));
-      table.indicators.map((indicator) => {
-        const row: (string | number)[] = [indicator];
-        (headers as string[]).map((header) => {
-          let d=table.values[indicator][header]
-          if(d=="ddloc" || d=="ddloc_reform" || d=="subpage"){
-            // if(row.urlWithParams) //对比专用
-            //   return <a href={`/allevaluates/jobs/job/${getStrWithSep(row,"url")}/${getStrWithSep(row,"metric_id")}/${getStrWithSep(row,"ind")}/${getStrWithSep(row,"displayname")}`} target="_blank">{getTransStr("对比")}</a>
-            // else 
-              row.push(`${window.location.origin}/allevaluates/jobs/job/${d}/${metricID}/${indicator}`)
-          }else if(d?.indexOf?.("http")==0){
-            row.push(`${window.location.origin}/${d}&metric_id=${metricID}`)
-          }else {
-            if(d?.replace) row.push(d.replaceAll(',','，'))
-            else row.push(d)
+      // 方法一：
+
+      const table = result as MesAPI.AggTableResult;
+      const _data: any[] = []
+        table.indicators.map(k=>{
+          const el={indicator: k, ...table.values[k]}
+          if(table.values[k].url && !table.values[k].url.startsWith("http")){
+            el.url=`${window.location.origin}${table.values[k].url}`
           }
-        });
-        csv.push(row.join(','));
-      });
-      const csvStr = csv.join('\n');
-      const filename = `${table.title}.csv`;
-      const link = document.createElement('a');
-      link.style.display = 'none';
-      link.setAttribute('target', '_blank');
-      link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvStr));
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+          _data.push(el)
+      })
+      downloadData(_data)
+
+      // 方法2：
+      // const csv: (number | string)[] = [];
+      // const table = tableResult;
+      // console.log(table.values);
+      // let headers = table.headers;
+      // if (!headers) {
+      //   headers = [];
+      //   table.indicators.map((indicator) => {
+      //     Object.keys(table.values[indicator]).map((header) =>
+      //       (headers as string[]).push(header),
+      //     );
+      //   });
+      //   headers = [...new Set(headers)];
+      // }
+      // csv.push(['', ...headers].join(','));
+      // table.indicators.map((indicator) => {
+      //   const row: (string | number)[] = [indicator];
+      //   (headers as string[]).map((header) => {
+      //     let d=table.values[indicator][header]
+      //     if(d=="ddloc" || d=="ddloc_reform" || d=="subpage"){
+      //       // if(row.urlWithParams) //对比专用
+      //       //   return <a href={`/allevaluates/jobs/job/${getStrWithSep(row,"url")}/${getStrWithSep(row,"metric_id")}/${getStrWithSep(row,"ind")}/${getStrWithSep(row,"displayname")}`} target="_blank">{getTransStr("对比")}</a>
+      //       // else 
+      //         row.push(`${window.location.origin}/allevaluates/jobs/job/${d}/${metricID}/${indicator}`)
+      //     }else if(d?.indexOf?.("http")==0){
+      //       row.push(`${window.location.origin}/${d}&metric_id=${metricID}`)
+      //     }else {
+      //       if(d?.replace) row.push(d.replaceAll(',','，'))
+      //       else row.push(d)
+      //     }
+      //   });
+      //   csv.push(row.join(','));
+      // });
+      // const csvStr = csv.join('\n');
+      // const filename = `${table.title}.csv`;
+      // const link = document.createElement('a');
+      // link.style.display = 'none';
+      // link.setAttribute('target', '_blank');
+      // link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvStr));
+      // link.setAttribute('download', filename);
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
     }}
   />
 )
