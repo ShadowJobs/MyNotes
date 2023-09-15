@@ -45,7 +45,7 @@ const ProportionSales = ({
   >
     <div>
       <Text>销售额</Text>
-      <Donut
+      {/* <Donut
         forceFit
         height={340}
         radius={0.8}
@@ -68,7 +68,7 @@ const ProportionSales = ({
             totalLabel: '销售额',
           } as DonutConfig['statistic']
         }
-      />
+      /> */}
     </div>
   </Card>
 );

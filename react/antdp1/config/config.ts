@@ -72,13 +72,36 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   chainWebpack: (memo) => {
-    // 更多配置 https://github.com/Microsoft/monaco-editor-webpack-plugin#options
     memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
-      // 按需配置
       { languages: ['javascript','json','python'] },
     ]);
+    // memo.module
+    //   .rule('worker')
+    //   .test(/\.worker\.js$/)
+    //   .use('worker-loader')
+    //   .loader('worker-loader');
+    memo.optimization.splitChunks({
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/](react|react-dom|@ant-design|antd|@antv)[\\/]$/,
+          name: 'vendors',
+          chunks: 'all',
+        }
+      }
+    });
     return memo;
-  },devServer:{
-    port: 8100,
+  },
+  devtool:"source-map",
+  devServer:{
+    //注意devServer是umi的配置，不是webpack的配置，修改之后umi会自动合并到webpack的配置中，并且需要重启
+    // 重启后在浏览器里还需要清空缓存，disable cache，并手动刷新才能生效
+    port: 8009,
+    headers: {
+      // 'X-Frame-Options': 'DENY',  // 只允许同源的站点嵌入，实测在本地无效（gpt解释为localhost下，同源限制会放宽，或许使用ip访问也会生效？），
+      // 但是gpt说在build后nginx服务器上可行，所以待验证
+      
+      // 'Content-Security-Policy': "frame-ancestors 'none'",//本地会生效
+      // "Access-Control-Allow-Origin": "http://localhost:8009", //只允许同源访问，在别的域名下使用fetch时会报错
+    }
   }
 });

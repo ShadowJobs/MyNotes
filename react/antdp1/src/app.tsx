@@ -19,6 +19,7 @@ export const initialStateConfig = {
   loading: <PageLoading />,
 };
 
+// Notes: 根据字符串获取一个icon，用到React的createElement
 const fixMenuItemIcon = (menus: MenuDataItem[], iconType='Outlined'): MenuDataItem[] => {
   menus.forEach((item) => {
     const {icon, children} = item
@@ -93,8 +94,37 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
           </Link>,
         ]
       : [],
-    // menuDataRender: () => fixMenuItemIcon(initialState?.menuData),//自定义菜单渲染
-
+    // 自定义菜单渲染的写法
+    // import React from 'react';
+    // import { MenuDataItem } from '@ant-design/pro-layout';
+    // import * as allIcons from '@ant-design/icons';
+    // // FIX从接口获取菜单时icon为string类型
+    // const fixMenuItemIcon = (menus: MenuDataItem[], iconType='Outlined'): MenuDataItem[] => {
+    //   menus.forEach((item) => {
+    //     const {icon, children} = item
+    //     if (typeof icon === 'string') {
+    //       let fixIconName = icon.slice(0,1).toLocaleUpperCase()+icon.slice(1) + iconType
+    //       item.icon = React.createElement(allIcons[fixIconName] || allIcons[icon])
+    //     }
+    //     children && children.length>0 ? item.children = fixMenuItemIcon(children) : null
+    //   });
+    //   return menus
+    // };
+    // menuDataRender: () => fixMenuItemIcon(initialState?.menuData),
+    //自定义菜单项，
+    // menuItemRender: (itemProps: MenuDataItem, defaultDom: React.ReactNode, props: BaseMenuProps) => {
+    //   if(itemProps.buttonUrl){ //这里创建2个按钮，各自控制点击
+    //     return <div >
+    //       <span onClick={() => history.push(itemProps.path!)}>{defaultDom}</span> 
+    //       <Tooltip title={getTransStr("创建新")+getTransStr(itemProps.tip)}>
+    //         <Button type="link" style={{color:"#eff2f2"}} className="button-scale" icon={<PlusOutlined />} onClick={()=>history.push(itemProps.buttonUrl)} /> 
+    //       </Tooltip>
+    //     </div>
+    //   }else
+    //     return itemProps.target==="_blank"? 
+    //       <a target='_blank' href={itemProps.path}>{defaultDom}</a>:  //注意这里，使用了<a>标签，如果只写onClick不写href，那在右键菜单里就不会有“新标签打开”，必须写href才有这一条
+    //       <NavLink to={itemProps.path} >{defaultDom}</NavLink>
+    // },
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,

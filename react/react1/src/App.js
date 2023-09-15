@@ -20,7 +20,7 @@ function App() {
   console.log(process.env.REACT_APP_DEVELOPMENT_P1)
   return (
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter basename={window.__POWERED_BY_QIANKUN__ ? '/app-react' : '/'}>
       <ul>
         <li>最简路由，多级路由的简单使用</li>
         <li>第一种跨组件的通信方式：mobx,可以模块化store</li>

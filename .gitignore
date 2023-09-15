@@ -10,3 +10,4 @@ C,C++/cmake/CMakeFiles/
 */node_modules/
 */dist/
 node_modules/
+package-lock.json

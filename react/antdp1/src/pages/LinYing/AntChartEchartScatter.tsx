@@ -1,12 +1,10 @@
 
-// import { getMousePosInElement } from '@/utils/utils';
 import { Col, Row, Slider } from 'antd';
-import { Line, Pie, Column, Scatter } from '@ant-design/charts';
+import { Scatter } from '@ant-design/charts';
 import ReactEcharts from 'echarts-for-react';
 import 'echarts-gl'; //使用scattergl必须引入
 import React from 'react';
 import { max, min, uniq } from 'lodash';
-import { StatisticCard } from '@ant-design/pro-card';
 
 
 export function strTofixed(num:string,n:number=2){ //保留2位小数
@@ -23,7 +21,6 @@ export const ScatterChart: React.FC<{ tableResult:any; }>
   const [scale,setScale] = React.useState(1);
   const [startDrag,setStartDrag] = React.useState(false);
   const [startPos,setStartPos] = React.useState<{x:number,y:number}>()
-  const [offsetPos,setOffsetPos] = React.useState<{x:number,y:number}>({x:0,y:0})
   const dragDiv = React.useRef<HTMLDivElement | null>(null);
   const tableResult={
     "category": null,
@@ -110,21 +107,7 @@ export const ScatterChart: React.FC<{ tableResult:any; }>
     if(navigator.userAgent.indexOf("Mac OS X")==-1) delta=e.deltaY //系统兼容: 按住shift后mac下是deltaX，windows，linux是deltaY
     if(e.deltaY<0){
       if(scale<5 && dragDiv && dragDiv.current) {
-        // let pos=getMousePosInElement(e,dragDiv.current)
-        // console.log(pos);
-        
-        // pos.x+=dragDiv.current.scrollLeft
-        // pos.y+=dragDiv.current.scrollTop
-        // console.log(pos);
-        
-        // let yOffset=pos.y*(scale+0.5)/scale-pos.y
-        // let xOffset=pos.x*(scale+0.5)/scale-pos.x
-
-        // console.log(yOffset,xOffset);
-        
         setScale(scale+0.5)
-        // dragDiv.current.scrollTop += yOffset
-        // dragDiv.current.scrollLeft +=  xOffset
       }
     }else{
       if(scale>0.5 && dragDiv && dragDiv.current) {

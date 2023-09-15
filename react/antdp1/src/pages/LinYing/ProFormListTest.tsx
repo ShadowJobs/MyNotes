@@ -10,8 +10,11 @@ import {
     ProFormText,
   } from '@ant-design/pro-components';
   import { useState } from 'react';
+import InputTag from './InputTag';
+import { Form } from 'antd';
   
   const Demo = () => {
+    const [labels, setLabels] = useState(["l1"])
     const [position, setPosition] = useState<'bottom' | 'top'>('bottom');
     return (
       <>
@@ -36,6 +39,10 @@ import {
             console.log('Received values of form:', values);
           }}
         >
+
+          <Form.Item label="Labels" name="tags" rules={[{ required: false }]} initialValue={["l1"]}>
+            <InputTag value={labels} onChange={setLabels} />
+          </Form.Item>
           <ProFormText width="sm" name="id" label="主合同编号" />
           <ProFormText name="project" width="md" label="项目名称" initialValue="xxxx项目" />
           <ProFormText width="xs" name="mangerName" label="商务经理" initialValue="启途" />
