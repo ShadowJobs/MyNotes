@@ -5,8 +5,6 @@ import {useEffect, useRef, useState } from "react";
 const { Panel } = Collapse
 import { PiplineFormItem } from "./TemplateForm";
 import { PlusOutlined } from "@ant-design/icons";
-import { safeReq } from "../NotRunned/utils";
-import { request } from "umi";
 
 const {Option}=Select
 const { Item } = Form
@@ -200,6 +198,9 @@ const IssueFormItem: React.FC<{form:FormInstance,product:string}> = ({form,produ
                 {issues?.map(v=><Option value={v} key={v}>{v}</Option>)}
             </Select>
         </Form.Item>
+        <Form.Item name="version2">
+            <Input/>
+        </Form.Item>
         <Button onClick={()=>{form.setFieldsValue({"event_issue_list":issues})}}>All</Button>
       </Space>
     </Form.Item>
@@ -254,6 +255,7 @@ const TemplateEditor: React.FC<{editData?: any }> =
                 </Form.Item>
                 <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.name !== curValues.name } tooltip={"name的值如果是a，则选项会变化"}>
                 {({getFieldValue}) => { //联动：本Item的选项由前一个name的值来确定，使用shouldUpdate; 注意必须配合noStyle,否则会Item会占据很大的空白
+                // 这里可以返回一个比较复杂的结构，里面甚至可以包含多个Item，但是必须要有name
                     return <IssueFormItem form={form} product={getFieldValue("name")}></IssueFormItem>;
                 }}
                 </Form.Item>

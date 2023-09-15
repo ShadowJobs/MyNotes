@@ -5,6 +5,7 @@ import { useModel, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
+import Announcement from './Announcement';
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -23,6 +24,7 @@ const GlobalHeaderRight: React.FC = () => {
   }
   return (
     <Space className={className}>
+      <Announcement/>
       <HeaderSearch
         className={`${styles.action} ${styles.search}`}
         placeholder="站内搜索"

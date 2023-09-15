@@ -59,72 +59,35 @@
     name: 'LinYing',
     icon: 'crown',
     routes: [
-      {
-        name: "log",
-        path: "/LinYing/log",
-        component: "./LinYing/LogInfo",
-      },{
-        name: "小组件",
-        path: "/LinYing/SmallComps",
-        component: "./LinYing/SmallComps",
-      },{
-        name:"react json配合form表单",
-        path: "/LinYing/react-json-form",
-        component: "./LinYing/JsonEditorAndForm",
-      },{
-        name:"上传文件，函数式确认框",
-        path: "/LinYing/updload",
-        component: "./LinYing/UploadFile",
-      },{
-        name:"代码编辑",
-        path: "/LinYing/code-editor",
-        component: "./LinYing/MonacoEditor",
-      },{
-        name:"echarts",
-        path: "/LinYing/echarts",
-        component: "./LinYing/AntChartEchartScatter",
-      },{
-        name:"tablemerge",
-        path: "/LinYing/MergeAntTable",
-        component: "./LinYing/MergeAntTable",
-      },{
-        name:"charts",
-        path: "/LinYing/Charts",
-        component: "./LinYing/Charts",
-      },{
-        name:"nesting",
-        icon: "smile",
-        path: "/LinYing/NestingForm",
-        component: "./LinYing/NestingForm",
-      },{
-        name:"htmlTable",
-        path: "/LinYing/HtmlTable",
-        component: "./LinYing/HtmlTable",
-      },{
-        name:"htmlTable2-feishu",
-        path: "/LinYing/HtmlTable2",
-        component: "./LinYing/HtmlTable2",
-      },{
-        name:"proformtest",
-        path: "/LinYing/ProFormTest",
-        component: "./LinYing/ProFormListTest",
-      },{
-        name:"高德",
-        path: "/LinYing/Gaode",
-        component: "./LinYing/Gaode",
-      },{
-        name:"高德热力图",
-        path: "/LinYing/GaodeHeatmap",
-        component: "./LinYing/GaodeHeatmap",
-      },{
-        name:"antTable",
-        path: "/LinYing/AntTable",
-        component: "./LinYing/AntTable",
-      },{
-        name:"图文混排",
-        path: "PicAndWord",
-        component: "./LinYing/PicAndWord",
-      }
+      {name: "WorkerTest", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest" },
+      {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest" },
+      {name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
+      {name: "Express+graphql", path: "/LinYing/express-graphql", component: "./LinYing/ExpressGraphql" },
+      {name:"地图",path:"map",routes:[
+        {name:"高德",path:"/LinYing/map/Gaode",component:"./LinYing/Map/Gaode"},
+        {name:"高德热力图",path:"/LinYing/map/GaodeHeatmap",component:"./LinYing/Map/GaodeHeatmap"},
+        {name:"GoogleMapReact",path:"/LinYing/map/GoogleMapReact",component:"./LinYing/Map/GoogleMapReact"},
+        {name:"GoogleMapReactClusterer",path:"/LinYing/map/GoogleMapReactClusterer",component:"./LinYing/Map/GoogleMapReactClusterer"},
+        {name:"GoogleMapOrigin",path:"/LinYing/map/GoogleMapOrigin",component:"./LinYing/Map/GoogleMapOrigin"},
+        {name:"GoogleMapUseApi",path:"/LinYing/map/GoogleMapGMApi",component:"./LinYing/Map/GoogleMapGMApi"},
+        {name:"GoogleHeatMap",path:"/LinYing/map/GoogleHeatMap",component:"./LinYing/Map/GoogleHeatMap"},
+      ]},
+      {name: "log+分段加载", path: "/LinYing/log", component: "./LinYing/LogInfo" },
+      { name: "小组件", path: "/LinYing/SmallComps", component: "./LinYing/SmallComps" },
+      { name: "Zip测试", path: "/LinYing/ZipTest", component: "./LinYing/ZipTest" },
+      { name: "图线缩放", path: "/LinYing/ScalePicCanvas", component: "./LinYing/ScalePicCanvas" },
+      { name: "BirdView", path: "/LinYing/BirdView", component: "./LinYing/BirdView" },
+      { name:"react json配合form表单", path: "/LinYing/react-json-form", component: "./LinYing/JsonEditorAndForm",},
+      { name:"上传文件，函数式确认框", path: "/LinYing/updload", component: "./LinYing/UploadFile",},
+      { name:"代码编辑", path: "/LinYing/code-editor", component: "./LinYing/MonacoEditor" },
+      { name:"echarts", path: "/LinYing/echarts", component: "./LinYing/AntChartEchartScatter" },
+      { name:"tablemerge", path: "/LinYing/MergeAntTable", component: "./LinYing/MergeAntTable" },
+      { name:"charts", path: "/LinYing/Charts", component: "./LinYing/TestCharts/Charts" },
+      { name:"nesting", icon: "smile", path: "/LinYing/NestingForm", component: "./LinYing/NestingForm" },
+      { name:"htmlTable", path: "/LinYing/HtmlTable", component: "./LinYing/HtmlTable" },
+      { name:"htmlTable2-feishu", path: "/LinYing/HtmlTable2", component: "./LinYing/HtmlTable2" },
+      { name:"proformtest", path: "/LinYing/ProFormTest", component: "./LinYing/ProFormListTest" },
+      { name:"图文混排", path: "PicAndWord", component: "./LinYing/PicAndWord" },
     ]
   },
   {

@@ -1,0 +1,167 @@
+// import { Express } from "express";
+// 使用上一句会报错
+// https://expressjs.com/en/resources/middleware.html
+
+// 启动 node app.js 这种方式无法看到log
+// 所以可以安装$ npm i -g nodemon，然后nodemon app.js,就可以看到log了
+
+const Express=require("express")
+const fs=require("fs");
+const { getJsonData } = require("./util");
+const { log } = require("console");
+const jobRouter = require("./jobs");
+const chartDataRouter = require("./testData/chartTest");
+const morgan = require("morgan");
+const cors=require("cors")
+const util=require("util");
+const path = require("path");
+const graphRouter = require("./graphql/graphtest");
+const app=Express()
+
+// 官方中间件
+app.use(Express.json()) //配置接受post请求时，按json方式解析body的内容（仅针对application/json格式）
+app.use(Express.urlencoded()) //配置接受post请求时，针对application/x-www-form-urllencoded格式
+app.use(Express.static("./public")) //配置静态资源请求，当资源路径为public时，则返回资源内容，不用手动去一个个写接口 示例 http://localhost:5000/a.css
+app.use("/res",Express.static("./public")) //请求时，必须加上/res 才能找,当有多个资源目录且有重名时，会优先找第一个匹配，所以加/res可以起到namespace的作用 示例 http://localhost:5000/res/a.css
+// path.join(__dirname,"./public") 路径最好使用绝对路径，
+// 资源路径查找的规则：<link ref="stylesheet" href="./res/a.css" />,这是一个相对路径，在不同的页面嵌入这个<link>得到的资源路径不一样，所以要用绝对路径，即以/开头
+app.use(cors()) //允许跨域
+
+// 自定义中间件，放到所有的请求之前，那么所有的get, post等方法执行时，都会进入这个自定义的函数
+app.use((req,res,next)=>{
+  log("self define middleware")
+  log(req.method,req.url,Date.now())
+  next()
+})
+app.use(morgan("tiny")) //官方提供的自动打印日志的中间件
+// 限定了路由的use，只针对该路由生效，
+app.use("/helloworld",(req,res,next)=>{
+  log("only helloword")
+  next() //本use里有2个函数，那么next会执行下一个，
+},
+(req,res,next)=>{
+  log("second middleware")
+  next()
+})
+// 上面可以将两个函数存到一个数组里，传给use，效果相同
+// 可以对一个路由加多个中间件,这3个函数都会执行
+app.use("/helloworld",(req,res,next)=>{
+  log("third helloword")
+  next()
+})
+
+// get也是use的变种，相当与限制了使用GET请求的use
+app.get("/helloworld",(req,res,next)=>{
+  // 这里面的next有什么用？如果在本函数结束后定义一个app.use,那么可以走进去。app.use会按顺序执行，并且匹配所有的请求
+  // 所以，如果请求为/helloworld那么会先执行上一个use，然后next()会走进本函数，如果本函数再调用next()，会往下继续
+  // 找匹配（因为helloworld已经匹配过了，所以不会再匹配路由，而是匹配下一个可use）
+  console.log("get hellowold req");
+  // res.send("Hello world") //发送数据的方法1,本方法的强大之处在于，可以发送对象，send自动会转换为json string
+
+  // res.write("hello")
+  // res.write("world2")
+  // res.end()//发送数据的方法2
+
+  res.end("<h1>hello world3</h1>")//发送数据的方法3
+  next("route")
+  // 特殊语法next("route"),不能在route中使用，如果加了route参数，那么会直接跳到third helloworld里
+},(req,res,next)=>{
+  log("after route") //上面用了next("route"),本行不会执行
+  next()
+})
+
+app.use("/helloworld",()=>{ 
+  log("4 hello里的next可以执行到这里")  
+})
+
+app.get("/error",(req,res)=>{
+  // 控制返回状态码，多函数连写
+  res.status(401).send("error info")
+  
+})
+
+app.get("/error2",(req,res,next)=>{
+  try {
+    throw {msg:"error2",id:1}
+  } catch (error) {
+    next(error)//非route参数的next会跳过所有非error处理的中间件，直接进入错误处理的中间件（见下）
+  }
+})
+
+app.get("/user/:id",(req,res)=>{
+  //请求方式： http://localhost:5000/user/12?info=all 
+  res.send({user:`userId=${req.params.id}`,info:req.query.info})
+  // 获取params和query参数的方法
+})
+
+//读文件
+app.get("/readfile",(req,res)=>{
+  fs.readFile("./jsonTest/json1.json","utf-8",(err,data)=>{
+    if(err){
+      return res.status(500).json({error:err.message})
+    }
+    const d=JSON.parse(data)
+    // http://localhost:5000/readfile
+    return res.status(200).json(d.data)
+  })
+})
+
+// 异步方式读文件
+app.get("/rdasync",async (req,res)=>{
+  try {
+    const jsondata=await getJsonData()
+
+    res.setHeader("Content-Type","application/json")
+    res.status(200).json(jsondata)
+  } catch (err) {
+    
+    return res.status(500).json({error:err.message})
+  }
+})
+
+// -------------------------post部分
+app.post("/write",(req,res)=>{
+  console.log(req.body)
+  // post方法测试需要用postman里，设置body类型为json或者x-www-form-urllencoded为{"a":1}，配合上面的app.use()接收指定的格式
+  res.end(`success ${req.body.a}`)//这里得到的body是一个已经解析过的对象
+})
+
+
+// ----------------模块化写法
+app.use(jobRouter)
+app.use("/a",jobRouter) //这种是带前缀的写法
+app.use(chartDataRouter) //这种是带前缀的写法
+app.use("/graphql",graphRouter)
+// app.route("/b").get().post() 连写写法
+
+// ----------------404处理
+app.use((req,res)=>{
+  log("404")
+  res.status(404).send("404 not found")
+})
+
+// ----------------错误处理中间件写法，传4个参数
+app.use((err,req,res,next)=>{
+  log(err)
+  res.status(500).json({
+    code:3,
+    msg:"error occured in service",
+    premsg:err.msg,
+    formatErr:util.format(err) //格式化错误
+  })
+})
+
+//----------------路由匹配语法 
+// express使用path-to-regexp来做解析 讲解示例 https://www.bilibili.com/video/BV1mQ4y1C7Cn?p=23&spm_id_from=pageDriver&vd_source=8b372dea1018ca4ba01e5493f0aaaf82
+
+app.listen(5000,(data)=>{
+  console.log("start listen"); //每次修改本文件后，log都会自动输出
+  console.log(data)
+})
+
+// 常用中间件
+// 1， expres-validator,接口数据合法性验证库
+
+// 2，存储加密密码，存db时用md5加密，而不是直接明文
+//  const crypto=require("crypto")
+// const ret=crypto.createHash("md5").update("123321").digest("hex") 得到md5,无法防止暴力破解，可以在123321中加入私钥(例如都加上mm，或者再做一次md5)

@@ -264,7 +264,8 @@ const TableList: React.FC = () => {
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
+            setSelectedRows(selectedRows); //坑：本句，不可少，有bug ；如果只使用tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected })，
+            // 执行时，先选一条，再筛选（条件是筛选后的结果仅1条，且是未选的），再选中筛选后的那一条，那么selectedRows里会出现一条undefined，所以这里onChange必须自定义
           },
         }}
       />
@@ -365,7 +366,7 @@ const TableList: React.FC = () => {
 
       <Drawer
         width={600}
-        visible={showDetail}
+        open={showDetail}
         onClose={() => {
           setCurrentRow(undefined);
           setShowDetail(false);

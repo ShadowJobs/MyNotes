@@ -1,14 +1,16 @@
-import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Tag, Tooltip } from "antd"
+import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Tag, Tooltip, message } from "antd"
 const { Option } = Select;
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Form } from 'antd';
 import './Common.css';
 import { Box, Column, Pie } from "@ant-design/charts";
-import ReactEcharts from 'echarts-for-react';
 import DebounceSelect from "./DebounceSelect";
 import MonacoEditor from 'react-monaco-editor';
+import DiffViewer from "react-diff-viewer";
+import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
+import copy from 'copy-to-clipboard';
 
-
+const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 
 //props={value,onChange,initOps} //value和onChange是配合Form使用用的,value要绑定到Select上，onChange在改变value时使用，initOps是初始可选择项
 class MySelect extends React.Component {
@@ -121,7 +123,21 @@ export const FormCheckbox = (props) => {
 };
 
 
-export const LevelPie:React.FC<{chart:MesAPI.AggLevelPieChart}>=({chart})=> {
+export const CopyButton = ({ text }) => {
+    const [copied, setCopied] = useState(false);
+    const handleCopyText = () => {
+      copy(text);
+      setCopied(true);
+      message.success('Copied to clipboard');
+      setTimeout(() => setCopied(false), 3000);
+    };
+  
+    return <div>
+        <span>{text}</span>
+        <Button type="link" icon={copied ? <CheckOutlined /> : <CopyOutlined />} onClick={handleCopyText} />
+    </div>
+  };
+export const LevelPie:React.FC<{chart:Mynote.ApiAggLevelPieChart}>=({chart})=> {
     const [data, setData] = useState(chart.data);
     const [crumbs, setCrumbs] = useState(['root']);
     const handleClick=(params)=> {
@@ -308,7 +324,7 @@ export const JerkNegMinBoxPlot = ({ data, mkey }) => {
     return <Card><Box {...config} /></Card>
 };
 
-export const FreeEchart:React.FC<{result:MesAPI.AggFreeEchart}>=({result})=>{
+const FreeEchart:React.FC<{result:Mynote.ApiAggFreeEchart}>=({result})=>{
     const customizeFuncs={
       "customize_adas_1":function (params) {
         const tip = params[0].data.tip;
@@ -337,7 +353,7 @@ export const FreeEchart:React.FC<{result:MesAPI.AggFreeEchart}>=({result})=>{
 
   const MonacoTest = () => {
     const [visible, setVisible] = useState(false);
-    const [editorCount, setEditorCount] = useState(2);
+    const editorCount = 2;
     const editorRefs = useRef([]); //useRef默认值可以是单个，null，也可以是个数组[],或hash{}
   
     useEffect(() => {
@@ -345,7 +361,7 @@ export const FreeEchart:React.FC<{result:MesAPI.AggFreeEchart}>=({result})=>{
         //这里的current就是[]
         editorRefs.current.forEach((editorRef) => {
           if (editorRef) {
-            editorRef.layout(); //重新渲染
+            editorRef.layout(); //FIX: 重新渲染
           }
         });
       }
@@ -486,6 +502,8 @@ const SmallComps: React.FC = () => {
     return <>
         改造后的Select组件，可以在单选的前提下，同时支持1，由可选的options，2能自己输入新值
         <MySelect initOps={[{ value: 'A' }, { value: 'B' }]} />
+        <br/>
+        <CopyButton text={"复制功能"}/>
         Select如何折行显示,搜索不搜索value，而是搜索label
         <Select style={{ width: 300 }} optionFilterProp="label" showSearch>
             {
@@ -522,6 +540,7 @@ const SmallComps: React.FC = () => {
                 注意输入：用户输入的1,2,3会被转化为x轴的区间坐标
                 <JerkNegMinHistogram data={barBoxData} mkey={"jerk_neg_min"}/>
             </Col>
+            <Suspense fallback={<div>loading...</div>}>
             <FreeEchart result={{
                 "category": null,
                 "data": {
@@ -542,6 +561,7 @@ const SmallComps: React.FC = () => {
                 "title": "Test",
                 "type": "echart"
             }}/>
+            </Suspense>
             防抖搜索Select，可翻页
             <DebounceSelect value={sid} showSearch
                 placeholder="Select onnx"
@@ -588,6 +608,27 @@ const SmallComps: React.FC = () => {
                     "type": "levelPie"
                 }}/>
             </Col>
+            <Row>
+                <Col span={18} >
+                    代码里这个styles的作用，是让修改默认的换行方式，否则，diffviewer的宽度会超过Col设置的18，是个bug
+                  <DiffViewer
+                      styles={{ //
+                        diffContainer: {wordBreak:"break-all"},
+                        diffRemoved: {wordBreak:"break-all"},
+                        diffAdded: {wordBreak:"break-all"},
+                      }}
+                      oldValue={JSON.stringify({"A":1,"B":2,"x":"X"},null,2)}
+                      newValue={JSON.stringify({"B":2,"C":4},null,2)}
+                      splitView={true}
+                      leftTitle="Current config"
+                      rightTitle="Compare config"
+                      useDarkTheme={false}
+                      oldTitleTemplate={() => 'Old Config'}
+                      newTitleTemplate={() => 'New Config'}
+                  />
+                </Col>
+                <Col span={6}></Col>
+            </Row>
         </Row>
     </>
 }

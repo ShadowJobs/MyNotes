@@ -19,6 +19,7 @@ const Welcome: React.FC = () => {
   return (
     <PageContainer>
       <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
+      <a href="/LinYing/JsTest">测试Helmet</a>
       <Card>
         <Alert
           message={intl.formatMessage({
