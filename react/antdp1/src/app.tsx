@@ -10,6 +10,7 @@ import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import defaultSettings from '../config/defaultSettings';
 import React from 'react';
 import * as allIcons from '@ant-design/icons';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -65,10 +66,27 @@ export async function getInitialState(): Promise<{
     // menuData
   };
 }
+let _initialState = {
+  collapsed: false,
+};
 
+if (typeof window !== 'undefined') {
+  try {
+    const collapsed = localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true';
+    _initialState.collapsed = collapsed;
+  } catch (error) {
+    console.error(error);
+  }
+}
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
+    collapsed: _initialState.collapsed,
+    // onCollapse: (collapsed) => {
+    //   localStorage.setItem('pro-sidebar-collapsed', String(collapsed));
+    //   // window.location.reload();
+    // },
+    // menuRender:false,隐藏整个菜单
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
@@ -152,3 +170,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ...initialState?.settings,
   };
 };
+
+const queryClient = new QueryClient();
+export function rootContainer(container) { //Important ， App()的入口处
+  return (
+    <QueryClientProvider client={queryClient}>
+        {container}
+    </QueryClientProvider>
+  );
+}

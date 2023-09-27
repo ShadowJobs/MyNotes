@@ -1,12 +1,13 @@
 import ProTable from '@ant-design/pro-table';
 import _ from 'lodash';
 import { Button, Drawer, message, Popover, Slider,Tag, Tooltip } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ProFormSelect } from '@ant-design/pro-form';
 import "./table.less"
 import { request, useModel } from 'umi';
 import { deepCopy, myTofix, toPercent } from '@/utils';
 import ReactJson from 'react-json-view';
+import { ActionType } from '@ant-design/pro-components';
 
 
 const uniqueHeaders = (tableResult) => {
@@ -124,8 +125,11 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
   const align: string= tableResult.external?.align || "";  
   const [drawerData,setDrawerData]=useState<any>()
   const onClose = () => {setDrawerData(undefined);}; 
+  const tableRef = useRef<ActionType>();
 
-
+  useEffect(()=>{
+    tableRef.current?.reload();
+  },[tableResult])
   const firstColumnName=tableResult.external?.id_name || "Event 名称"
   const [selected, setSelected] = useState<boolean[]>(new Array(tableResult.searchOption?.length || 0).fill(false) );
   const _data: any[] = []
@@ -375,7 +379,8 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
         <ProTable columns={columns} dataSource={data} bordered rowKey="indicator" className='hoverNone'
           pagination={noPagination?false:{ pageSize: 10, }} 
           tableLayout="fixed"
-          scroll={{x: 'max-content'}}
+          scroll={{x: 'max-content'}}          
+          actionRef={tableRef}
           search={{ collapsed: false, span:{xs: 24,sm: 24,md: generateSummary?24:12,lg: generateSummary?24:12,
             xl: generateSummary?12:8,
             xxl: generateSummary?12:6,

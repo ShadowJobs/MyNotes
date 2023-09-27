@@ -38,7 +38,7 @@ const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team
   result,team,isMerged = false,
 }) => {
   const [autofitY, setAutofitY] = useState(true);
-  const [noScale,setNoScale] = useState(true);
+  const [noScale,setNoScale] = useState(false);
   const [isHorizontal, setIsHorizontal] = useState(result.horizontal?true:false);
   if(result.type=='feishu' && !result.content?.body?.blocks?.[0]?.preSum){
     addPreSum(result.content)
@@ -162,6 +162,7 @@ const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team
     <Collapse defaultActiveKey={result.external?.collapsed?'':"1"} ><Collapse.Panel collapsible="header" id={encodeURIComponent(result.title || result.map_title)} header={result.type === 'json' ? '' : (result.title || result.map_title || "-")}
         extra={extraMap[result.type]} 
         key='1'><div style={{width:"100%",overflow:"scroll"}}>
+        <div>{result.external?.annotation}</div>
         {reportMap[result.type] || <Input.TextArea value={JSON.stringify(result.data,null,2)} />}
       </div></Collapse.Panel></Collapse>
     </Col>

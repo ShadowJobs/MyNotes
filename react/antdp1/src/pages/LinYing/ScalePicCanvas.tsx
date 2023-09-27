@@ -198,7 +198,7 @@ const VV: React.FC<{}> = () => {
       }, [canvasWidth, imageInfo.img, scale, offset]);
     useEffect(() => {
         const oriImg = new Image();
-        oriImg.src = `/tang.jpeg`;
+        oriImg.src = `/tang.jpg`;
         oriImg.onload = () => {
             setimginfo({
                 img: oriImg,

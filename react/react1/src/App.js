@@ -14,12 +14,17 @@ import AuthComponent from './pages/AuthComponent';
 import { Login } from './pages/login';
 import { ReactSetState } from './pages/ReactSetState';
 import { NativeEventPage } from './pages/NativeEvent';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { ReactQueryComp } from './pages/ReactQueryComp';
 
 
+const queryClient = new QueryClient();
+window.queryClient=queryClient
 function App() {
   console.log(process.env.REACT_APP_DEVELOPMENT_P1)
   return (
     <div className="App">
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={window.__POWERED_BY_QIANKUN__ ? '/app-react' : '/'}>
       <ul>
         <li>最简路由，多级路由的简单使用</li>
@@ -72,6 +77,7 @@ function App() {
       <br/>
       <ReactSetState></ReactSetState>
       <NativeEventPage></NativeEventPage>
+      </QueryClientProvider>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>

@@ -46,7 +46,7 @@ const WithWorkerTest: React.FC<{ value?: string[], onChange?: Function }> = ({ v
   };
 
   return <div>
-    <button onClick={handleButtonClick}>使用worker子线程</button>;
+    <button onClick={handleButtonClick}>使用worker子线程</button>
     <br/>
     <button onClick={()=>{
       console.log("click broad");
@@ -59,7 +59,7 @@ const WorkerTest: React.FC<{}> = ({ }) => {
   return <div>
     <button onClick={() => { message.info("测试卡顿") }}>测试卡顿</button> 点击过程中，主线程计算会导致此按钮不可点击
     <div>
-      <button onClick={bigJob}>主线程直接计算</button> 这是1个3秒的任务
+      <button onClick={bigJob}>2主线程直接计算</button> 这是1个3秒的任务
     </div>
     <WithWorkerTest /> 启用worker线程，不会卡主主线程，上面的测试按钮可以点击并响应
     但是注意：

@@ -255,7 +255,8 @@ const TemplateEditor: React.FC<{editData?: any }> =
                 </Form.Item>
                 <Form.Item noStyle shouldUpdate={(prevValues, curValues) => prevValues.name !== curValues.name } tooltip={"name的值如果是a，则选项会变化"}>
                 {({getFieldValue}) => { //联动：本Item的选项由前一个name的值来确定，使用shouldUpdate; 注意必须配合noStyle,否则会Item会占据很大的空白
-                // 这里可以返回一个比较复杂的结构，里面甚至可以包含多个Item，但是必须要有name
+                // 这里可以返回一个比较复杂的结构，里面甚至可以包含多个Item，但是必须要有name. 
+                // IssueFormItem里面可以有状态，所以可以请求后端数据来决定选项
                     return <IssueFormItem form={form} product={getFieldValue("name")}></IssueFormItem>;
                 }}
                 </Form.Item>

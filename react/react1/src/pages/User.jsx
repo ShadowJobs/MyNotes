@@ -1,10 +1,13 @@
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
 import { Lin } from './subpages/Lin'
 import { Wang } from './subpages/Wang'
+import { ReactQueryComp } from './ReactQueryComp'
 
 export function User(){
     return <div>User 使用react的原始Routes实现嵌套路由
-        <br></br>
+
+        <br />
+        <ReactQueryComp/>
         <Link to='/user/lin'>小林</Link>
         <span> | </span>
         <Link to='/user/wang'>小王</Link>

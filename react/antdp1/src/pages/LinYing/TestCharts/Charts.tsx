@@ -8,13 +8,76 @@ import { isNumber, max, min } from 'lodash';
 import ReactJson from "react-json-view"
 const { registerInteraction } = G2;
 import _ from 'lodash';
-import { safeReq } from '@/utils';
+import { formatNumber, safeReq, timestampToDateString } from '@/utils';
 import { request } from 'umi';
 import AnchorPop from './AnchorPop';
 import ChartCard from './chartCard';
 export const MaxPageChartNum=6
 export const OpenResultPage=true
 
+function aisWheelDown(event) {
+  event.gEvent.preventDefault();
+  event.gEvent.stopPropagation();
+  event.gEvent.originalEvent.preventDefault(); // 阻止 mousewheel 的默认行为
+  event.gEvent.originalEvent.stopPropagation(); // 阻止 mousewheel 的默认行为
+  return event.gEvent.originalEvent.deltaY > 0;
+}
+registerInteraction('view-zoom', {
+  start: [
+    {
+      trigger: 'plot:mousewheel',
+      isEnable(context) { 
+        return aisWheelDown(context.event);
+      },
+      action: 'scale-zoom:zoomIn',
+      throttle: { wait: 20, leading: true, trailing: false },
+    },{
+      trigger: 'plot:mousewheel',
+      isEnable(context) {
+        
+        return !aisWheelDown(context.event);},
+
+      action: 'scale-zoom:zoomOut',
+      throttle: { wait: 20, leading: true, trailing: false },
+    },
+  ],
+  rollback: [{ trigger: 'dblclick', action: ['scale-zoom:reset'] }],
+});
+registerInteraction('brush', {
+  showEnable: [
+    { trigger: 'plot:mouseenter', action: 'cursor:crosshair' },
+    { trigger: 'plot:mouseleave', action: 'cursor:default' },
+  ],
+  start: [
+    {
+      trigger: 'plot:mousedown',
+      action: ['brush:start', 'rect-mask:start', 'rect-mask:show'],
+    },
+  ],
+  processing: [
+    {
+      trigger: 'plot:mousemove',
+      action: ['rect-mask:resize'],
+    },
+  ],
+  end: [
+    {
+      trigger: 'plot:mouseup',
+      action: ['brush:filter', 'brush:end', 'rect-mask:end', 'rect-mask:hide'],
+    },
+  ],
+  rollback: [{ trigger: 'dblclick', action: ['brush:reset'] }],
+});
+registerInteraction('view-drag', {
+  showEnable: [
+    { trigger: 'plot:mouseenter', action: 'cursor:move' },
+    { trigger: 'plot:mouseleave', action: 'cursor:default' },
+  ],
+  start:[{trigger: 'plot:mousedown',action:"scale-translate:start"} ],
+  processing: [{trigger: 'plot:mousemove',action:"scale-translate:translate"}],
+  end: [{trigger: 'plot:mouseup',action:"scale-translate:end"}],
+  rollback: [{ trigger: 'dblclick', action: ['scale-translate:reset'] }],
+});
 const commonTypes=['scatter','divider','html','image','map','table','antTable','line','pie','bar','StackArea','box','echart','json',
   'feishu','imageMerge','embeddedPage','nppKanban']
 export const GetChartCards:React.FC<{category: string | null,resultData:any,team?:string}> = 
@@ -103,41 +166,13 @@ const getAnnotationConfgs = (annotation: Mynote.ApiAggLineAnnotation) => {
   return configs[annotation.type] ? configs[annotation.type] : {};
 };
 
-function aisWheelDown(event) {
-  event.gEvent.preventDefault();
-  return event.gEvent.originalEvent.deltaY > 0;
-}
 export const LineChart: React.FC<{
-  chart: Mynote.ApiAggLineChart;
-  options: { autofitY: boolean,noScale:boolean };
-}> = ({ chart, options }) => {
-  registerInteraction('view-zoom', {
-    start: [
-      {
-        trigger: 'plot:mousewheel',
-        isEnable(context) { return aisWheelDown(context.event);},
-        action: 'scale-zoom:zoomIn',
-        throttle: { wait: 20, leading: true, trailing: false },
-      },{
-        trigger: 'plot:mousewheel',
-        isEnable(context) {return !aisWheelDown(context.event);},
-        action: 'scale-zoom:zoomOut',
-        throttle: { wait: 20, leading: true, trailing: false },
-      },
-    ],
-    rollback: [{ trigger: 'dblclick', action: ['scale-zoom:reset'] }],
-  });
-  registerInteraction('view-drag', {
-    showEnable: [
-      { trigger: 'plot:mouseenter', action: 'cursor:move' },
-      { trigger: 'plot:mouseleave', action: 'cursor:default' },
-    ],
-    start:[{trigger: 'plot:mousedown',action:"scale-translate:start"} ],
-    processing: [{trigger: 'plot:mousemove',action:"scale-translate:translate"}],
-    end: [{trigger: 'plot:mouseup',action:"scale-translate:end"}],
-    rollback: [{ trigger: 'dblclick', action: ['scale-translate:reset'] }],
-  });
+  chart: MesAPI.AggLineChart;
+  options: { autofitY: boolean,noScale:boolean 
+  mouseover?:Function};
+}> = ({ chart, options, mouseover }) => {
   const extraTip=chart.external?.extraTip
+  const ref=useRef()
   const data = chart.data
     .map((line) => {
       return line.points.map((point) => {
@@ -158,10 +193,8 @@ export const LineChart: React.FC<{
   const yMax = max(yData)//Math.max.apply(Math, yData); 老的方法有内存占用过高，疑似有泄漏
 
   const annotations = chart.extra?.map((annotation) => getAnnotationConfgs(annotation));
-
   const config: LineConfig = {
     data,
-    legend: {position: 'right'},
     ...(chart.external?.pointSize?{point:{size:chart.external.pointSize}}:{}),
     xField: chart.x_label,
     yField: chart.y_label,
@@ -180,8 +213,8 @@ export const LineChart: React.FC<{
       title: {
         text: chart.y_label,
       },
-      min: isNumber(chart.external?.yMin)?chart.external.yMin:(options.autofitY ? yMin : 0),
-      max: isNumber(chart.external?.yMax)?chart.external.yMax:yMax,
+      min: options.autofitY ? yMin : 0,
+      max: yMax,
       label:{
         rotate:chart.external?.yLabel?.rotate || 0,
         offsetX:chart.external?.yLabel?.offsetX || 0,
@@ -198,28 +231,45 @@ export const LineChart: React.FC<{
       color: chart.data.map((line) => line.color as string),
     }),
     ...(annotations && { annotations: annotations }),
-    interactions: options.noScale?[]: [
-      {type:"view-zoom"},
-      {type:"view-drag"},
-    ],
-    tooltip: {
-      fields: [
-        // chart.x_label,
-        chart.y_label,...(extraTip||[])
+    interactions: [
+      ...options.noScale?[]: [
+        {type:"view-zoom"},
+        {type:"view-drag"},
       ],
-    }
+    ],
+    tooltip: extraTip?{
+      fields: [chart.y_label,...(extraTip||[])],}
+      :{},
   };
+  if(chart?.external?.closeAnimation) config.animation=false
+
+  if(chart?.external?.useBigNumFormat){//用这个值来判断调用者来自cloudBI
+    config.yAxis.label.formatter=(v)=>formatNumber(parseFloat(v))
+  }
+  if(chart?.external?.xDate){//用这个值来判断调用者来自cloudBI
+    config.xAxis.label.formatter=(v)=>timestampToDateString(Number(v))
+  }
+
+  const handleWheel = e => e.preventDefault()
+  useEffect(()=>{
+    ref.current?.addEventListener('wheel', handleWheel, { passive: false });
+    return ()=>ref.current?.removeEventListener('wheel', handleWheel);
+  },[])
   return (
-    <div>
-    <div onMouseEnter={(e)=>{ if(!options.noScale)document.body.style["overflow"]="hidden" } }
-        onMouseLeave={(e)=>{ if(!options.noScale)document.body.style["overflow"]="auto" }} >
+    <div ref={ref}>
       <Line {...config} onReady={(plot)=>{
-        plot.on('element:click', (e) => { //坑：注意这里的点击，必须先设置 pointSize(见上)，否则会出现无法定位到具体点的bug（e.data.data得到的是全部的点，而不是某一个）
+        plot.on('element:click', (e) => {
           if(e.data.data.ptype=="url")
             e.data.data.url && window.open(e.data.data.url,"_blank")
+
+        });
+        plot.on('element:mouseover', (e) => {
+          console.log(e);
+          if(!Array.isArray(e.data.data)){
+            mouseover?.(e.data.data.x)
+          }
         });
       }}/>
-    </div>
   </div>)
 };
 export const LevelPie:React.FC<{chart:Mynote.ApiAggLevelPieChart}>=({chart})=> {
@@ -422,6 +472,10 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     columnStyle: { radius: [8, 8, 0, 0], }, //圆角柱子
     padding:[20,10,20,40] //整个柱形图的图像部分(canvas)的边距，
     //如果上面的label里position是top那么可能会出现文字超过边界，从而展示不全。这是就需要调整padding
+    ,
+    scrollbar: {
+      type: 'horizontal',
+    },
   };
   // isMerged=true
   // chart.external={isStack:true}
@@ -440,6 +494,10 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     }
     config.seriesField=data?.[0]?.stackField?"stackField":undefined
   }
+
+  if(chart?.external?.xDate){//用这个值来判断调用者来自cloudBI
+    config.xAxis.label.formatter=(v)=>timestampToDateString(Number(v))
+  }
   return <Column {...config} />;
 };
 
@@ -447,8 +505,8 @@ const SinglImage: React.FC<{ url:string} >= ({ url }) => {
   const [realUrl,setRealUrl] = useState<string>()
   const getRealPath=async (url:string)=>{
     try {
-      const result=await getRealUrlByUrl(url)
-      setRealUrl(result.data.url)
+      const result=(url)
+      setRealUrl(result)
     } catch (error) {
       console.log(error)
     }

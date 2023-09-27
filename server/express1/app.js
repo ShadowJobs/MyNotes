@@ -153,9 +153,9 @@ app.use((err,req,res,next)=>{
 
 //----------------路由匹配语法 
 // express使用path-to-regexp来做解析 讲解示例 https://www.bilibili.com/video/BV1mQ4y1C7Cn?p=23&spm_id_from=pageDriver&vd_source=8b372dea1018ca4ba01e5493f0aaaf82
-
-app.listen(5000,(data)=>{
-  console.log("start listen"); //每次修改本文件后，log都会自动输出
+const port=5000
+app.listen(port,(data)=>{
+  console.log("start listen "+port); //每次修改本文件后，log都会自动输出
   console.log(data)
 })
 
