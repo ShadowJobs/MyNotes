@@ -59,8 +59,13 @@
     name: 'LinYing',
     icon: 'crown',
     routes: [
-      {name: "WorkerTest", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest" },
-      {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest" },
+      // {name: "Test", path: "/LinYing/Test", component: "./LinYing/Test" },
+      {name: "WorkerTest+fullScreen", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest",layout:{
+        hideMenu: true,
+        hideNav: true,
+        hideFooter: true, 
+      }},
+      {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest" },
       {name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
       {name: "Express+graphql", path: "/LinYing/express-graphql", component: "./LinYing/ExpressGraphql" },
       {name:"地图",path:"map",routes:[

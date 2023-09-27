@@ -426,5 +426,17 @@ export const getMapInfoWinStr=(content:any)=>{
   }
   return trStr
 }
-export { safeReq, tryGetJson, tableUnitRender, clickHtmlList }
+// 数字转为1000万，1亿格式
+const formatNumber=(num)=> {
+  let absNum = Math.abs(num);
+  if (absNum < 10000) {
+      return Number.isInteger(num) ? num.toString() : num.toFixed(2);
+  } else if (absNum >= 10000 && absNum < 100000000) {
+      return `${(num / 10000).toFixed(absNum % 10000 === 0 ? 0 : 2)}万`;
+  } else {
+      return `${(num / 100000000).toFixed(absNum % 100000000 === 0 ? 0 : 2)}亿`;
+  }
+}
+
+export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber}
 

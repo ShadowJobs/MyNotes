@@ -9,6 +9,7 @@ import MonacoEditor from 'react-monaco-editor';
 import DiffViewer from "react-diff-viewer";
 import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
 import copy from 'copy-to-clipboard';
+import ColorTestComponent from "./ColorGenerator";
 
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 
@@ -630,6 +631,7 @@ const SmallComps: React.FC = () => {
                 <Col span={6}></Col>
             </Row>
         </Row>
+        <ColorTestComponent/>
     </>
 }
 

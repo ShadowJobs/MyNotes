@@ -9,6 +9,44 @@ const TestMesObjData={
           "label": "rpe_seg1_err",
           "points": [
             {
+              "x": 1695698873852,
+              "y": 0.018759501453098574,
+              "url":"https://www.qq.com"
+            },
+            {
+              "x": 1695596733852,
+              "y": 0.018596994480507376,
+              "url":"https://www.baidu.com",
+              "ptype":"url"
+            },
+          ]
+        }
+      ],
+      "order": "B",
+      "title": "imu_rpe_err_line",
+      "type": "line",
+      "x_label": "gyro_z(rad/s)",
+      "y_label": "relative_position_err(m)",
+
+      "external":{
+        "filters":{ 
+          "filter_type":"dt_source-filter",
+          "visual_type":"线路级MPD",
+        },
+        xDate:true,
+        annotaion:"noScale 可缩放",
+        noScale:false,
+        "sortHeaders":[],
+        "pointSize":5
+      } 
+    },
+    {
+      "data": [
+        {
+          "color": "#381BC2",
+          "label": "rpe_seg1_err",
+          "points": [
+            {
               "x": 0,
               "y": 0.018596994480507376,
               "url":"https://www.baidu.com",
@@ -73,8 +111,10 @@ const TestMesObjData={
       "external":{
         "filters":{ 
           "filter_type":"dt_source-filter",
-          "visual_type":"线路级MPD"
+          "visual_type":"线路级MPD",
         },
+        annotaion:"noScale 可缩放",
+        noScale:false,
         "sortHeaders":[],
         "pointSize":5,
         "xLabel": {
@@ -85,11 +125,89 @@ const TestMesObjData={
       } 
     },
     {
-      type:"nppKanban",
-      title:"NppKanban",
-      category:null,
-      external:{},
-      data:{}
+      "data": [
+        {
+          "color": "#381BC2",
+          "label": "rpe_seg1_err",
+          "points": [
+            {
+              "x": 0,
+              "y": 1000,
+              "url":"https://www.baidu.com",
+              "ptype":"url"
+            },
+            {
+              "x": 0.2,
+              "y": 10000,
+              "url":"https://www.qq.com"
+            }
+          ]
+        },
+        {
+          "color": "#A9DD69",
+          "label": "rpe_seg2_err",
+          "points": [
+            {
+              "x": 0,
+              "y": 2000
+            },
+            {
+              "x": 0.2,
+              "y":20000
+            }
+          ]
+        },
+        {
+          "color": "#A92F2B",
+          "label": "rpe_seg5_err",
+          "points": [
+            {
+              "x": 0,
+              "y": 10000000
+            },
+            {
+              "x": 0.2,
+              "y": 20000000
+            }
+          ]
+        },
+        {
+          "color": "#8B6FDA",
+          "label": "rpe_seg10_err",
+          "points": [
+            {
+              "x": 0,
+              "y": 1000000000
+            },
+            {
+              "x": 0.2,
+              "y": 2000000000
+            }
+          ]
+        }
+      ],
+      "order": "B",
+      "title": "imu_rpe_err_big_number",
+      "type": "line",
+      "x_label": "gyro_z(rad/s)",
+      "y_label": "relative_position_err(m)",
+
+      "external":{
+        "annotation":"格式化万亿级数据",
+        "filters":{ 
+          "filter_type":"dt_source-filter",
+          "visual_type":"线路级MPD"
+        },
+        useBigNumFormat:true,
+        noScale:false,
+        "sortHeaders":[],
+        "pointSize":5,
+        "xLabel": {
+          "rotate":-1.57,
+           "offsetX":-25,
+           "offsetY":-10
+       },
+      } 
     },
     {
       category:null,
@@ -113,7 +231,7 @@ const TestMesObjData={
               }
           ]
       },
-      "external": {"span":12,"echartHeight":1000},
+      "external": {"span":12,"echartHeight":1000,"annotation":"echart折线图自定义高度",},
       "title": "Test",
       "type": "echart"
     },
@@ -140,8 +258,8 @@ const TestMesObjData={
       "type": "image",
       "title": "res_normal_1677342459453452: 本次标定结果 | 实车标定结果",
       "file_path_list": [
-        "calib/a9adc138-b6a4-11ed-8caf-d3e71e282ae7_1677342459453452_normal.jpg",
-        "calib/45ac3e6e-b693-11ed-9e31-2f1a68565dac_1677342459453452_normal.jpg"
+        "/a.jpg",
+        "/tang.jpg"
       ],
       "external": {}
     },
@@ -187,8 +305,9 @@ const TestMesObjData={
     {
       "external":{
         "span":24,
+        "annotation":"旋转x轴，横条图有效果，（柱状图x轴不会自动按数字大小自动排序，全是按点出现的顺序来排的）",
         "xLabel": {
-          "rotate":-1.57,
+          "rotate":-1.17,
           "offsetX":-25,
           "offsetY":-10
         }

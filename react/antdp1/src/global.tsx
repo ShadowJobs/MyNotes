@@ -90,4 +90,4 @@ if (pwa) {
   clearCache();
 }
 
-export const GoogleMapKey="AIzaSyCZpwd6Gs3HUU47ke-bnl9ADTvM0NXrW0o"
+export const GoogleMapKey="MyKey"
