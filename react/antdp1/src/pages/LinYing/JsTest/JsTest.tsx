@@ -6,6 +6,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 
 import { useQuery } from 'react-query';
 import { fetchPageData, fetchReQuery } from "@/services/myExpressApi/express1";
+import { ExpressUrl } from "@/global";
 // tag函数会把模板字符串拆分成数组，参数是拆分后的数组和变量
 const TagFunc1 = (strs, ...args: any[]) => {
   console.log(strs, args);//
@@ -116,7 +117,7 @@ export default function JsTest() {
         <button onClick={() => {
           const _controller = new AbortController()
           setController(_controller)
-          fetch('http://localhost:5000/job/longtime', { signal: _controller.signal })
+          fetch(`${ExpressUrl}/job/longtime`, { signal: _controller.signal })
             .then(response => response.json())
             .then(data => {
               message.success("请求成功")
@@ -141,7 +142,7 @@ export default function JsTest() {
           }
           const _xhr = new XMLHttpRequest();
           setXhr(_xhr)
-          _xhr.open('GET', 'http://localhost:5000/job/longtime', true);
+          _xhr.open('GET', `${ExpressUrl}job/longtime`, true);
           _xhr.send();
           _xhr.onreadystatechange = function () {
             if (_xhr.readyState === 4) {

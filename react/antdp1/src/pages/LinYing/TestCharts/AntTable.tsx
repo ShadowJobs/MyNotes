@@ -274,6 +274,12 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
     {
       title:firstColumnName,dataIndex:"indicator",className: `tableHead3 ${align}`,width:tableResult.external?.id_width,//colSize:1,
       onCell: () => ({ className: "prevent-click" }), hideInSearch: hideHeaders.includes("indicator") ? true : false
+      //坑：合并单元格，antd旧版(4.18以前)写法是放到render里， 如下
+        //   render:(value,row,index)=>{
+        //     const obj={children:value,props:{}}
+        //     obj.props.rowSpan=index%2==0?2:0
+        //     return obj
+        //   },
     },
     ...(headers.map((head:string) => ({
       title: head, dataIndex: head, className: "tableHead3",
@@ -287,6 +293,7 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
           return { className ,style:{...(styleHeaders.includes(head)?row.style?.[head]:{})}}          
         }
         className+=head.indexOf("url")!=0?"prevent-click":""
+        //这个rowspan主要是用来计算单元格是否合并行,colSpan是用来计算列合并的
         return ({ className ,colSpan:row.colSpan?.[head]!=undefined?row.colSpan?.[head]:1,rowSpan:row.rowSpan?.[head]!=undefined?row.rowSpan?.[head]:1,
           style:{...(styleHeaders.includes(head)?row.style?.[head]:{})}})
       },
@@ -381,6 +388,9 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
           tableLayout="fixed"
           scroll={{x: 'max-content'}}          
           actionRef={tableRef}
+
+          // rowClassName={(record,index)=>{ return index%2==0?"meRed":"meBlue" }}/>
+          // {/* 隔行变色，通过变化rowClassName来控制 */}
           search={{ collapsed: false, span:{xs: 24,sm: 24,md: generateSummary?24:12,lg: generateSummary?24:12,
             xl: generateSummary?12:8,
             xxl: generateSummary?12:6,

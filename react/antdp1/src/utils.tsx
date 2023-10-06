@@ -1,4 +1,5 @@
 import { message } from "antd";
+import { GaodeKey } from "./global";
 // import { Parser } from 'json2csv';
 // import { saveAs } from 'file-saver';
 
@@ -363,12 +364,12 @@ export const loadGaode=(initMap:Function)=>{
     initMap()
   }else {
     const script = document.createElement("script");
-    script.src = "https://webapi.amap.com/maps?v=1.4.15&key=bee4e28c4e7a936055c093a667bf234b";
+    script.src = `https://webapi.amap.com/maps?v=1.4.15&key=${GaodeKey}`;
     script.async = true;
     document.head.appendChild(script);
     script.onload = ()=>{ //loca组件依赖AMap
       const locScript = document.createElement("script");
-      locScript.src = "https://webapi.amap.com/loca?key=bee4e28c4e7a936055c093a667bf234b&v=1.3.2";
+      locScript.src = `https://webapi.amap.com/loca?key=${GaodeKey}&v=1.3.2`;
       locScript.async = true;
       document.head.appendChild(locScript);
       locScript.onload =()=>initMap()
@@ -391,14 +392,14 @@ const loadGaode_deprecated=(initMap:Function)=>{
   }
   if(!window.Loca){
     const locScript = document.createElement("script");
-    locScript.src = "https://webapi.amap.com/loca?key=bee4e28c4e7a936055c093a667bf234b&v=1.3.2";
+    locScript.src = `https://webapi.amap.com/loca?key=${GaodeKey}&v=1.3.2`;
     locScript.async = true;
     document.head.appendChild(locScript);
     locScript.onload =()=>afterLoad('loca')
   }
   if (!window.AMap) {
     const script = document.createElement("script");
-    script.src = "https://webapi.amap.com/maps?v=1.4.15&key=bee4e28c4e7a936055c093a667bf234b";
+    script.src = `https://webapi.amap.com/maps?v=1.4.15&key=${GaodeKey}`;
     script.async = true;
     document.head.appendChild(script);
     script.onload = ()=>afterLoad('map')
@@ -438,5 +439,40 @@ const formatNumber=(num)=> {
   }
 }
 
-export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber}
+const eliminateAsyncCall = (fn: Function) => {
+  // 基本面思路：重写fetch，并使用缓存。
+  // 在fetch里判断缓存的状态，success和error表示有缓存，success可以直接返回缓存不用请求，error则抛出缓存的错误也不用请求，
+  // pendding表示没有缓存，需要请求，请求成功后，将缓存状态改为success，请求失败后，将缓存状态改为error。
+  // pendding时需要抛出错误，错误就是catch里要等待执行的promise，也就是原来的fetch，
+  // 传递给catch后，catch里面的promise执行完毕后，会执行finally，这里将fetch还原，否则后续的fetch都会使用缓存
+  const oldFetch=window.fetch
+  const cache={
+    status:"pendding", // pendding,success,error
+    data:null,
+  }
+  window.fetch=(...args)=>{
+    if(cache.status=='success') return cache.data
+    else if(cache.status=='error') throw cache.data
+    const promise=oldFetch(...args).then(res=>res.json()).then(res=>{
+      cache.status='success'
+      cache.data=res
+    },err=>{
+      cache.status='error'
+      cache.data=err
+    })
+    throw promise
+  }
+  try {
+    fn()
+  } catch (error) {
+    console.log(error);
+    if(error instanceof Promise){
+      error.then(fn,fn).finally(()=>{
+        window.fetch=oldFetch
+      })
+    }
+  }
+}
+
+export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall}
 

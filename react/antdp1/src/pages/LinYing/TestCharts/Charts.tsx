@@ -8,10 +8,11 @@ import { isNumber, max, min } from 'lodash';
 import ReactJson from "react-json-view"
 const { registerInteraction } = G2;
 import _ from 'lodash';
-import { formatNumber, safeReq, timestampToDateString } from '@/utils';
+import { formatNumber, safeReq } from '@/utils';
 import { request } from 'umi';
 import AnchorPop from './AnchorPop';
 import ChartCard from './chartCard';
+import { ExpressUrl } from '@/global';
 export const MaxPageChartNum=6
 export const OpenResultPage=true
 
@@ -243,11 +244,8 @@ export const LineChart: React.FC<{
   };
   if(chart?.external?.closeAnimation) config.animation=false
 
-  if(chart?.external?.useBigNumFormat){//用这个值来判断调用者来自cloudBI
+  if(chart?.external?.useBigNumFormat){
     config.yAxis.label.formatter=(v)=>formatNumber(parseFloat(v))
-  }
-  if(chart?.external?.xDate){//用这个值来判断调用者来自cloudBI
-    config.xAxis.label.formatter=(v)=>timestampToDateString(Number(v))
   }
 
   const handleWheel = e => e.preventDefault()
@@ -495,9 +493,6 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     config.seriesField=data?.[0]?.stackField?"stackField":undefined
   }
 
-  if(chart?.external?.xDate){//用这个值来判断调用者来自cloudBI
-    config.xAxis.label.formatter=(v)=>timestampToDateString(Number(v))
-  }
   return <Column {...config} />;
 };
 
@@ -731,7 +726,7 @@ const TestCharts:React.FC=()=>{
     const [TestMesObjData,setData]=useState()
     useEffect(()=>{
       safeReq(async()=>{
-        return await request("http://localhost:5000/chart_data")
+        return await request(`${ExpressUrl}/chart_data`)
       },res=>{
         setData(res)
       })

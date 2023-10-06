@@ -51,7 +51,7 @@ const Table2: React.FC<{ tableResult: Mynote.ApiAggTableResult; isMerged: boolea
   const firstColumnName=tableResult.external?.id_name || "Event 名称"
 
   return <div><table className='table table-hover rounded table-bordered'>
-    <thead id="custom-header">
+    <thead id="custom-header" style={{position:"sticky",top:40}}>
       <tr>
         <th className='text-center mth'><p className='mes-p-header'>{firstColumnName}</p></th>
         {

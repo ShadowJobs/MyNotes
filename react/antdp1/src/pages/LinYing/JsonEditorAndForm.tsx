@@ -4,6 +4,7 @@ import { Form, Button, Input, Select, Row, Col, message, Space } from 'antd';
 import JsonEditor from './JSONEditor';
 import { request } from 'umi';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { ExpressUrl } from '@/global';
 
 export function removeEnter(str: string) {
   return str.replace(/\n/g, "")
@@ -30,7 +31,7 @@ const DataLakeJob: React.FC<{ req: any }> = ({ req }) => {
         //这里的refData是从Editor里面获取的，不能直接从values里获取。注释见JSONEditor.tsx
       };
       setsubmitV(JSON.stringify(submitValues, null, 2));
-      await request("http://localhost:5000/job", {
+      await request(`${ExpressUrl}/job`, {
         method: "post",
         data: submitValues,
       })
