@@ -18,5 +18,16 @@ jobRouter.get("/job/tasks_by_page",(req,res)=>{
     const page=req.query.page
     res.send({code:0,data:`page ${page} data`})
 })
+jobRouter.get("/job/objdata",(req,res)=>{
+    res.send({code:0,data:"this is objdata"})
+})
+jobRouter.get("/job/bigfile",(req,res)=>{
+    let s=""
+    for(let i=0;i<2000000;i++){
+        s+="hello "+i+Math.random()
+    }
+    res.send({code:0,data:s})
+})
+
 
 module.exports= jobRouter

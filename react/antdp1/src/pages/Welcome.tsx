@@ -1,11 +1,12 @@
 import React from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Alert, Typography, Button, Space } from 'antd';
+import { Card, Alert, Typography, Button, Space, Divider } from 'antd';
 import { useIntl, FormattedMessage } from 'umi';
 import styles from './Welcome.less';
-import { savePageWithStyles } from '@/utils';
+import { eliminateAsyncCall, savePageWithStyles } from '@/utils';
 import { useQuery } from 'react-query';
 import { fetchReQuery } from '@/services/myExpressApi/express1';
+import { ExpressUrl } from '@/global';
 
 
 const CodePreview: React.FC = ({ children }) => (
@@ -15,7 +16,15 @@ const CodePreview: React.FC = ({ children }) => (
     </code>
   </pre>
 );
-
+const getAsyncJobData = async () => {
+  const res = await fetch(`${ExpressUrl}/job/objdata`);
+  res.json().then(res=>console.log(res));
+}
+const getJobData=()=>{
+  // 非await的fetch重写，见utils.ts
+  const result = fetch(`${ExpressUrl}/job/objdata`)
+  console.log(result);
+}
 const Welcome: React.FC = () => {
   const intl = useIntl();
   const { data, status } = useQuery('todos', fetchReQuery,{
@@ -30,13 +39,30 @@ const Welcome: React.FC = () => {
     refetchIntervalInBackground: false, // 页面在后台时是否自动刷新
     // initialData: '初始数据,设置了之后，默认第一次不会请求数据，而是直接使用这个数据，点击强制获取可更新数据', 
   });
+  const [fileTxt,setfileTxt]=React.useState<string>('')
 
+  const getBigFile=async ()=>{
+    const result =await fetch(`${ExpressUrl}/job/bigfile`) //第一次await只是head部分，第二次await res.json()才是body部分,但是json会等所有的数据都到达才返回
+    const reader = result.body?.getReader();
+    const decoder = new TextDecoder('utf-8');
+    while(true){
+      const r = await reader?.read();//这次是read的body部分
+      if(r?.done) break;
+      const txt = decoder.decode(r?.value);
+      // setfileTxt(pre=>pre+txt) //正常情况下数据应该是这种方式获取，因为每次read之后数据就会丢弃
+      setfileTxt(txt)//这里只读取最后一次的结果，方便展示的时候看到变化
+
+    }
+  }
+  
   return (
     <PageContainer>
+      画一个圆环
+      <div style={{border:"10px solid blue",borderRadius:20,width:40,height:40}}></div>
       <Space>
         <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
-        <a href="/LinYing/JsTest/JsTest">测试Helmet</a>
-        <a href="/responsiveTest">响应式原理</a>
+        <a href="/LinYing/JsTest">测试Helmet</a>
+        <Button><a href="/responsiveTest">响应式原理</a></Button>
         <Button type="primary" onClick={()=>{
           if(localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
             localStorage.setItem('pro-sidebar-collapsed',"false")
@@ -45,6 +71,16 @@ const Welcome: React.FC = () => {
           window.location.reload();
         }} >显、隐菜单</Button>
       </Space>
+      <div><Space>
+        <Button onClick={getAsyncJobData}>异步fetch</Button>
+        <Button onClick={()=>eliminateAsyncCall(getJobData)}>非await的fetch</Button>
+      </Space></div>
+      <div><Space>
+        <Button onClick={getBigFile}>字节流请求大文件</Button>
+      </Space>
+      <div style={{height:100,overflow:"scroll"}}>{fileTxt}</div>
+      </div>
+      <Divider/>
       <div>
         <div>React query测试</div>
           <div>另一个共享本react-query的页面在LinYing/JsTest里</div>

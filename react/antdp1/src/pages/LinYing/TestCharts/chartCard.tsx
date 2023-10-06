@@ -161,7 +161,7 @@ const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team
     <Col xs={{ span: 24 }} xxl={{ span: span }}>
     <Collapse defaultActiveKey={result.external?.collapsed?'':"1"} ><Collapse.Panel collapsible="header" id={encodeURIComponent(result.title || result.map_title)} header={result.type === 'json' ? '' : (result.title || result.map_title || "-")}
         extra={extraMap[result.type]} 
-        key='1'><div style={{width:"100%",overflow:"scroll"}}>
+        key='1'><div style={{width:"100%"}}>
         <div>{result.external?.annotation}</div>
         {reportMap[result.type] || <Input.TextArea value={JSON.stringify(result.data,null,2)} />}
       </div></Collapse.Panel></Collapse>

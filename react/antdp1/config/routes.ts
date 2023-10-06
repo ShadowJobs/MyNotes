@@ -68,6 +68,11 @@
       {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest" },
       {name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
       {name: "Express+graphql", path: "/LinYing/express-graphql", component: "./LinYing/ExpressGraphql" },
+      {name: "Css例子", path: "css",routes:[
+        {name:"瀑布流",path:"/LinYing/css/Waterfall", component: "./LinYing/CssCase/Waterfall"},
+        {name:"Css样例",path:"/LinYing/css/cases", component: "./LinYing/CssCase/SmallCssCases"},
+        {name:"Css变量",path:"/LinYing/css/css-variable", component: "./LinYing/CssCase/CssVariable"},
+      ]},
       {name:"地图",path:"map",routes:[
         {name:"高德",path:"/LinYing/map/Gaode",component:"./LinYing/Map/Gaode"},
         {name:"高德热力图",path:"/LinYing/map/GaodeHeatmap",component:"./LinYing/Map/GaodeHeatmap"},

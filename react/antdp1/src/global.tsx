@@ -91,3 +91,5 @@ if (pwa) {
 }
 
 export const GoogleMapKey="MyKey"
+export const GaodeKey="MyKey"
+export const ExpressUrl="http://localhost:5000"
