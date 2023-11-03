@@ -14,24 +14,24 @@ registerMicroApps([
     // {
     //     name: 'reactApp',
     //     entry: '//localhost:9102', // 默认react启动的入口是10000端口
-    //     activeRule: '/react', // 当路径是 /react的时候启动
-    //     container: '#container', // 应用挂载的位置
+    //     activeRule: '/react',
+    //     container: '#container',
     //     loader,
     //     props: { a: 1, util: {} }
     // },
     {
         name: 'vueApp',
-        entry: '//localhost:9101', // 默认react启动的入口是10000端口
-        activeRule: '/vue', // 当路径是 /react的时候启动
-        container: '#container', // 应用挂载的位置
+        entry: '//localhost:9101',
+        activeRule: '/vue',
+        container: '#container',
         loader,
         props: { a: 1, util: {} }
     },
     {
         name: 'react my',
-        entry: '//localhost:9102', // 默认react启动的入口是10000端口
-        activeRule: '/react1', // 当路径是 /react的时候启动
-        container: '#container', // 应用挂载的位置
+        entry: '//localhost:9102',
+        activeRule: '/react1',
+        container: '#container', 
         loader,
         props: { a: 1, util: {} }
     }

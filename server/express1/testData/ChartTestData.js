@@ -214,7 +214,7 @@ const TestMesObjData={
       type:"embeddedPage",
       title:"内嵌html iframe",
       external:{},
-      data:{url:"http://localhost:5000/helloworld"}
+      data:{url:`/api-ly/helloworld`}
     },
     {
       "category": null,

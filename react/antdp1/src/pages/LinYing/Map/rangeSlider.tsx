@@ -32,7 +32,7 @@ const RangeSlider: React.FC<{
   inputWidth?:number|string;
   inputDisabled?: boolean;
 }> = ({ value, onChange, onAfterChange, min, max, inputDisabled, inputWidth }) => {
-  const stepValue = roundUp((max - min) / steps, precision);
+  const stepValue = roundUp((max - min) / steps, precision) || 0.0001; //坑：如果是0，不报错，但是会导致页面超出宽度，因为最后计算得到的width是个超大的数
   const extendedMax = parseFloat((min + (steps + 1) * stepValue).toFixed(precision));
 
   const [leftValue, setLeftValue] = useState(value ? value[0] : min);

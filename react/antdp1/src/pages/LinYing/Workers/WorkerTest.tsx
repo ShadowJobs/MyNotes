@@ -51,7 +51,19 @@ const WithWorkerTest: React.FC<{ value?: string[], onChange?: Function }> = ({ v
     <button onClick={()=>{
       console.log("click broad");
       broadCastRef.current.postMessage("有人点击了广播按钮")
-      }}>发送广播</button> 注意广播可以在同一个浏览器的不同tab,iframe间传递消息，但是，本页面不会收到本页面post的消息
+      }}>发送广播
+    </button> 
+
+    注意广播可以在同一个浏览器的不同tab,iframe间传递消息，但是，本页面不会收到本页面post的消息.
+    跨标签通信的方法还有
+    <li>serice worker</li>
+    <li>localStorage，window.onstorage监听</li>
+    <li>websocket</li>
+    <li>SharedWorker 定时器轮询</li>
+    <li>indexdb 定时器轮询</li>
+    <li>cookie 定时器轮询</li>
+    <li>window.open window.postMessage????</li>
+      
   </div>
 };
 

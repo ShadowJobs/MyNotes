@@ -12,7 +12,7 @@ import { formatNumber, safeReq } from '@/utils';
 import { request } from 'umi';
 import AnchorPop from './AnchorPop';
 import ChartCard from './chartCard';
-import { ExpressUrl } from '@/global';
+import { ExpressUrl, FrontendPre } from '@/global';
 export const MaxPageChartNum=6
 export const OpenResultPage=true
 
@@ -515,7 +515,7 @@ const SinglImage: React.FC<{ url:string} >= ({ url }) => {
 export const MmtImage: React.FC<{ tableResult: Mynote.ApiAggImageResult} > 
 = ({ tableResult }) => {
   return <div>
-      {tableResult.file_path_list.map((v,idx)=>(<SinglImage key={idx} url={v}/>))}
+      {tableResult.file_path_list.map((v,idx)=>(<SinglImage key={idx} url={FrontendPre+v}/>))}
   </div>
 }
 

@@ -1,7 +1,7 @@
 import { WarningTwoTone } from "@ant-design/icons";
 import { Card } from "antd";
 import React from "react";
-
+// 函数组件无法实现，只能用类组件
 class ErrorBoundary extends React.Component {
   constructor(props) {
       super(props);
@@ -17,6 +17,8 @@ class ErrorBoundary extends React.Component {
       // 这里你也可以将错误记录到一些报告服务中
       console.log(error, errorInfo);
   }
+//   上2个函数只能捕获生命周期里的钩子里的错误，一般是render的错误
+
 
   render() {
       if (this.state.hasError) {

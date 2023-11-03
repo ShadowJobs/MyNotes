@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { API_URL } from "../const";
 
 const fetchData = async () => {
-  const response = await (await fetch('http://localhost:5000/job/react_query')).json();
+  const response = await (await fetch(`${API_URL}/job/react_query`)).json();
   return response.data;
 };
-const fetchPageData = (page = 0) => fetch('http://localhost:5000/job/tasks_by_page?page=' + page).then((res) => res.json())
+const fetchPageData = (page = 0) => fetch(`${API_URL}/job/tasks_by_page?page=` + page).then((res) => res.json())
 
 export const ReactQueryComp = () => {
   const [page, setPage] = useState(0)

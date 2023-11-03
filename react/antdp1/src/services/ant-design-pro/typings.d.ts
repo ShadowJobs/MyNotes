@@ -7,7 +7,6 @@ declare namespace API {
     avatar?: string;
     userid?: string;
     email?: string;
-    signature?: string;
     title?: string;
     group?: string;
     tags?: { key?: string; label?: string }[];
@@ -24,9 +23,10 @@ declare namespace API {
   };
 
   type LoginResult = {
-    status?: string;
+    code?: number;
     type?: string;
     currentAuthority?: string;
+    msg?:string;
   };
 
   type PageParams = {

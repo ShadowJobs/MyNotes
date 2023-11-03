@@ -2,7 +2,7 @@
 //  Quiz1.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/10.
+//  Created by ShadowJobs on 2019/12/10.
 //
 /**Q:找去nums里，a+b=target的下标
 解法：用哈希表记录已经检测过的值，每次判断a时，检查target-a是否在表里，有则直接返回

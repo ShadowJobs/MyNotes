@@ -149,5 +149,5 @@ const server=http.createServer((req,res)=>{
   // res.writeHead(200,{"Expires":new Date("2023-09-17 10:45:50").toUTCString()}) //强制缓存
   // res.write(JSON.stringify({name:"lin"}))
 }).listen(5002,()=>{
-  console.log("server is running at port 5000")
+  console.log("node without express server is running at port 5002")
 })

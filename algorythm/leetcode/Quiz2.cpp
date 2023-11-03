@@ -2,7 +2,7 @@
 //  Quiz2.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/11.
+//  Created by ShadowJobs on 2019/12/11.
 //
 /**Q:两个长数相加。
 //result的初始值为有2个节点的链表，后面插值时，往这两个节点的中间插，并且每次都是在头部插，实现链表的倒序

@@ -2,7 +2,7 @@
 //  Quiz1.hpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/10.
+//  Created by ShadowJobs on 2019/12/10.
 //
 
 #ifndef Quiz1_hpp

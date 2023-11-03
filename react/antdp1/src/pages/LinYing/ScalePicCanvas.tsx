@@ -1,3 +1,4 @@
+import { FrontendPre } from '@/global';
 import React, { useEffect, useRef, useState } from 'react';
 const linedata = {
     "data": {
@@ -198,7 +199,7 @@ const VV: React.FC<{}> = () => {
       }, [canvasWidth, imageInfo.img, scale, offset]);
     useEffect(() => {
         const oriImg = new Image();
-        oriImg.src = `/tang.jpg`;
+        oriImg.src = `${FrontendPre}/tang.jpg`;
         oriImg.onload = () => {
             setimginfo({
                 img: oriImg,

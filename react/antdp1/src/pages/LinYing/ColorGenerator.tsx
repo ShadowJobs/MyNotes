@@ -54,7 +54,10 @@ const ColorTestComponent = () => {
   };
   return (
     <div>
-      <Slider min={0} max={1} step={0.01} onChange={handleSliderChange} value={value} />
+      <div style={{display:"flex"}}>
+      <div style={{flex:"auto"}}>色彩渐变</div>
+      <div style={{flex:"200px"}}><Slider min={0} max={1} step={0.01} onChange={handleSliderChange} value={value} /></div>
+      </div>
       <div style={{
         width: '100px',
         height: '100px',
