@@ -1,5 +1,6 @@
 import { message } from "antd";
 import { GaodeKey } from "./global";
+import _ from "lodash";
 // import { Parser } from 'json2csv';
 // import { saveAs } from 'file-saver';
 
@@ -137,11 +138,6 @@ export function deepCompareTwoObj(obj1: any, obj2: any) {
 export function removeEnter(str: string) {
   return str.replace(/\n/g, "")
 }
-
-export function deepCopy(obj: any) {
-  return JSON.parse(JSON.stringify(obj))
-}
-
 
 ///颜色渐变生成
 // 颜色#FF00FF格式转为Array(255,0,255)
@@ -359,83 +355,83 @@ async function getStyles() {
   return `<style>${styles}</style>`;
 }
 
-export const loadGaode=(initMap:Function)=>{
-  if(window.AMap) {
+export const loadGaode = (initMap: Function) => {
+  if (window.AMap) {
     initMap()
-  }else {
+  } else {
     const script = document.createElement("script");
     script.src = `https://webapi.amap.com/maps?v=1.4.15&key=${GaodeKey}`;
     script.async = true;
     document.head.appendChild(script);
-    script.onload = ()=>{ //loca组件依赖AMap
+    script.onload = () => { //loca组件依赖AMap
       const locScript = document.createElement("script");
       locScript.src = `https://webapi.amap.com/loca?key=${GaodeKey}&v=1.3.2`;
       locScript.async = true;
       document.head.appendChild(locScript);
-      locScript.onload =()=>initMap()
+      locScript.onload = () => initMap()
     }
   }
 }
 // 并行加载高德地图和定位插件，有问题，loca组件依赖AMap，如果先加载Loca会有报错，
-const loadGaode_deprecated=(initMap:Function)=>{
-  const loadedHash={map:false,loca:false}
-  const afterLoad=(mapJsName)=>{
-    if(mapJsName=='all'){
+const loadGaode_deprecated = (initMap: Function) => {
+  const loadedHash = { map: false, loca: false }
+  const afterLoad = (mapJsName) => {
+    if (mapJsName == 'all') {
       initMap()
-    }else if(mapJsName=='map'){
-      loadedHash.map=true
-      if(loadedHash.loca) initMap()
-    }else if(mapJsName=='loca'){
-      loadedHash.loca=true
-      if(loadedHash.map) initMap()
+    } else if (mapJsName == 'map') {
+      loadedHash.map = true
+      if (loadedHash.loca) initMap()
+    } else if (mapJsName == 'loca') {
+      loadedHash.loca = true
+      if (loadedHash.map) initMap()
     }
   }
-  if(!window.Loca){
+  if (!window.Loca) {
     const locScript = document.createElement("script");
     locScript.src = `https://webapi.amap.com/loca?key=${GaodeKey}&v=1.3.2`;
     locScript.async = true;
     document.head.appendChild(locScript);
-    locScript.onload =()=>afterLoad('loca')
+    locScript.onload = () => afterLoad('loca')
   }
   if (!window.AMap) {
     const script = document.createElement("script");
     script.src = `https://webapi.amap.com/maps?v=1.4.15&key=${GaodeKey}`;
     script.async = true;
     document.head.appendChild(script);
-    script.onload = ()=>afterLoad('map')
+    script.onload = () => afterLoad('map')
     // 经实测，css如果采用这种方式，会导致css样式失效，所以改用在document.ejs里引入
     // const locAmapCss = document.createElement("script");
     // locAmapCss.src = "https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css";
     // locAmapCss.async = true;
     // document.head.appendChild(locAmapCss);
   }
-  if(window.AMap && window.Loca) {
+  if (window.AMap && window.Loca) {
     afterLoad('all');
   }
 }
 
-export const getMapInfoWinStr=(content:any)=>{
+export const getMapInfoWinStr = (content: any) => {
   var trStr = '';
   for (var name in content) {
-      var val = content[name];
-      trStr +=
-          '<tr>' +
-              '<td class="label" style="font-weight:bold;">' + name + ': </td>' +
-              '<td>&nbsp;</td>' +
-              '<td class="content">' + (name=="link"?`<a href="${val}" target="_blank">GO</a>`:val) + '</td>' +
-          '</tr>'
+    var val = content[name];
+    trStr +=
+      '<tr>' +
+      '<td class="label" style="font-weight:bold;">' + name + ': </td>' +
+      '<td>&nbsp;</td>' +
+      '<td class="content">' + (name == "link" ? `<a href="${val}" target="_blank">GO</a>` : val) + '</td>' +
+      '</tr>'
   }
   return trStr
 }
 // 数字转为1000万，1亿格式
-const formatNumber=(num)=> {
+const formatNumber = (num) => {
   let absNum = Math.abs(num);
   if (absNum < 10000) {
-      return Number.isInteger(num) ? num.toString() : num.toFixed(2);
+    return Number.isInteger(num) ? num.toString() : num.toFixed(2);
   } else if (absNum >= 10000 && absNum < 100000000) {
-      return `${(num / 10000).toFixed(absNum % 10000 === 0 ? 0 : 2)}万`;
+    return `${(num / 10000).toFixed(absNum % 10000 === 0 ? 0 : 2)}万`;
   } else {
-      return `${(num / 100000000).toFixed(absNum % 100000000 === 0 ? 0 : 2)}亿`;
+    return `${(num / 100000000).toFixed(absNum % 100000000 === 0 ? 0 : 2)}亿`;
   }
 }
 
@@ -445,20 +441,20 @@ const eliminateAsyncCall = (fn: Function) => {
   // pendding表示没有缓存，需要请求，请求成功后，将缓存状态改为success，请求失败后，将缓存状态改为error。
   // pendding时需要抛出错误，错误就是catch里要等待执行的promise，也就是原来的fetch，
   // 传递给catch后，catch里面的promise执行完毕后，会执行finally，这里将fetch还原，否则后续的fetch都会使用缓存
-  const oldFetch=window.fetch
-  const cache={
-    status:"pendding", // pendding,success,error
-    data:null,
+  const oldFetch = window.fetch
+  const cache = {
+    status: "pendding", // pendding,success,error
+    data: null,
   }
-  window.fetch=(...args)=>{
-    if(cache.status=='success') return cache.data
-    else if(cache.status=='error') throw cache.data
-    const promise=oldFetch(...args).then(res=>res.json()).then(res=>{
-      cache.status='success'
-      cache.data=res
-    },err=>{
-      cache.status='error'
-      cache.data=err
+  window.fetch = (...args) => {
+    if (cache.status == 'success') return cache.data
+    else if (cache.status == 'error') throw cache.data
+    const promise = oldFetch(...args).then(res => res.json()).then(res => {
+      cache.status = 'success'
+      cache.data = res
+    }, err => {
+      cache.status = 'error'
+      cache.data = err
     })
     throw promise
   }
@@ -466,13 +462,80 @@ const eliminateAsyncCall = (fn: Function) => {
     fn()
   } catch (error) {
     console.log(error);
-    if(error instanceof Promise){
-      error.then(fn,fn).finally(()=>{
-        window.fetch=oldFetch
+    if (error instanceof Promise) {
+      error.then(fn, fn).finally(() => {
+        window.fetch = oldFetch
       })
     }
   }
 }
+const deepClone2 = async (obj) => {
+  new Promise((resolve, reject) => {
+    const { port1, port2 } = new MessageChannel();
+    port1.onmessage = (e) => {
+      console.log(e.data.c === obj.c);
+      obj.c.a = 10
+      console.log(e.data)
+      console.log(obj)
+      resolve(e.data) //做成异步，因为是在回调里才能拿到结果
+    }
+    port2.postMessage(obj);
+  })
+}
+const deepCloneSelf = (obj) => {
+  const objMap = new Map()
+  const _deepClone = (obj) => {
+    const type = typeof obj
+    if (type != "object" || obj == null) return obj
+    if (objMap.has(obj)) return objMap.get(obj)
+    const newObj = Array.isArray(obj) ? [] : {}
+    objMap.set(obj, newObj)
+    for (let key in obj) {
+      newObj[key] = _deepClone(obj[key])
+    }
+    return newObj
+  }
+  return _deepClone(obj)
+}
 
-export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall}
+export const deepClone = async (obj) => {
+  // 方法1：JSON.stringify(obj) //报错
+  // 方法2: messageChannel
+  let result = await deepClone2(obj)
+  console.log(result)
+  // 方法3：worker?
+  // 方法5：递归
+  console.log(deepCloneSelf(obj))
+  // 方法6：lodash
+  console.log(_.cloneDeep(obj))
+}
+export const deepCopy = (obj) => {
+  return _.cloneDeep(obj)
+}
+
+export function generateRandomWords(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.';
+  for (let i = 0; i < length; i++) {
+    Math.random() > 0.7 ?
+      result += " " :
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+// 转换为62进制0-9,a-z,A-Z
+function toBase62(n) {
+    if (n === 0) return '0';
+    let s = '';
+    while (n > 0) {
+        s = chars[n % 62] + s;
+        n = Math.floor(n / 62);
+    }
+    return s;
+}
+  // console.log(toBase62(123456789)); // 输出: '8M0kX'
+
+export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall,toBase62 }
 

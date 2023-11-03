@@ -67,11 +67,15 @@ class MonacoEditor extends React.Component {
         <Row>
           <Col span={12}>
             <Card>
-               //6, 注意monaco版本不能是0.33.0，不然编译会报错 ,这部分改动有3处
+               6, 注意monaco版本不能是0.33.0，不然编译会报错 ,这部分改动有3处
                 1，在package.json中添加
                   "monaco-editor": "^0.26.0",
                   "monaco-editor-webpack-plugin": "^4.0.1"   注意这2个库的版本必须配对好，在网上查一下对应的版本表，不对应的话会报错
                 2，在config.ts里配置MonacoWebpackPlugin和chainWebpack
+              <br/>
+              其他的代码编辑器还有| <a href="https://scniro.github.io/react-codemirror2/">react-codemirror2</a> 仅支持js | 
+              <a href="https://github.com/securingsincity/react-ace">react-ace</a>支持语言多 | 
+              <a href="https://jpuri.github.io/react-draft-wysiwyg/#/">react-draft-wysiwyg</a> 点demo可及时看到代码
               <br/>
               <Space>
                 <Button style={{ marginBottom: 3 }} type="primary" onClick={() => { this.handleSubmitRun() }} loading={this.state.loadings[0]}>{getTransStr("运行")}</Button>

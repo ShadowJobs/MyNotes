@@ -92,4 +92,8 @@ if (pwa) {
 
 export const GoogleMapKey="MyKey"
 export const GaodeKey="MyKey"
-export const ExpressUrl="http://localhost:5000"
+export const ExpressUrl=window.location.host.includes("localhost")?"http://localhost:5000":"/api-ly"
+// 做域名共用时的/ly/转发，现在有独立的端口，不需要转发了
+// export const FrontendPre=window.location.host.includes("localhost")?"":"/ly"
+export const FrontendPre=""
+export const WebsocketUrl=window.location.host.includes("localhost")?"ws://localhost:5001":"wss://www.xyccstudio.cn:8009/ws" //线上通过/ws转发

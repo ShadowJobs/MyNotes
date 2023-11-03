@@ -1,6 +1,9 @@
+import { Col, Row } from "antd"
 import "./small-css.css"
 const SmallCssCases: React.FC = () => {
   return <div>
+    <Row>
+      <Col span={12}>
     <div>
     {/* 方法1，textShadow 文字描边css */}
     <div style={{ color: "blue", fontSize: 40, textShadow: "0 0 3px red,0 0 3px red,0 0 3px red,0 0 3px red" }}>文字描边1</div>
@@ -27,8 +30,19 @@ const SmallCssCases: React.FC = () => {
       </div>
     </div>
     <div>
-      <p>测试块</p>
+      <p style={{color:"white"}}>测试块</p>
     </div>
+    </Col>
+    <Col span={12}>
+      height+margin和line-height的区别
+      <div className="test-line-height">lineHeight单行</div>
+      <div className="test-height">height单行</div>
+      {/* 测试块 */}
+      <div className="test-line-height">lineHeight多行多行多行多行多行多行多行</div>
+      <div className="test-height">height多行多行多行多行多行多行多行多行多行行多行多行多行多行多行行多行多行多行多行多行</div>
+
+    </Col>
+  </Row>
   </div>
 }
 export default SmallCssCases

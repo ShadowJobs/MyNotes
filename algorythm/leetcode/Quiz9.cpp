@@ -2,7 +2,7 @@
 //  Quiz9.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/18.
+//  Created by ShadowJobs on 2019/12/18.
 //
 /**Q:检查是否为回文数
  解法：先算出位数，然后逐个位比较

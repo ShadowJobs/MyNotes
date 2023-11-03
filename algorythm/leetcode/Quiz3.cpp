@@ -2,7 +2,7 @@
 //  Quiz3.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/12.
+//  Created by ShadowJobs on 2019/12/12.
 //
 //找字符串中最长的不重复子串长度
 #include "Quiz3.hpp"

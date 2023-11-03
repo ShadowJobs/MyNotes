@@ -11,17 +11,52 @@ const { getJsonData } = require("./util");
 const { log } = require("console");
 const jobRouter = require("./jobs");
 const chartDataRouter = require("./testData/chartTest");
+const streamRouter = require("./streamApi");
 const morgan = require("morgan");
 const cors=require("cors")
 const util=require("util");
-const path = require("path");
 const graphRouter = require("./graphql/graphtest");
+const proxyRouter = require("./proxyApi");
+const userRouter = require("./user");
 const app=Express()
+const rateLimit = require("express-rate-limit");
+const slowDown = require("express-slow-down");
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const {startWebsocket,wss}=require("./WebSocketApi")
+const path = require("path");
 
+
+// 配置速度限制器
+const speedLimiter = slowDown({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  delayAfter: 100, // 请求达到100次后开始限制
+  delayMs: 500 // 每次请求都会增加500ms的延迟
+});
+
+// 配置率限制器
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分钟
+  max: 200, // 在15分钟内，每个IP最大请求次数为200
+  message: { error: "请求过于频繁" }
+});
+
+
+// 将限制器应用到所有路由
+app.use(speedLimiter);
+app.use(limiter);
 // 官方中间件
 app.use(Express.json()) //配置接受post请求时，按json方式解析body的内容（仅针对application/json格式）
-app.use(Express.urlencoded()) //配置接受post请求时，针对application/x-www-form-urllencoded格式
-app.use(Express.static("./public")) //配置静态资源请求，当资源路径为public时，则返回资源内容，不用手动去一个个写接口 示例 http://localhost:5000/a.css
+app.use(Express.urlencoded({ extended: true })) //配置接受post请求时，针对application/x-www-form-urllencoded格式
+app.use(Express.static("./public")
+// 缓存部分见nodeLuncheServer.js，本文件只记录一下开启的一种方式
+// ,{
+//   etag: true, // 开启 ETag
+//   lastModified: true,  // 开启 Last-Modified
+//   setHeaders: (res, path) => {
+//     res.setHeader('Cache-Control', 'public, max-age=3600') // 设置 Cache-Control 报头
+//   }
+// }
+) //配置静态资源请求，当资源路径为public时，则返回资源内容，不用手动去一个个写接口 示例 http://localhost:5000/a.css
 app.use("/res",Express.static("./public")) //请求时，必须加上/res 才能找,当有多个资源目录且有重名时，会优先找第一个匹配，所以加/res可以起到namespace的作用 示例 http://localhost:5000/res/a.css
 // path.join(__dirname,"./public") 路径最好使用绝对路径，
 // 资源路径查找的规则：<link ref="stylesheet" href="./res/a.css" />,这是一个相对路径，在不同的页面嵌入这个<link>得到的资源路径不一样，所以要用绝对路径，即以/开头
@@ -33,7 +68,7 @@ app.use((req,res,next)=>{
   log(req.method,req.url,Date.now())
   next()
 })
-app.use(morgan("tiny")) //官方提供的自动打印日志的中间件
+// app.use(morgan("tiny")) //官方提供的自动打印日志的中间件
 // 限定了路由的use，只针对该路由生效，
 app.use("/helloworld",(req,res,next)=>{
   log("only helloword")
@@ -79,7 +114,6 @@ app.get("/error",(req,res)=>{
   res.status(401).send("error info")
   
 })
-
 app.get("/error2",(req,res,next)=>{
   try {
     throw {msg:"error2",id:1}
@@ -96,7 +130,7 @@ app.get("/user/:id",(req,res)=>{
 
 //读文件
 app.get("/readfile",(req,res)=>{
-  fs.readFile("./jsonTest/json1.json","utf-8",(err,data)=>{
+  fs.readFile(path.join(__dirname,"./jsonTest/json1.json"),"utf-8",(err,data)=>{
     if(err){
       return res.status(500).json({error:err.message})
     }
@@ -126,12 +160,48 @@ app.post("/write",(req,res)=>{
   res.end(`success ${req.body.a}`)//这里得到的body是一个已经解析过的对象
 })
 
+// 直接转发，不做任何处理
+app.use("/baidu-trans", createProxyMiddleware({ 
+  target: 'http://api.fanyi.baidu.com', // 目标服务器地址
+  changeOrigin: true, // 需要修改请求头中的源地址为目标服务器的地址
+  pathRewrite: {
+    '^/any': '', // 将请求路径中的/api替换为空
+  },
+  onProxyReq(proxyReq, req, res) {
+      console.log('Target URL:', 'http://api.fanyi.baidu.com' + req.originalUrl);
+  }
+}));
+
+app.use('/any', (req, res, next) => {
+  // 获取请求中的目标 URL
+  const targetUrl = req.query.url;
+  if (!targetUrl) {
+      return res.status(400).send({ error: 'Missing target URL' });
+  }
+  // 创建一个基于目标 URL 的动态代理
+  const proxy = createProxyMiddleware({
+      target: targetUrl,
+      changeOrigin: true,
+      pathRewrite: (path, req) => {
+          // 删除原始路径中的 /any 和目标 URL，保留其他部分
+          return path.replace(/^\/any/, '').replace(new URL(targetUrl).pathname, '');
+      },
+      onProxyReq(proxyReq, req, res) {
+          console.log('Target URL:', targetUrl + req.originalUrl);
+      }
+  });
+  // 使用这个动态代理处理当前请求
+  proxy(req, res, next);
+});
 
 // ----------------模块化写法
+app.use("/proxy-ly",proxyRouter)
 app.use(jobRouter)
 app.use("/a",jobRouter) //这种是带前缀的写法
-app.use(chartDataRouter) //这种是带前缀的写法
+app.use(chartDataRouter)
 app.use("/graphql",graphRouter)
+app.use("/stream",streamRouter)
+app.use("/user-api",userRouter)
 // app.route("/b").get().post() 连写写法
 
 // ----------------404处理
@@ -151,6 +221,7 @@ app.use((err,req,res,next)=>{
   })
 })
 
+
 //----------------路由匹配语法 
 // express使用path-to-regexp来做解析 讲解示例 https://www.bilibili.com/video/BV1mQ4y1C7Cn?p=23&spm_id_from=pageDriver&vd_source=8b372dea1018ca4ba01e5493f0aaaf82
 const port=5000
@@ -158,7 +229,7 @@ app.listen(port,(data)=>{
   console.log("start listen "+port); //每次修改本文件后，log都会自动输出
   console.log(data)
 })
-
+startWebsocket()
 // 常用中间件
 // 1， expres-validator,接口数据合法性验证库
 

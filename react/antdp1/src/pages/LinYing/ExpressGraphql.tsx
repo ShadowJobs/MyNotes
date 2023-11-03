@@ -1,12 +1,11 @@
 import { ExpressUrl } from "@/global"
-import { safeReq } from "@/utils"
-import { Button, Divider } from "antd"
+import { Button, Divider, Image, message } from "antd"
 import { useEffect, useState } from "react"
 import { request } from "umi"
 
 const ExpressGraphql = () => {
   const [expressResult, setExpressResult] = useState('')
-  const [objResult, setObjResult] = useState({} as any)
+  const [imgData, setImgData] = useState('' as any)
   const [graphqlResult, setGraphqlResult] = useState({} as any)
   useEffect(async () => {
     console.log('ExpressGraphql')
@@ -20,197 +19,102 @@ const ExpressGraphql = () => {
   }, [])
   console.log(expressResult);
 
+  const GraphQlButton=(props:{query:string,btn?:string,method?:string})=>{
+    const {query,btn,method}=props
+    return <Button onClick={async () => {
+      const r = method==="post"?await request(`${ExpressUrl}/graphql/client`, {
+        method: "post",
+        data: { query }
+      }):
+      await request(`${ExpressUrl}/graphql/client?query={ ${query} }`)
+      setGraphqlResult(r)
+    }}>
+      {btn || query}
+    </Button>
+  }
+  const ExpressButton=(props:{url:string,method?:string,btn?:string})=>{
+    const {url,method,btn}=props
+    return <Button onClick={async () => {
+      const r = await request(`${ExpressUrl}/${url}`, { method: method || "GET", })
+      const r2=typeof r==="object"?JSON.stringify(r,null,2):r
+      setExpressResult(r2)
+    }}>
+      {btn || url}
+    </Button>
+  }
   return (
     <div>
       <h1>express,graphql接口测试</h1>
       ExpressGraphql, return string
       <br />
-      <Button onClick={async () => {
-        const r = await safeReq(async () => {
-          return await request(`${ExpressUrl}/helloworld`)
-        }, null, true)
-        setExpressResult(r)
-      }}>Helloworld</Button>
+      <ExpressButton url="helloworld"/>
+      <ExpressButton url="job" btn="jobget"/>
+      <ExpressButton url="job" method="POST" btn="jobpost"/>
+      <ExpressButton url="job/longtime_await" btn="await长任务"/>
+      <ExpressButton url="job/longtime_compute" btn="cpu密集"/>
+      <ExpressButton url="job/lt_worker_thread" btn="cpu+worker线程"/>
+      <ExpressButton url="error2"/>
+      <br/>
+      <Button onClick={()=>{
+        const source = new EventSource(`${ExpressUrl}/stream/eventsource`);
+        // EventSource主要方法有：onmessage,onopen,onerror,close,readyState(返回此对象的当前状态，连接未建、正在连接、已经连接或者连接关闭对应的值分别为0, 1, 2, 3.)
+        source.onmessage = event=>{
+          if(event.data==="close") return source.close() // 当收到后端的close消息时，需要手动关闭连接
+          setExpressResult(pre=>pre+event.data)
+          setTimeout(() => {source.close()}, 11000);//如果连接断开，浏览器会在约3秒钟后尝试重新连接,并且会不停的重试，所以11秒后关闭连接
+        }
+      }}>EventSource长连</Button>
+      <Button onClick={()=>{
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', `${ExpressUrl}/stream/gpt-stream`, true); // 设定请求以及URL
+        xhr.onprogress = function(e) { // 设定 onprogress 事件处理器
+            var responseText = xhr.responseText; // 获取服务端返回的文本
+            setExpressResult(responseText)
+        };
+        xhr.send(); // 发送请求
+      }}>类GPT流</Button>
 
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/job`)
-          }, null, true)
-          setExpressResult(r)
-        }
-      }>
-        job get
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/job`, {method: "POST",})
-          }, null, true)
-          setExpressResult(r)
-        }
-      }>
-        job post
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/error2`)
-          }, null, true)
-          setExpressResult(r)
-        }
-      }>
-        Error
-      </Button>
 
       <div>Express Req Result is</div>
-      <div>{expressResult}</div>
+      <div style={{width:"100%",wordBreak:"break-all"}}>{expressResult}</div>
       <Divider />
+      <ExpressButton url="user/12?info=all" btn="params"/>
+      <ExpressButton url="readfile" btn="readfile"/>
+      <ExpressButton url="rdasync" btn="read async"/>
+      <ExpressButton url="write" method="POST" btn="write"/>
 
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/user/12?info=all`)
-          }, null, true)
-          setObjResult(r)
-        }
-      }>
-        Params
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/readfile`)
-          }, null, true)
-          setObjResult(r)
-        }
-      }>
-        Readfile
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/rdasync`)
-          }, null, true)
-          setObjResult(r)
-        }
-      }>
-        Read Async
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/write`, {
-              method: "POST",
-              data: { a: 1 }
-            })
-          }, null, true)
-          setObjResult(r)
-        }
-      }>
-        Write
-      </Button>
-      <br />
-      Express Object result is
-      <div>{JSON.stringify(objResult, null, 2)}</div>
 
-      <Divider/>
+      <Divider />
       <div>Test graphql</div>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client?query={ hello }`)
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        Hello
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client?query={ ly }`)
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        ly
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client?query={ user {name age hobbies score{name score}} }`)
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        user
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client?query={ articles{id title content} }`)
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        articles
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client?query={ article(id:"2"){id title content} }`)
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        article
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client`,{
-              method:"post",
-              data:{query:`mutation{ addArticle(title:"title4",content:"content4"){id title content} }`}
-            })
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        addArticle
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client`,{
-              method:"post",
-              data:{query:`mutation{ updateArticle(id:"2",title:"title2",content:"content2 updated"){id title content} }`}
-            })
-          }, null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        updateArticle
-      </Button>
-      <Button onClick={
-        async () => {
-          const r = await safeReq(async () => {
-            return await request(`${ExpressUrl}/graphql/client`,{
-              method:"post",
-              data:{query:`mutation{ deleteArticle(id:"2"){id title content} }`}
-            })
-          }
-          , null, true)
-          setGraphqlResult(r)
-        }
-      }>
-        deleteArticle
-      </Button>
+      <GraphQlButton query="hello"/>
+      <GraphQlButton query="ly"/>
+      <GraphQlButton query=" user {name age hobbies score{name score}} " btn="user"/>
+      <GraphQlButton query=" articles{id title content} " btn="articles"/>
+      <GraphQlButton query=' article(id:"7"){id title content} ' btn="article"/>
+      <GraphQlButton query='mutation{ addArticle(title:"title4",content:"content4"){id title content} }' btn="addArticle" method="post"/>
+      <GraphQlButton query='mutation{ updateArticle(id:"2",title:"title2",content:"content2 updated"){id title content} }' btn="updateArticle" method="post"/>
+      <GraphQlButton query='mutation{ deleteArticle(id:"2"){id title content} }' btn="deleteArticle" method="post"/>
 
-      <br/>
-      <div style={{ whiteSpace: "pre-wrap",wordBreak: "break-all",}}>
-        {JSON.stringify(graphqlResult,null,2)}
+      <br />
+      <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-all", }}>
+        {JSON.stringify(graphqlResult, null, 2)}
       </div>
+
+      <Divider>跨域测试</Divider>
+      <Button onClick={async () => {
+        const r = await request(`/api-outer-proxy/a.jpg`, { responseType: 'blob' })
+        setImgData(URL.createObjectURL(r))
+      }}>通过nginx转发到外站</Button>
+      <Button onClick={() => {
+        try {
+          request(`https://www.xyccstudio.cn/ly/a.jpg`)
+        } catch (error) {
+          message.error(error.message)
+        }
+      }}>直接请求外站会报cors</Button>
+      <br />
+      <img src={imgData} alt="" width={200}/>
+      要用createObjectURL转换一下
     </div>
   )
 }

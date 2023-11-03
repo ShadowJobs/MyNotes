@@ -1,3 +1,4 @@
+import { FrontendPre } from "@/global";
 import { useEffect } from "react";
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -33,7 +34,7 @@ function init() {
     // 创建月球
     const moonGeometry = new THREE.SphereGeometry(MOON_RADIUS, 16, 16);
     const moonMaterial = new THREE.MeshPhongMaterial({
-        map: textureLoader.load('/threeres/textures/planets/moon_1024.jpg')
+        map: textureLoader.load(`${FrontendPre}/threeres/textures/planets/moon_1024.jpg`)
     })
     moon = new THREE.Mesh(moonGeometry, moonMaterial)
     moon.receiveShadow = true;
@@ -43,9 +44,9 @@ function init() {
     const earthGeometry = new THREE.SphereGeometry(EARTH_RADIUS, 16, 16);
     const earthMaterial = new THREE.MeshPhongMaterial({
         shininess: 5,
-        map: textureLoader.load('/threeres/textures/planets/earth_atmos_2048.jpg'),
-        specularMap: textureLoader.load('/threeres/textures/planets/earth_specular_2048.jpg'),
-        normalMap: textureLoader.load('/threeres/textures/planets/earth_normal_2048.jpg')
+        map: textureLoader.load(`${FrontendPre}/threeres/textures/planets/earth_atmos_2048.jpg`),
+        specularMap: textureLoader.load(`${FrontendPre}/threeres/textures/planets/earth_specular_2048.jpg`),
+        normalMap: textureLoader.load(`${FrontendPre}/threeres/textures/planets/earth_normal_2048.jpg`)
     })
 
     earth = new THREE.Mesh(earthGeometry, earthMaterial);

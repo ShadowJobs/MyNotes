@@ -2,7 +2,7 @@
 //  Quiz10.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/18.
+//  Created by ShadowJobs on 2019/12/18.
 //
 
 #include "Quiz10.hpp"

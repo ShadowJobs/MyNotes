@@ -8,14 +8,14 @@
 2，ant design pro项目做子项目
 3，vue3项目做主项目 待参考https://blog.csdn.net/weixin_46769087/article/details/131406750
 
-qiankun原理
+qiankun 原理
 学习 https://www.bilibili.com/video/BV1H34y117fe/?spm_id_from=333.337.search-card.all.click&vd_source=8b372dea1018ca4ba01e5493f0aaaf82
 知识点：
-主应用不需要安装qiankun包
+子应用不需要安装qiankun包
 匹配路由，监听路由变化，onhashchange,popstate,pushstate,等
 路由改变时，卸载旧代码，加载新代码，有单独的库kuitos/import-html-entry，这个库可以获取html，css,js，并提供sandbox环境执行js，
 卸载旧路由时怎么获取旧的app？需要自己记录2个页面prev和curr。（因为浏览器不提供，否则切换时无法销毁旧的页面）
-自己实现怎么做？start
+-------------------自己实现怎么做？start-------------------
 实现：import-html-entry，通过createElement("div"),设置div的innerHtml,然后这个div就可以querySelectorAll("script")得到所有脚本代码
 渲染节点是container指定的节点，通过主应用设置__POWERED_BY_QIANKUN__来控制
 innerHtml不自动执行<javascript>标签，需要获取节点后，获得节点内的脚本（沙箱隔离方式2种1，代理沙箱，2，快照沙箱）
@@ -33,37 +33,15 @@ css隔离有2种技术
 }
 css处理方式1,shadowDom（浏览器提供的css隔离节点，兼容？）,2所有style class前都加一个前缀
 
-自己实现end
+-------------------自己实现end-------------------
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ### `npm run eject`
 
@@ -100,7 +78,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 ### Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

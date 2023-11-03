@@ -142,7 +142,7 @@ export default function JsTest() {
           }
           const _xhr = new XMLHttpRequest();
           setXhr(_xhr)
-          _xhr.open('GET', `${ExpressUrl}job/longtime`, true);
+          _xhr.open('GET', `${ExpressUrl}/job/longtime`, true);
           _xhr.send();
           _xhr.onreadystatechange = function () {
             if (_xhr.readyState === 4) {

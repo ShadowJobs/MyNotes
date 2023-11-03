@@ -2,7 +2,7 @@
 //  Quiz4.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/13.
+//  Created by ShadowJobs on 2019/12/13.
 //
 /**Q:两个数组的中位数
 思路，合并2个数组，

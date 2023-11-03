@@ -12,6 +12,8 @@ const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   hash: true,
   antd: {},
+  // publicPath: '/ly/',
+
   dva: {
     hmr: true,
   },
@@ -91,7 +93,7 @@ export default defineConfig({
     });
     return memo;
   },
-  devtool:"source-map",
+  // devtool:"source-map", //默认关掉，不然会很慢
   devServer:{
     //注意devServer是umi的配置，不是webpack的配置，修改之后umi会自动合并到webpack的配置中，并且需要重启
     // 重启后在浏览器里还需要清空缓存，disable cache，并手动刷新才能生效

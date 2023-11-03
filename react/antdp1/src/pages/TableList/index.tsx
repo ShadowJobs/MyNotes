@@ -207,6 +207,9 @@ const TableList: React.FC = () => {
                 id: 'pages.searchTable.exception',
                 defaultMessage: 'Please enter the reason for the exception!',
               })}
+              // onChange={(e)=>{ //#坑：自定义的onChange，不会提交到表单里。解决方法1：在Input外面包一层Form.Item，方法二，调用form.setFieldsValue
+              //   form.setFieldsValue({ updatedAt: e });
+              // }}
             />
           );
         }

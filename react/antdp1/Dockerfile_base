@@ -1,0 +1,28 @@
+#FROM ubuntu:20.04
+#LABEL maintainer="shadow" email="shadow@g.com"
+#
+#USER root
+#COPY ["sources.list", "/etc/apt/"]
+#RUN mkdir -p /root/.pip
+#COPY ["pip.conf", "/root/.pip/"]
+#
+#RUN apt update && DEBIAN_FRONTEND="noninteractive" apt -y install tzdata unzip nginx openssh-server net-tools lsof vim curl
+#RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+#RUN apt -y install nodejs
+## 设置时区
+#ENV TZ=Asia/Shanghai
+## 创建一个我们期望的时区的软连接到localtime，并修改本机时区timezone
+#RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+#
+#COPY ["sshd_config", "/etc/ssh/"]
+#RUN /bin/echo "root:123456" | chpasswd
+
+# FROM node:15.11 as builder
+# FROM node.com/nodejs/node:15.11 as builder
+FROM tagserver.com/docker-atcraft-dev/dck-base:1.2
+
+WORKDIR /app
+COPY package.json .
+RUN npx -p npm@7.6.0 npm install --legacy-peer-deps --registry=https://mirrors.huaweicloud.com/repository/npm/
+COPY . .
+RUN npm run build --max-old-space-size=8192

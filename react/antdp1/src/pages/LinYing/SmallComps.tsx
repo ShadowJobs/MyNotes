@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Tag, Tooltip, message } from "antd"
+import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Space, Tag, Tooltip, message } from "antd"
 const { Option } = Select;
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Form } from 'antd';
@@ -10,6 +10,7 @@ import DiffViewer from "react-diff-viewer";
 import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
 import copy from 'copy-to-clipboard';
 import ColorTestComponent from "./ColorGenerator";
+import { deepClone } from "@/utils";
 
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 
@@ -122,8 +123,25 @@ export const FormCheckbox = (props) => {
     };
     return <Checkbox checked={value} onChange={handleChange} {...rest} />
 };
-
-
+const selfWriteCopyFunc=(()=>{
+    if(navigator.clipboard){//惰性函数,这个判断只会执行一次，省略后面的判断
+        return async(text)=>{
+        await navigator.clipboard.writeText(text)
+        }
+        // writeText()需要用户的交互才能正常工作。除此之外，它还需要页面处于活动状态（即当前标签页）。如果以上两点不存在，浏览器会出于安全原因拒绝执行命令。
+        // 对于 navigator.clipboard.writeText(text) API，当页面在后台运行或未获取焦点时，浏览器将会阻止复制操作。这是为了保护用户的剪贴板不被无意中修改。
+        // 必须使用异步函数，否则会报错
+    }else{
+        return (text)=>{
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+        }
+    }
+})()
 export const CopyButton = ({ text }) => {
     const [copied, setCopied] = useState(false);
     const handleCopyText = () => {
@@ -136,8 +154,19 @@ export const CopyButton = ({ text }) => {
     return <div>
         <span>{text}</span>
         <Button type="link" icon={copied ? <CheckOutlined /> : <CopyOutlined />} onClick={handleCopyText} />
+        <span>{text}</span>，自己写的copy函数
+        <Button type="link" icon={copied ? <CheckOutlined /> : <CopyOutlined />} onClick={()=>selfWriteCopyFunc(text)}/>
+        <Button onClick={()=>{
+            document.addEventListener('copy', (event) => {
+                event.preventDefault();
+                event.clipboardData.setData('text/plain', "复制已经被禁用");
+                message.error("复制已经被禁用")
+                document.execCommand('copy');
+
+            }, false);
+        }}>禁用浏览器复制</Button>解禁在element-eventlisteners-copy里可以删除所有的
     </div>
-  };
+};
 export const LevelPie:React.FC<{chart:Mynote.ApiAggLevelPieChart}>=({chart})=> {
     const [data, setData] = useState(chart.data);
     const [crumbs, setCrumbs] = useState(['root']);
@@ -506,7 +535,13 @@ const SmallComps: React.FC = () => {
         <br/>
         <CopyButton text={"复制功能"}/>
         Select如何折行显示,搜索不搜索value，而是搜索label
-        <Select style={{ width: 300 }} optionFilterProp="label" showSearch>
+        <div id="pp">
+        <Select style={{ width: 300 }} optionFilterProp="label" showSearch onChange={e=>{
+            // document.querySelector('.ant-select-selection-item').style.color = "yellow"
+            document.getElementById("pp").querySelectorAll('.ant-select-selection-item').forEach(item => {
+                  item.style.color = e==1?'yellow':"blue"})
+
+        }}>
             {
                 [{ label: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa111111111111111111111111", value: 1 },
                 { label: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb2222222222222222222222222", value: 2 }]
@@ -514,13 +549,22 @@ const SmallComps: React.FC = () => {
                         <div style={{ wordBreak: "break-all", whiteSpace: "normal" }}>{v.label}</div>
                     </Select.Option>)
             }
-        </Select>
+        </Select></div>
+        <div>Select可以使用options,也可以使用Children里的Select.Option,Select.Option已经不推荐使用了，但这种写法的好处是可以自定义Item的style
+            select自定义已选文字的颜色，可以用querySelector('.ant-select-selection-item').style.color = "blue"
+        </div>
         <Tooltip title={"超长字符串省略+tip写法 啊；发送端发；氨基酸的； 发；三大纠纷；就阿斯；东方今典杀戮空间发牢骚大军阀；了解阿斯蒂芬撒大家；发 "}>
             <h3 style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: 200}}
             >
                 超长字符串省略+tip写法 啊；发送端发；氨基酸的； 发；三大纠纷；就阿斯；东方今典杀戮空间发牢骚大军阀；了解阿斯蒂芬撒大家；发 
             </h3>
         </Tooltip>
+
+        <div><Button onClick={()=>{
+            const obj={a:1,b:2};obj.c=obj
+            console.log(deepClone(obj))
+        }}>深度克隆</Button>json.parse,messagechannel,自写,lodash
+        </div>
         <Form form={form} layout="vertical">
             <Form.Item label="Status (Single)" name="statusSingle">
                 <CustomRadioGroup mode="single" onChange={handleChange} />
@@ -612,6 +656,11 @@ const SmallComps: React.FC = () => {
             <Row>
                 <Col span={18} >
                     代码里这个styles的作用，是让修改默认的换行方式，否则，diffviewer的宽度会超过Col设置的18，是个bug
+                    <br/>本代码实现的是react-diff-viewer库，还有其他的库比如
+                    <Space>
+                    <a href="https://diff2html.xyz/">diff2html</a> <a href="https://github.com/securingsincity/react-ace">react-ace</a>支持语言多
+                    <a href="https://uiwjs.github.io/react-codemirror/">react-codemirror</a>
+                    </Space>
                   <DiffViewer
                       styles={{ //
                         diffContainer: {wordBreak:"break-all"},

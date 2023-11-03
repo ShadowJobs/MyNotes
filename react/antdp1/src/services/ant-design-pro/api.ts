@@ -1,13 +1,17 @@
 // @ts-ignore
 /* eslint-disable */
+import { ExpressUrl } from '@/global';
 import { request } from 'umi';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('/api/currentUser', {
+  }>(`${ExpressUrl}/user-api/currentUser`, {
     method: 'GET',
+    headers: {
+      'Authorization': localStorage.getItem('token') || '',
+    },
     ...(options || {}),
   });
 }
@@ -20,9 +24,19 @@ export async function outLogin(options?: { [key: string]: any }) {
   });
 }
 
-/** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+  return request<API.LoginResult>(`${ExpressUrl}/user-api/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function registAccount(body: API.LoginParams, options?: { [key: string]: any }) {
+  return request<API.LoginResult>(`${ExpressUrl}/user-api/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

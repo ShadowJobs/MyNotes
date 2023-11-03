@@ -2,7 +2,7 @@
 //  Quiz7.cpp
 //  LeetCode
 //
-//  Created by 林影 on 2019/12/16.
+//  Created by ShadowJobs on 2019/12/16.
 //
 
 #include "Quiz7.hpp"

@@ -59,10 +59,24 @@ ul {
 li {
   list-style-type: none;
 }
-/* 注意下面这两块权重都是0-0-2，所以后一个生效吗，red，所以 > 不影响权重，div离p更近，但也不影响权重 */
-div > p{
+/* 注意下面这两块权重都是0-0-3，所以后一个生效吗，red，所以 > 不影响权重，div离p更近，但也不影响权重 */
+div p > p{
   background-color: yellow;
 }
-html p{
+html p p{
   background-color: red;
+}
+
+.test-height{
+  height: 100px;
+  width: 150px;
+  border: 1px solid gray;
+  margin-top:20px;
+}
+
+.test-line-height{
+  line-height: 50px;
+  width: 150px;
+  height: 100px;
+  border: 1px solid gray;
 }
