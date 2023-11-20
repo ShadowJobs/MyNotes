@@ -9,6 +9,7 @@ declare namespace API {
     email?: string;
     title?: string;
     group?: string;
+    gender?:string;
     tags?: { key?: string; label?: string }[];
     notifyCount?: number;
     unreadCount?: number;

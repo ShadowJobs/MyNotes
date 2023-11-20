@@ -4,7 +4,7 @@
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
-    "notes":"build命令如果报错内存不足，需要设置为：cross-env NODE_OPTIONS=--max_old_space_size=8192 umi build",
+    "notes": "build命令如果报错内存不足，需要设置为：cross-env NODE_OPTIONS=--max_old_space_size=8192 umi build",
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
     "deploy": "npm run build && npm run gh-pages",
@@ -98,6 +98,8 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-tiny-virtual-list": "^2.2.0",
     "recompose": "^0.30.0",
+    "simple-peer": "^9.11.1",
+    "socket.io-client": "^4.7.2",
     "three": "^0.142.0",
     "umi": "^3.5.0"
   },

@@ -9,9 +9,12 @@ const { log } = require("console")
 const etag = require("etag")
 const exptime="2023-09-17 19:21:40"
 const relativeTime=3
+const rootPath="./react/antdp1/public"
+const serverPath="/server/express1/public"
 const server=http.createServer((req,res)=>{
   console.log(req.method,req.url)
   const {pathname,query}=url.parse(req.url,true)
+  try {
   if(pathname==="/"){
     res.setHeader("Content-Type","text/html;charset=utf-8")
     res.write(`<div><h1>hello world
@@ -37,15 +40,17 @@ const server=http.createServer((req,res)=>{
     res.write(JSON.stringify({name:"lin"}))
     res.end()
   }else if(pathname==="/favicon.ico"){
-    const data=fs.readFileSync("../../react/antdp1/public/a.jpg")
+    const data=fs.readFileSync(`${rootPath}/a.jpg`)
     res.writeHead(200,{"Expires":new Date("2027-09-17 19:21:40").toUTCString()})
     res.end(data)
   }else if(pathname==="/img"){ //强制缓存，固定过期时间
-    const data=fs.readFileSync("../../react/antdp1/public/tang.jpg")
+    const data=fs.readFileSync(`${rootPath}/tang.jpg`)
     res.writeHead(200,{"Expires":new Date("2023-09-17 19:21:40").toUTCString()})
     res.end(data)
   }else if(pathname==="/img2"){ //
-    const data=fs.readFileSync("./public/img2.jpg")
+    const currentDirectory = process.cwd();
+console.log(currentDirectory);
+    const data=fs.readFileSync(`${currentDirectory}${serverPath}/img2.jpg`) //坑：tang.jpg能访问，img2.jpg访问不到
     res.writeHead(200,{"Cache-Control":`max-age=${relativeTime}`}) //相对与第一次请求的时间，3秒内不会再次请求
     //max-age和s-maxage的区别是，s-maxage只对代理服务器有效,必须先设置public，max-age对浏览器和代理服务器都有效
 
@@ -62,7 +67,7 @@ const server=http.createServer((req,res)=>{
 
     res.end(data)
   }else if(pathname==="/img3"){ //协商缓存，询问服务器文件是否改变，如果没有改变，返回304，浏览器使用缓存
-    const {mtime}=fs.statSync("../../react/antdp1/public/a.jpg")
+    const {mtime}=fs.statSync(`${rootPath}/a.jpg`)
     const lastModified=mtime.toUTCString()
     const ifModifiedSince=req.headers["if-modified-since"]
     log(lastModified)
@@ -80,11 +85,12 @@ const server=http.createServer((req,res)=>{
     })
     // res.writeHead(200,{"Cache-Control":"no-cache"}) //设置了last-modified后不需要再设置no-cache
 
-    const data=fs.readFileSync("../../react/antdp1/public/a.jpg")
+    const data=fs.readFileSync(`${rootPath}/a.jpg`)
     res.end(data)
   }else if(pathname==="/etagpic"){ //协商缓存etag
     // etag不适合做图片的缓存方案，因为图片通常是整张替换。
-    const data=fs.readFileSync("./public/etagpic.png")
+    const currentDirectory = process.cwd();
+    const data=fs.readFileSync(`${currentDirectory}${serverPath}/etagpic.png`)
     const etagStr=etag(data)
     // etag缺点：会消耗计算（对比文件内容）
     const ifNoneMatch=req.headers["if-none-match"]
@@ -146,6 +152,9 @@ const server=http.createServer((req,res)=>{
     res.end()
   }
 
+  } catch (error) {
+    console.log(error)
+  }
   // res.writeHead(200,{"Expires":new Date("2023-09-17 10:45:50").toUTCString()}) //强制缓存
   // res.write(JSON.stringify({name:"lin"}))
 }).listen(5002,()=>{

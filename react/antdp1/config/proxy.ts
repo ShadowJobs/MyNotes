@@ -22,6 +22,16 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
+    '/browser-cache/': {
+      target: 'http://localhost:5002/',
+      changeOrigin: true,
+      pathRewrite: { '^/browser-cache/': '' },
+    },
+    '/api-python/': {
+      target: 'http://localhost:5003/',
+      changeOrigin: true,
+      pathRewrite: { '^/api-python/': '' }, //去掉 /api-python/ 的写法
+    },
   },
   test: {
     '/api/': {

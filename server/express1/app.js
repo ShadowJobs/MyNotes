@@ -18,12 +18,14 @@ const util=require("util");
 const graphRouter = require("./graphql/graphtest");
 const proxyRouter = require("./proxyApi");
 const userRouter = require("./user");
+const contentTypeRouter = require("./contentType");
 const app=Express()
 const rateLimit = require("express-rate-limit");
 const slowDown = require("express-slow-down");
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const {startWebsocket,wss}=require("./WebSocketApi")
 const path = require("path");
+const startPeerServer = require("./peerServer");
 
 
 // 配置速度限制器
@@ -48,6 +50,7 @@ app.use(limiter);
 app.use(Express.json()) //配置接受post请求时，按json方式解析body的内容（仅针对application/json格式）
 app.use(Express.urlencoded({ extended: true })) //配置接受post请求时，针对application/x-www-form-urllencoded格式
 app.use(Express.static("./public")
+// app.use(serveIndex("./public"))可以将public目录下的文件列出来，但是不会自动刷新，需要手动刷新（先serveIndex=require("serve-index")）
 // 缓存部分见nodeLuncheServer.js，本文件只记录一下开启的一种方式
 // ,{
 //   etag: true, // 开启 ETag
@@ -172,6 +175,7 @@ app.use("/baidu-trans", createProxyMiddleware({
   }
 }));
 
+
 app.use('/any', (req, res, next) => {
   // 获取请求中的目标 URL
   const targetUrl = req.query.url;
@@ -202,6 +206,8 @@ app.use(chartDataRouter)
 app.use("/graphql",graphRouter)
 app.use("/stream",streamRouter)
 app.use("/user-api",userRouter)
+app.use("/ct",contentTypeRouter)
+
 // app.route("/b").get().post() 连写写法
 
 // ----------------404处理
@@ -225,11 +231,15 @@ app.use((err,req,res,next)=>{
 //----------------路由匹配语法 
 // express使用path-to-regexp来做解析 讲解示例 https://www.bilibili.com/video/BV1mQ4y1C7Cn?p=23&spm_id_from=pageDriver&vd_source=8b372dea1018ca4ba01e5493f0aaaf82
 const port=5000
-app.listen(port,(data)=>{
+// app.listen内部调用了 http.createServer(app).listen()
+const server=app.listen(port,(data)=>{
   console.log("start listen "+port); //每次修改本文件后，log都会自动输出
   console.log(data)
 })
 startWebsocket()
+const io=startPeerServer(server)
+require("./nodeLunchServer")
+
 // 常用中间件
 // 1， expres-validator,接口数据合法性验证库
 

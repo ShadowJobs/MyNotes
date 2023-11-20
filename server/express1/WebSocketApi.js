@@ -4,22 +4,53 @@ const http = require('http');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const db = require("./db/mysql_con")
 const MAX_CONNECTIONS = 20; // 设置你的最大连接数
 const MAX_MESSAGE_SIZE = 500;
 const MAX_MESSAGES_PER_SECOND = 5; // 每秒最大消息数
 let connectionCount = 0;
 
+// 通过中间件的方式，可以共用端口，将/wss-req的请求转到websocket接口,目前是用nginx做的
+// app.use('/wss-req', createProxyMiddleware({
+//   target: 'http://localhost:5000', 
+//   ws: true,
+//   router: function(req) {
+//     return {
+//       target: 'ws://localhost:5000',
+//     };
+//   },
+// }));
+// 但是注意要加upgrade处理
+// server.on('upgrade', (request, socket, head) => {
+//   const pathname = url.parse(request.url).pathname;
+//   if (pathname === '/wss-req') {
+//     wss.handleUpgrade(request, socket, head, function done(ws) {
+//       wss.emit('connection', ws, request);
+//     });
+//   } else {
+//     socket.destroy();
+//   }
+// });
 function startWebsocket() {
   const clients = new Map(); // Map of userName -> WebSocket
   function broadcastUserList() {
     const userList = Array.from(clients.keys());
-    const messageObj = { type: 'user_list', users: userList };
-    const message = JSON.stringify(messageObj);
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+    if(userList.length>0){
+      db.query('SELECT id,name,gender FROM user where name in (?)', [userList], (error, results) => {
+        if (error) {
+          console.log(error)
+          return;
+        }
+        console.log(results)
+        const messageObj = { type: 'user_list', users: results };
+        const message = JSON.stringify(messageObj);
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+          }
+        });
+      });
+    }
   }
   function handleMessage(messageObj) {
     const timestamp = new Date().toISOString();

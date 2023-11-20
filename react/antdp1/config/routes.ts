@@ -71,10 +71,12 @@
   {
     path:'/interest', icon:"apartment", name:"interest",
     routes:[
-      {name:"DPlayer",path:"dplayer",component:"./Interest/DPlayer"},
+      {name:"DPlayer看视频",path:"dplayer",component:"./Interest/DPlayer"},
+      {name: "直播视频", path: "LiveVideo", component: "./Interest/LiveVideo" },
+      {name: "视频聊天", path: "VideoChat", component: "./Interest/VideoChat" },
       {name:"翻译",path:"translate",component:"./Interest/Translator"},
-      {name: "Websocket聊天", path: "/Interest/WebSocket", component: "./Interest/WebsocketPage" },
-      {name: "动态生成表单", path: "/Interest/AutoForm", component: "./Interest/AutoForm" },
+      {name: "Websocket聊天", path: "WebSocket", component: "./Interest/WebsocketPage" },
+      {name: "动态生成表单", path: "AutoForm", component: "./Interest/AutoForm" },
     ]
   },
   {

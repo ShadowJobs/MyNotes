@@ -13,7 +13,7 @@ import ColorTestComponent from "./ColorGenerator";
 import { deepClone } from "@/utils";
 
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
-
+// 可以搜索，又可以自己输入的select
 //props={value,onChange,initOps} //value和onChange是配合Form使用用的,value要绑定到Select上，onChange在改变value时使用，initOps是初始可选择项
 class MySelect extends React.Component {
     state = {

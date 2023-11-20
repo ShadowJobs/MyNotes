@@ -161,7 +161,7 @@ userRouter.post('/login', (req, res, next) => rateLimit(req, res, next, loginLim
       if (!errorStore[key]) { // 如果错误之前没有发生过
         errorStore[key] = { count: 1, timestamp: Date.now(), id: crypto.randomBytes(16).toString('hex') };
         logger.error("id:", errorStore[key].id);
-        logger.error('Error when inserting new user: ', error);
+        logger.error('Error when query user: ', error);
       } else { // 如果错误已经发生过
         errorStore[key].count += 1;
       }
@@ -189,7 +189,7 @@ userRouter.get('/currentUser',async (req, res) => {
       return res.status(200).json({ msg: 'Invalid token', code: 3 });
     }
     console.log("username", username)
-    db.query('SELECT id, name FROM user WHERE name = ?', [username], (error, results) => {
+    db.query('SELECT id, name,gender FROM user WHERE name = ?', [username], (error, results) => {
       if (error || results.length === 0) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -218,6 +218,7 @@ userRouter.get('/currentUser',async (req, res) => {
       }
       r.data.name = results[0].name
       r.data.userid = results[0].id
+      r.data.gender = results[0].gender
       return res.json(r);
     });
   } catch (error) {
