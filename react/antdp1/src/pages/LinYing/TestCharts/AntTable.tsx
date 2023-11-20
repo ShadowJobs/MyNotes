@@ -391,10 +391,15 @@ export const AntTable: React.FC<{ tableResult; isMerged: boolean}> = ({
 
           // rowClassName={(record,index)=>{ return index%2==0?"meRed":"meBlue" }}/>
           // {/* 隔行变色，通过变化rowClassName来控制 */}
-          search={{ collapsed: false, span:{xs: 24,sm: 24,md: generateSummary?24:12,lg: generateSummary?24:12,
-            xl: generateSummary?12:8,
-            xxl: generateSummary?12:6,
-          }}}
+          search={{ 
+            collapsed: false, 
+            className:`${tableResult.external?.breakLabel?"at-lb-mline":""}`, //控制label的换行
+            span:tableResult.external?.tSearchSpan || {xs: 24,sm: 24,md: generateSummary?24:12,lg: generateSummary?24:12,
+              xl: generateSummary?12:8,
+              xxl: generateSummary?12:6,
+            },
+            labelWidth:tableResult.external?.labelWidth || 140, //自定义label宽度
+          }}
           request={async (params: any) => {
             let len=refreshFilters(params)
             return { data: data, success: true, total: len }

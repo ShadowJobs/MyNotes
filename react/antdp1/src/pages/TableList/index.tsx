@@ -252,6 +252,13 @@ const TableList: React.FC = () => {
         search={{
           labelWidth: 120, //顶部搜索栏的label宽度
         }}
+        form={{
+          initialValues: { //这里是设置顶部搜索栏里的默认值
+            offset:0,
+            size:20,
+          }
+        }}
+  
         toolBarRender={() => [
           <Button
             type="primary"

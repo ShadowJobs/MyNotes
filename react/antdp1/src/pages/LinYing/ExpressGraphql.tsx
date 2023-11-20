@@ -1,5 +1,5 @@
-import { ExpressUrl } from "@/global"
-import { Button, Divider, Image, message } from "antd"
+import { ExpressUrl, PythonUrl } from "@/global"
+import { Button, Divider, Image, Select, message } from "antd"
 import { useEffect, useState } from "react"
 import { request } from "umi"
 
@@ -7,15 +7,18 @@ const ExpressGraphql = () => {
   const [expressResult, setExpressResult] = useState('')
   const [imgData, setImgData] = useState('' as any)
   const [graphqlResult, setGraphqlResult] = useState({} as any)
+  const [contentType, setContentType] = useState('application/json')
+  const [contentTypeResult, setContentTypeResult] = useState({
+    python:"python api",
+    express:"express api"
+  })
   useEffect(async () => {
     console.log('ExpressGraphql')
     const data = await fetch(`${ExpressUrl}/graphql/client?query={ hello }`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
-    })
-      .then(r => r.json())
+    }).then(r => r.json())
     console.log(data.data.hello);
-
   }, [])
   console.log(expressResult);
 
@@ -42,9 +45,27 @@ const ExpressGraphql = () => {
       {btn || url}
     </Button>
   }
+  const ContentTypeButton=(props:{method?:string,type:string})=>{
+    const {method="post",type}=props
+    return <Button onClick={async () => {
+      const r = await request(`${type=="express"?ExpressUrl:PythonUrl}/ct/content-type`, { 
+        method: method || "GET", 
+        data: { ct:contentType,data:"hah" }, 
+        headers:{"Content-Type":contentType},
+        params:{
+          a:1,b:"Ba", // query，数字和字符都会被转换成字符串
+          c:[1,2,3], // query，数组会被转换成逗号分隔的字符串，所以最终取值是第一个，就是1
+          d:{d1:1,d2:"d2"}}// query，对象会被转换成JSON串
+
+      })
+      setContentTypeResult(pre=>({...pre,[type]:r}))
+    }}>
+      {type} api
+    </Button>
+  }
   return (
     <div>
-      <h1>express,graphql接口测试</h1>
+      <h1>express,graphql,python接口测试</h1>
       ExpressGraphql, return string
       <br />
       <ExpressButton url="helloworld"/>
@@ -73,7 +94,7 @@ const ExpressGraphql = () => {
         };
         xhr.send(); // 发送请求
       }}>类GPT流</Button>
-
+      {/* <Button type="link" href="/browser-cache/" target="_blank">浏览器缓存</Button> */}
 
       <div>Express Req Result is</div>
       <div style={{width:"100%",wordBreak:"break-all"}}>{expressResult}</div>
@@ -95,10 +116,55 @@ const ExpressGraphql = () => {
       <GraphQlButton query='mutation{ updateArticle(id:"2",title:"title2",content:"content2 updated"){id title content} }' btn="updateArticle" method="post"/>
       <GraphQlButton query='mutation{ deleteArticle(id:"2"){id title content} }' btn="deleteArticle" method="post"/>
 
+
       <br />
       <div style={{ whiteSpace: "pre-wrap", wordBreak: "break-all", }}>
         {JSON.stringify(graphqlResult, null, 2)}
       </div>
+
+      <Divider>PythonApi</Divider>
+      <Button onClick={async () => {
+        try {
+          const r = await request(`${PythonUrl}/gpt`)
+          setExpressResult(r)
+        } catch (error) {
+          message.error(error.message)          
+        }
+      }}>python</Button>
+
+      <Divider>Content-Type测试</Divider>
+      <div>ContentType
+        <Select style={{width:250}} value={contentType} onChange={setContentType} options={[
+        { label: "application/json", value: "application/json" },
+        { label: "application/x-www-form-urlencoded", value: "application/x-www-form-urlencoded" },
+        { label: "multipart/form-data", value: "multipart/form-data" },
+        { label: "text/plain", value: "text/plain" },
+        { label: "text/xml", value: "text/xml" },
+        { label: "application/javascript", value: "application/javascript" },
+        { label: "application/octet-stream", value: "application/octet-stream" },
+        { label: "image/jpeg", value: "image/jpeg" },
+        { label: "image/gif", value: "image/gif" },
+        { label: "audio/mpeg", value: "audio/mpeg" },
+        { label: "audio/x-ms-wma", value: "audio/x-ms-wma" },
+        { label: "audio/x-wav", value: "audio/x-wav" },
+        { label: "video/mpeg", value: "video/mpeg" },
+        { label: "video/mp4", value: "video/mp4" },
+        { label: "video/x-msvideo", value: "video/x-msvideo" },
+        { label: "application/vnd.ms-excel", value: "application/vnd.ms-excel" },
+        { label: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", value: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+      ]}
+      /></div>
+      <ContentTypeButton type="python"/>
+      <ContentTypeButton type="express"/>
+      <div style={{display:"flex"}}>
+      <div style={{width:"100%",flex:1,wordBreak:"break-all",whiteSpace:"pre",border:"1px solid black",}}>
+        pythonResult:<br/>{JSON.stringify(contentTypeResult.python,null,2)}
+      </div>
+      <div style={{width:"100%",flex:1,wordBreak:"break-all",whiteSpace:"pre",border:"1px solid black"}}>
+        expressResult<br/>{JSON.stringify(contentTypeResult.express,null,2)}
+      </div>
+      </div>
+
 
       <Divider>跨域测试</Divider>
       <Button onClick={async () => {
