@@ -5,6 +5,7 @@ import {useEffect, useRef, useState } from "react";
 const { Panel } = Collapse
 import { PiplineFormItem } from "./TemplateForm";
 import { PlusOutlined } from "@ant-design/icons";
+import ListForm from "./ListForm";
 
 const {Option}=Select
 const { Item } = Form
@@ -304,7 +305,10 @@ const TemplateEditor: React.FC<{editData?: any }> =
 
 const NestingForm: React.FC = () => {
     const [editData, seteditData] = useState<rowDataType>(); //主要用于传入初始表单值
-    return <TemplateEditor editData={editData} />
+    return <div>
+      <TemplateEditor editData={editData} />
+      <ListForm/>
+    </div>
 }
 export default NestingForm;
 export { OneForm }

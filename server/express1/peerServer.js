@@ -1,5 +1,24 @@
 const socketIo = require('socket.io');
-const startPeerServer=(server)=>{
+const express = require('express');
+
+const app = express();
+// const server = http.createServer(app);
+
+// 带证书的写法
+// const privateKey = fs.readFileSync('./path_to_your_key/key.pem', 'utf8');
+// const certificate = fs.readFileSync('./path_to_your_cert/certificate.pem', 'utf8');
+// const credentials = { key: privateKey, cert: certificate };
+// const server = https.createServer(credentials)
+
+
+
+const startPeerServer=()=>{
+  const port=39001 //ssl通过nginx添加39000，再转发到这个端口
+  const server=app.listen(port,(data)=>{
+    console.log("start listen video chat ,port"+port); //每次修改本文件后，log都会自动输出
+    console.log(data)
+  })
+  
   const io = socketIo(server,{
     cors:{ //这里必须单独再加一层cors，app的cors对本层不生效
       origin: "*",
@@ -11,6 +30,7 @@ const startPeerServer=(server)=>{
   let onlineUsers = [];
   let rooms = {}
   const sockets={}
+  // io.of('/my-namespace').on('connection')，那么它就不等同于io.sockets.on('connection')，因为后者只监听默认的"/"命名空间。
   io.on('connection', socket => {
     let curWsUser;
     socket.emit("rooms", rooms) //给自己发,当前以后的房间数
@@ -66,12 +86,12 @@ const startPeerServer=(server)=>{
           return;
       }
       rooms[roomId].allUsers.push({sid:socket.id,name:curWsUser.name});
-      socket.join(info.room.name);
+      socket.join(info.room.name);//可以同时加入多个频道
       // const otherUsers = rooms[roomId].allUsers.filter(su => su.sid !== socket.id);
       // if(otherUsers) {
       //   socket.emit("all users", otherUsers);//给自己发
       //   otherUsers.forEach(su => {
-      //     socket.to(su.sid).emit("user joined", {sid:socket.id,user:curWsUser.name});//给其他人发
+      //     socket.to(su.sid).emit("user joined", {sid:socket.id,user:curWsUser.name});//给其他room发
       //   });
       // }
       let u=onlineUsers.find(u=>u.name===curWsUser.name)
@@ -98,6 +118,7 @@ const startPeerServer=(server)=>{
       io.to(incoming.target).emit("ice-candidate", incoming.candidate);
     });
     socket.on("leave", () => {
+      // socket.leave(roomId);
     })
 
 

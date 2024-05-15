@@ -1,9 +1,9 @@
 import { Button, Select } from "antd";
 import moment from "moment";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useModel } from "umi";
 import io from 'socket.io-client';
-import { ExpressUrl } from '@/global';
+import { VideoChartUrl } from '@/global';
 ;
 const RtcWebApiVideoChat = ({ }) => {
   const { initialState } = useModel("@@initialState")
@@ -11,7 +11,6 @@ const RtcWebApiVideoChat = ({ }) => {
   const userVideo = useRef();
   const otherVideo = useRef();
   const [targetUser, setTargetUser] = useState()
-  // const [myInfo, setMyInfo] = useReducer()
   const st = useRef()
   const [onlienUsers, setOnlineUsers] = useState<{ user: string, time: string }[]>([])
   const [callState,setCallState]=useState<'calling'|'talking'|'idle'>('idle')
@@ -30,7 +29,7 @@ const RtcWebApiVideoChat = ({ }) => {
   }
   const startSocket = () => {
     console.log("create socket")
-    let socket = io.connect(`${ExpressUrl}/`, {
+    let socket = io.connect(`${VideoChartUrl}/`, {
       reconnection: true,        // 是否允许自动重连
       reconnectionAttempts: 5    // 最大重连尝试次数
     });
@@ -63,7 +62,16 @@ const RtcWebApiVideoChat = ({ }) => {
       }else if(payload.type=='accept'){
         setCallState('talking')
         // 交换sdp，编解码支持信息等
-        rtc.current=new RTCPeerConnection()
+        rtc.current=new RTCPeerConnection({
+          iceServers: [
+              {
+                  urls: 'stun:stun.l.google.com:19302'
+              }
+          ]
+        })
+        rtc.current.onicecandidateerror=(e)=>{
+          console.log(e)
+        }
         const stream=await openCamera() //这里虽然useEffect里已经openCamera了，但是这里还是要再open一次，否则还是会报错st.current is null
         rtc.current.addStream(stream)
 
@@ -99,7 +107,17 @@ const RtcWebApiVideoChat = ({ }) => {
         };
       }else if(payload.type=='offer'){
         // 这里是接收方，所以还没有rtc，要先创建
-        rtc.current=new RTCPeerConnection()
+        rtc.current=new RTCPeerConnection({
+          iceServers: [
+              {
+                  urls: 'stun:stun.l.google.com:19302'
+              }
+          ]
+        })
+
+        rtc.current.onicecandidateerror=(e)=>{
+          console.log(e)
+        }
         const stream=await openCamera()
         rtc.current.addStream(stream)
         // stream.getTracks().forEach(track => rtc.current.addTrack(track, stream));
@@ -138,11 +156,13 @@ const RtcWebApiVideoChat = ({ }) => {
     }
   }, []);
   return <div>
-    <video playsInline muted ref={userVideo} autoPlay style={{ width: 50, height: 50 }} />
-    <br/>
-    <video playsInline muted ref={otherVideo} autoPlay style={{ width: 50, height: 50 }} />
+    <div>目前仅支持同一个局域网内通话，暂未做safari浏览器支持，跨局域网视频需要买stun/turn服务，不去花那钱了</div>
+    <div style={{display:"flex"}}>
+      <video playsInline muted ref={userVideo} autoPlay style={{ flex:1 }} />
+      <video playsInline muted ref={otherVideo} autoPlay style={{ flex:1 }} />
+    </div>
     <br />
-    选择呼叫的用户：<Select options={onlienUsers.map(user => ({ label: user.name, value: user.name }))} value={targetUser}
+    选择呼叫的用户（一个浏览器只能登录一个用户）：<Select options={onlienUsers.map(user => ({ label: user.name, value: user.name }))} value={targetUser}
       style={{ width: 200 }}
       onChange={(user) => {setTargetUser(user)}} 
     />
@@ -154,7 +174,9 @@ const RtcWebApiVideoChat = ({ }) => {
     }}>呼叫</Button>}
     {callState=='calling' && <Button onClick={()=>{
     }}>取消</Button>}
-    {callState=='talking' && <Button>挂断</Button>}
+    {callState=='talking' && <Button onClick={()=>{
+      
+    }}>挂断</Button>}
     {callState=='idle' && callMeUsers.map((user) => <div key={user.name} >
       {user.name}--{moment(user.time).format("YYYY-MM-DD HH:mm:ss")}
       <Button onClick={()=>{

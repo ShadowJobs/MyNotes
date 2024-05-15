@@ -197,7 +197,7 @@ const AlignContentTest: React.FC<{}> = ({ }) => {
         ["flex-start", "flex-end", "center", "baseline", "stretch", "space-between", "space-around"].map(v => ({ label: v, value: v }))
       } onChange={(v) => setjustifyContent(v)}
       />
-      gap:<InputNumber style={{ width: 100 }} value={gap} onChange={(e) => setGap(e)} />
+      gap:<InputNumber style={{ width: 100 }} value={gap} onChange={(e) => setGap(e)} /> (gap也可用row-gap和column-gap,grid中也可以用)
     </div>
     <div className="flex-layout" style={{ alignContent, justifyContent, flexWrap: "wrap", height: 600,gap }}>
       {Array.from({ length: 30 }).map((v, i) => <div key={i} style={{ width: 100, height: 100, backgroundColor: "lightblue", margin: 2 }}></div>)}

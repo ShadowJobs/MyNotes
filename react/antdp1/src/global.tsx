@@ -93,6 +93,7 @@ if (pwa) {
 export const GoogleMapKey="MyKey"
 export const GaodeKey="MyKey"
 export const ExpressUrl=window.location.host.includes("localhost")?"http://localhost:5000":"/api-ly"
+export const VideoChartUrl=window.location.host.includes("localhost")?"http://localhost:39000":"https://www.xyccstudio.cn:39000"
 export const PythonUrl="/api-python"
 // 做域名共用时的/ly/转发，现在有独立的端口，不需要转发了
 // export const FrontendPre=window.location.host.includes("localhost")?"":"/ly"

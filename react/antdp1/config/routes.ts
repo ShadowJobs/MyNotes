@@ -29,12 +29,13 @@
     icon: 'crown',
     routes: [
       // {name: "Test", path: "/LinYing/Test", component: "./LinYing/Test" },
-      {name: "WorkerTest+fullScreen", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest",layout:{
+      {name: "WorkerTest+fullScreen", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest",
+        target:"_blank",
+        layout:{
         hideMenu: true,
         hideNav: true,
         hideFooter: true, 
       }},
-      {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest",menuRender:false },
       {name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
       {name: "Express+graphql", path: "/LinYing/express-graphql", component: "./LinYing/ExpressGraphql" },
       {name: "Css例子", path: "css",routes:[
@@ -51,6 +52,7 @@
         {name:"GoogleMapUseApi",path:"/LinYing/map/GoogleMapGMApi",component:"./LinYing/Map/GoogleMapGMApi"},
         {name:"GoogleHeatMap",path:"/LinYing/map/GoogleHeatMap",component:"./LinYing/Map/GoogleHeatMap"},
       ]},
+      {name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest",menuRender:false },
       {name: "log+分段加载", path: "/LinYing/log", component: "./LinYing/LogInfo" },
       { name: "小组件", path: "/LinYing/SmallComps", component: "./LinYing/SmallComps" },
       { name: "Zip测试", path: "/LinYing/ZipTest", component: "./LinYing/ZipTest" },
@@ -69,7 +71,7 @@
     ]
   },
   {
-    path:'/interest', icon:"apartment", name:"interest",
+    path:'/interest', icon:"apartment", name:"业余研究",
     routes:[
       {name:"DPlayer看视频",path:"dplayer",component:"./Interest/DPlayer"},
       {name: "直播视频", path: "LiveVideo", component: "./Interest/LiveVideo" },

@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect,useCallback, useRef, useState } from 'react';
-import { Line, Pie, Column, Bar,G2, Box } from '@ant-design/charts';
-import { Col, Collapse, Divider, Image, Row,Input, Space, Spin  } from 'antd';
+import { Line, Pie, Column, Bar,G2, Box, Scatter } from '@ant-design/charts';
+import { Col, Collapse, Divider, Image, Row,Input, Space, Spin, Slider, Radio  } from 'antd';
 import { LineConfig } from '@ant-design/charts/es/line';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import { ColumnConfig } from '@ant-design/charts/es/column';
@@ -13,6 +13,7 @@ import { request } from 'umi';
 import AnchorPop from './AnchorPop';
 import ChartCard from './chartCard';
 import { ExpressUrl, FrontendPre } from '@/global';
+const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 export const MaxPageChartNum=6
 export const OpenResultPage=true
 
@@ -543,86 +544,188 @@ export const CompareChart:React.FC<{result:{results:Mynote.ApiAggResult[]}}> = (
   )
 };
 
-export const ScatterChart: React.FC= ({ tableResult}) => {
-  const data=tableResult.data
-  const tips=data.tips || ['x','y','label','t'] 
-  // const [scale,setScale] = useState(1);
-  // const [startDrag,setStartDrag] = useState(false);
-  // const [startPos,setStartPos] = useState<{x:number,y:number}>()
-  const [clickLink,setClickLink] = useState<string>("")
-  // const dragDiv = React.useRef<HTMLDivElement | null>(null);
+export const ScatterChart:React.FC<{ tableResult: MesAPI.AggScatterResult;tips:string[]} >  = ({ tableResult,tips }) => {
+  const colorArr=Object.entries(tableResult.data.colors)
+  const _tips= tips || tableResult.data.tips || ['x','y','label','t']
+  const timeKey=tableResult.external?.filterKey || "t"
+  const discreteArr=_.uniq(tableResult.data.points.map(v=>v[timeKey])).sort((a,b)=>a-b)
+  const [p,setP]=useState<number>()
+  const [zoomData, setZoomData] = useState({
+    xStart: 0,
+    xEnd: 100,
+    yStart: 0,
+    yEnd: 100,
+  });
+  const zoomInfo=useRef() //直接使用useState，在zoomFunc中会有问题,echarts的zoom监听函数内不允许使用钩子，直接报错，所以这里先放到useRef里存着
+  useEffect(()=>{
+    setZoomData({...zoomInfo.current,}) //当滑块变化时，将zoomInfo.current的值赋给zoomData，这样图就不会还原成原始比例
+  },[p])
+  useEffect(()=>{
+    zoomInfo.current={
+      xStart: 0,
+      xEnd: 100,
+      yStart: 0,
+      yEnd: 100,
+    }
+  },[])
+  const zoomFunc=(e) => {
+    // zoomfunc要处理滚动，圈选，拖动滑块三种缩放情况，并且还有拖动位移，和reset还原。
+    if(e.batch){
+      if(e.batch[0].dataZoomId=="dataZoomInsideX" || e.batch[0].dataZoomId=="dataZoomInsideY" || e.batch[0].start || e.batch[0].end){
+        //滚动时，zoomId有值，reset时没有设置zoomid,可以通过start和end判断
+        zoomInfo.current={
+          xStart: e.batch[0].start,
+          xEnd: e.batch[0].end,
+        }
+        if(e.batch[1]){ // 拖动移动时，只有batch[0]，所以这里判断一下
+          zoomInfo.current={
+            ...zoomInfo.current,
+            yStart: e.batch[1].start,
+            yEnd: e.batch[1].end,
+          }
+        }
+      }else{//拖动圈选,没有start和end，只有startValue和endValue，所以要计算百分比
+        zoomInfo.current={
+          xStart:(e.batch[0].startValue-tableResult.data.min_x)/tableResult.data.width*100,
+          xEnd:(e.batch[0].endValue-tableResult.data.min_x)/tableResult.data.width*100,
+          yStart:(e.batch[1].startValue-tableResult.data.min_y)/tableResult.data.width*100,
+          yEnd:(e.batch[1].endValue-tableResult.data.min_y)/tableResult.data.width*100,
+        }
+      }
+    }else{//拖动滑块
+      if(e.dataZoomId=="dataZoomX"){
+        zoomInfo.current.xStart=e.start
+        zoomInfo.current.xEnd=e.end
+      }else if(e.dataZoomId=="dataZoomY"){
+        zoomInfo.current.yStart=e.start
+        zoomInfo.current.yEnd=e.end
+      }
+    }
+  }
+  return <>
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <Slider min={discreteArr[0]} max={discreteArr[discreteArr.length - 1]} step={null}
+        marks={discreteArr.reduce((acc, cur) => {
+          acc[cur] = <span style={{display:"none"}}>{cur}</span>;
+          return acc;
+        }, {})}
+        onChange={setP}
+      />
+      <ReactEcharts 
+        onEvents={{dataZoom:zoomFunc}}
+        option = { {
+          xAxis: {min:tableResult.data.min_x,max:tableResult.data.min_x+tableResult.data.width},
+          yAxis: {min:tableResult.data.min_y,max:tableResult.data.min_y+tableResult.data.width},
+          color: colorArr.map(v=>v[1]),
+          legend:{
+            data: colorArr.map(v=>v[0]),
+            left: 'center',
+          },
+          series: [...colorArr.map(v=>v[0]).map(v=>({
+              name:v,
+              symbolSize:5,
+              type:"scatter",
+              data:tableResult.data.points.filter(v2=>v2.label==v).map(v2=>[v2.x,v2.y,v2]),
+            }
+          )),
+          // 将滑块选择的点找出来，单独画一个series
+          ...(p==undefined?[]:[{
+            name:"selected",
+            type:"scatter",
+            symbolSize:10,
+            data:tableResult.data.points.filter(v2=>v2[timeKey]==p).map(v2=>[v2.x,v2.y,v2]),
+            itemStyle:{color:tableResult.external?.highlightColor || "purple"},
+          }]),
+          ],
+          toolbox : {feature:{
+            dataZoom:{show:true},
+            dataView:{show:true,},
+          }},
+          dataZoom: [
+            { type: 'slider', show: true, xAxisIndex: [0], start: zoomData.xStart, end: zoomData.xEnd, id:"dataZoomX" },
+            { type: 'slider', show: true, yAxisIndex: [0], start: zoomData.yStart, end: zoomData.yEnd, id: 'dataZoomY' },
+            { type: 'inside', xAxisIndex: [0], start: zoomData.xStart, end: zoomData.xEnd, id: "dataZoomInsideX" },
+            { type: 'inside', yAxisIndex: [0], start: zoomData.yStart, end: zoomData.yEnd, id: 'dataZoomInsideY'}
+            // 这里的start和end是百分比，0-100，并且是初始值，没有双向绑定，所以当滑块滑动时，虽然图会放大，但是这里的start和end并不会变化
+          ],
+          tooltip: {
+            trigger: 'item', //如果是axis则是坐标轴触发，那么下面formatter返回的是个数组，每个元素是一个系列的item，如果是item触发，那么返回的是单个item
+            axisPointer: {
+              type: 'cross'
+            },
+            enterable: true,
+            borderWidth: 1,
+            borderColor: '#ccc',
+            padding: 10,
+            textStyle: {
+              color: '#000'
+            },
+            enterable: true,
+            formatter: (v) => {
+              return `<div style="width: 300px;overflow: visible;">
+                  ${_tips.map(v2=>{
+                    return (v2=="link")?`<a href="${v.data[2][v2]}" target="_blank">${v.data[2][v2]?"Link":""}</a><br/>`
+                    :`<span style="width: 50px;display: inline-block;">${v2}</span>:<span style="margin-left:5px">${v.data[2][v2]}</span><br/>`
+                  }).join("")}
+              </div>`
+            }
+            // extraCssText: 'width: 170px'
+          },
+        }} style={{ height:710}} />
+    </React.Suspense>
+  </>
+}
 
+export const ScatterAntChart: React.FC<{ tableResult: MesAPI.AggScatterResult;} > 
+= ({ tableResult }) => {
+  const data=tableResult.data
+  const tips=data.tips || ['x','y','label','t']
+  const [clickLink,setClickLink] = useState<string>("")
+  // data.points.map(v=>v.link="https://www.baidu.com")
+// data.min_x=120.2;data.min_y=30.21;data.width=0.15
   const config = {
     appendPadding: 10,
-    data:data.points,
+    data:data.points,//.filter(v=>v.label=="Normal").sort((a,b)=>{ return a.x-b.x }),// .map(v=>({...v,x:parseFloat(v.x),y:parseFloat(v.y)})),
     xField: 'x', yField: 'y',
     size: 2,
     colorField: 'label', // 部分图表使用 seriesField
     color: ({ label }) => data.colors[label],
     yAxis: { nice: true, line: { style: { stroke: '#aaa', }, }, title:{text:tableResult.y_label} ,
-      label:{style: { opacity: 0.6, },rotate:0,formatter:v=>(v)},
-      // 下一句是设置y的取值范围，不设置的话，y的取值范围是自动计算的。自动计算有个问题是，x和y的比例会失真，比如相同的长度，x表示1-50，y可能表示1-100
-      // 导致与原来的比例不一致，所以要设置一个范围，保证x和y的最大减最小是相等的
+      label:{style: { opacity: 0.6, },rotate:0,
+        formatter:v=>strTofixed(v)
+      },
       // ...(data.min_y==undefined?{}:{min:data.min_y,max:data.min_y+data.width,minLimit:data.min_y,maxLimit:data.min_y+data.width})
     },
     xAxis: {
       grid: {
         line: {
-          style: { stroke: '#eee', },
+          style: {
+            stroke: '#eee',
+          },
         },
       },
       line: { style: {  stroke: '#aaa', }, },
       title:{text:tableResult.x_label},
       // ...(data.min_x==undefined?{}:{min:data.min_x,max:data.min_x+data.width,minLimit:data.min_x,maxLimit:data.min_x+data.width}),
       label:{ style: { opacity: 0.6, },rotate:0,
-        formatter:v=>(v)
+        formatter:v=>strTofixed(v)
       }
     },
     meta: {
       [tableResult.x_label]: { type: 'linear' },
       [tableResult.y_label]: { type: 'linear' },
     },
-    tooltip:{
-      fields:tips,
-      domStyles:{"g2-tooltip-value":{width:"400px",overflow:"hidden"}}, //注意：这里的width不能直接写400，而应该“400px",否则不生效
+    tooltip:{fields:tips,domStyles:{
+      "g2-tooltip-value":{width:"400px",overflow:"hidden"},
     },
-
+  },
     // brush:{enabled:true},
+    autoFit:false,
     interactions: [
-      {type: 'view-zoom',},{type:"view-drag"},//本行为第一种放大方案，监听鼠标滚动和拖动。用了本方案就不能同时设置minx,maxx,miny,maxy了
-      // {type:"brush",enabled:true},//第二种方案：将圈出来的区域放大，但是不能拖动（注意要打开上面的brush:{enabled:true}）。同样用了本方案就不能同时设置minx,maxx,miny,maxy了。
+      {type:"view-zoom"},
+      {type:"view-drag"}
     ],
-    // interactions: [{ type: 'tooltip', enable: false }]  
   };
-  // const onmousedown=(e)=>{
-  //   setStartDrag(true)
-  //   setStartPos({x:e.clientX+dragDiv.current.scrollLeft,y:e.clientY+dragDiv.current.scrollTop})
-  // }
-  // const onmousemove=(e)=>{
-  //   if(startDrag){
-  //     dragDiv.current.scrollTop=startPos.y-e.clientY
-  //     dragDiv.current.scrollLeft=startPos.x-e.clientX
-  //   }
-  // }
-  // const onmouseup=(e)=>{setStartDrag(false)}
-  // const onwheel=(e)=>{
-  //   if(!e.shiftKey) {
-  //     // e.stopPropagation()
-  //     return 
-  //   }
-  //   let delta=e.deltaX
-  //   if(navigator.userAgent.indexOf("Mac OS X")==-1) delta=e.deltaY
-  //   if(delta<0){
-  //     if(scale<5 && dragDiv && dragDiv.current) {
-  //       setScale(scale+0.5)
-  //     }
-  //   }else{
-  //     if(scale>0.5 && dragDiv && dragDiv.current) {
-  //       setScale(scale-0.5)
-  //     }
-  //   }
-  //   e.stopPropagation()
-  // }
   const onReadyColumn = (plot: any) => {
     plot.on('element:mousedown', (...args: any) => {
       const data = args[0].data?.data
@@ -630,95 +733,145 @@ export const ScatterChart: React.FC= ({ tableResult}) => {
       setClickLink(data.link)
     });
   };
-  // registerInteraction('view-zoom', {
-  //   start: [
-  //     {
-  //       trigger: 'plot:mousewheel',
-  //       isEnable(context) {
-  //         return aisWheelDown(context.event);
-  //       },
-  //       action: 'scale-zoom:zoomIn',
-  //       throttle: { wait: 20, leading: true, trailing: false },
-  //     },
-  //     {
-  //       trigger: 'plot:mousewheel',
-  //       isEnable(context) {
-  //         return !aisWheelDown(context.event);
-  //       },
-  //       action: 'scale-zoom:zoomOut',
-  //       throttle: { wait: 20, leading: true, trailing: false },
-  //     },
-  //   ],
-  //   rollback: [{ trigger: 'dblclick', action: ['scale-zoom:reset'] }],
-  // });
-  // registerInteraction('view-drag', {
-  //   start:[
-  //     {trigger: 'plot:mousedown',
-  //       action:"scale-translate:start"
-  //     },
-  //   ],
-  //   processing: [{
-  //     trigger: 'plot:mousemove',
-  //     action:"scale-translate:translate"
-  //   }],
-  //   end: [{
-  //     trigger: 'plot:mouseup',
-  //     action:"scale-translate:end"
-  //   }],
-  //   rollback: [{ trigger: 'dblclick', action: ['scale-translate:reset'] }],
-  // });
-  registerInteraction('brush', { //选择时刷新
-    showEnable: [
-      { trigger: 'plot:mouseenter', action: 'cursor:crosshair' },
-      { trigger: 'plot:mouseleave', action: 'cursor:default' },
-    ],
-    start: [
-      {
-        trigger: 'plot:mousedown',
-        action: ['brush:start', 'rect-mask:start', 'rect-mask:show'],
-      },
-    ],
-    processing: [
-      {
-        trigger: 'plot:mousemove',
-        action: ['rect-mask:resize'],
-      },
-    ],
-    end: [
-      {
-        trigger: 'plot:mouseup',
-        action: ['brush:filter', 'brush:end', 'rect-mask:end', 'rect-mask:hide'],
-      },
-    ],
-    rollback: [{ trigger: 'dblclick', action: ['brush:reset'] }],
-  });
+
   return (
-    <div className="page-home">
-      adsfas
-      {/* <Row>
-        <Col span={2}> <div style={{bottom:-5,position:"relative"}}>{getTransStr("缩放")}： {scale}</div> </Col>
-        <Col span={22}> <Slider min={0} max={5} defaultValue={1} value={scale} step={0.5} onChange={(v)=>{ setScale(v)}}/> </Col>
-      </Row> */}
+    <div>
       {clickLink && <div>CLICKED LINK:<a href={clickLink} target="_blank">{clickLink}</a></div>}
-      <div style={{width:700,height:700 ,overflow:"scroll"}} 
-      // className={"chart-show-hand"} ref={dragDiv}
-        // onMouseDown={onmousedown} onMouseMove={onmousemove} onMouseUp={onmouseup} //自己写的放大缩小和拖动，问题：放大缩小永远都只以（0,0）为锚点，TODO：需要计算坐标。因改用其他方案没做
+      <div style={{width:700,height:700 ,overflow:"visible"}} 
         onMouseEnter={(e)=>{ document.body.style["overflow"]="hidden"}}
-        onMouseLeave={(e)=>{
-          document.body.style["overflow"]="auto"
-          // onmouseup()
-        }}
-        // onWheel={onwheel} 
-        >
-        <Scatter {...config} onReady={onReadyColumn} //本句作用：给点击加监听
-        // style={{width:`${scale*100}%`,height:`${scale*100}%`}}  //第一版实现，通过控制style的width和height来实现缩放，
-        // 问题是：这么放大后，坐标轴的刻度和位置会跟着放大而消失。
-        // 如果想保持刻度，就必须使用组件提供的rect-mask交互事件，但是这么做也有问题，就是不能同时配置minx,maxx,miny,maxy。否则交互react会失效
-         />
+        onMouseLeave={(e)=>{ document.body.style["overflow"]="auto" }} >
+        <Scatter {...config} onReady={onReadyColumn}/>
       </div>
     </div>
   )
 };
+
+export const MultAntScatter: React.FC<{ tableResult: MesAPI.AggMultScatterResult;} > 
+= ({ tableResult }) => {
+  const [clickLink,setClickLink] = useState<string>("")
+  const filterTopBtns=_.uniq(tableResult.data.map(v=>v.filter_type)) //第一排按钮
+  
+  const [selectFilterBtn,setSelectFilterBtn]=useState<string>(filterTopBtns[0])
+  const [pointsColors,setPointsColors]=useState<any>(tableResult.data.filter(v=>v.filter_type==filterTopBtns[0]))
+  const [tips,setTips] = useState<string[]>(tableResult.data?.[0]?.tips || tableResult.tips || ['x','y','label','t'])  
+  const config = {
+    appendPadding: 10,
+    xField: 'x', yField: 'y',
+    size: 2,
+    colorField: 'label', // 部分图表使用 seriesField
+    // color: ({ label }) => data.colors[label],
+    yAxis: { nice: true, line: { style: { stroke: '#aaa', }, }, title:{text:tableResult.y_label} ,
+      label:{style: { opacity: 0.6, },rotate:0,formatter:v=>strTofixed(v)}
+    },
+    xAxis: {
+      grid: {line: {style: {stroke: '#eee'}}},
+      line: { style: {  stroke: '#aaa', }, },
+      title:{text:tableResult.x_label},
+      label:{ style: { opacity: 0.6, },rotate:0,formatter:v=>strTofixed(v)}
+    },
+    meta: {
+      [tableResult.x_label]: { type: 'linear' },
+      [tableResult.y_label]: { type: 'linear' },
+    },
+    tooltip:{fields:tips,domStyles:{"g2-tooltip-value":{width:"400px",overflow:"hidden"}}},
+    autoFit:false,
+    interactions: [
+      {type:"view-zoom"},
+      {type:"view-drag"}
+    ],
+  };
+  const onReadyColumn = (plot: any) => {
+    plot.on('element:mousedown', (...args: any) => {
+      const data = args[0].data?.data
+      console.log(data);
+      setClickLink(data.link)
+    });
+  };
+
+  return (
+    <div>
+        <Radio.Group style={{marginTop:10}} value={selectFilterBtn} buttonStyle="solid" onChange={(e)=>{
+            setSelectFilterBtn(e.target.value)
+            setPointsColors(tableResult.data.filter(v=>v.filter_type==e.target.value))
+            setTips(tableResult.data.filter(v=>v.filter_type==e.target.value)[0]?.tips || tableResult.tips || ['x','y','label','t'])
+        }}>
+            {filterTopBtns.map(v=>{
+                return <Radio.Button  value={v} key={v}>{v}</Radio.Button>
+            })}
+        </Radio.Group>
+      {clickLink && <div>CLICKED LINK:<a href={clickLink} target="_blank">{clickLink}</a></div>}
+      <Row>
+        {pointsColors.map((v,idx)=><Col span={12} key={idx}>
+            <div style={{ width:650,height:710, overflow:"visible",marginTop:14}} 
+              onMouseEnter={(e)=>{ document.body.style["overflow"]="hidden"}}
+              onMouseLeave={(e)=>{ document.body.style["overflow"]="auto" }} >
+              {v.visual_type}
+              <Scatter {...config} height={630} data={v.points} color={({ label }) => v.colors[label]} onReady={onReadyColumn}/>
+            </div>
+        </Col>)}
+      </Row>
+    </div>
+  )
+};
+
+export const MultScatter:React.FC<{ tableResult: MesAPI.AggMultScatterResult;span?:number} > 
+= ({ tableResult,span }) => {
+  const filterTopBtns=_.uniq(tableResult.data.map(v=>v.filter_type)) //第一排按钮
+  const [selectFilterBtn,setSelectFilterBtn]=useState<string>(filterTopBtns[0])
+  const [pointsColors,setPointsColors]=useState<any>(tableResult.data.filter(v=>v.filter_type==filterTopBtns[0]))
+  const [tips,setTips] = useState<string[]>(tableResult.data?.[0]?.tips || tableResult.tips || ['x','y','label','t'])
+
+  return <div>
+    <Radio.Group style={{marginTop:10}} value={selectFilterBtn} buttonStyle="solid" onChange={(e)=>{
+        setSelectFilterBtn(e.target.value)
+        setPointsColors(tableResult.data.filter(v=>v.filter_type==e.target.value))
+        setTips(tableResult.data.filter(v=>v.filter_type==e.target.value)[0]?.tips || tableResult.tips || ['x','y','label','t'])
+    }}>
+        {filterTopBtns.map(v=>{
+            return <Radio.Button  value={v} key={v}>{v}</Radio.Button>
+        })}
+    </Radio.Group>
+    <Row>
+      {pointsColors.map((v,idx)=><Col span={span || 12} key={idx}>
+          <div style={{ width:650,height:710, overflow:"visible",marginBottom:70}}>
+            {v.visual_type}
+            <ScatterChart tableResult={{data:v,tips,external:tableResult.external}} />
+          </div>
+      </Col>)}
+    </Row>
+  </div>
+}
+
+const getWidthByNum=(n:number)=>{
+  if(n<3) return 650
+  else return 500
+}
+export const CompareMultScatter: React.FC<{ scatterResults:MesAPI.AggMultScatterResult[]}>
+  = ({ scatterResults }) => {
+  // const filterTopBtns=_.uniq(scatterResults.map(v0=>v0.data.map(v=>v.filter_type)).flat()) //第一排按钮
+  // const [selectFilterBtn,setSelectFilterBtn]=useState<string>(filterTopBtns[0])
+  // const [pointsColors,setPointsColors]=useState<any[]>(scatterResults.map(v=>v.data.filter(v2=>v2.filter_type==filterTopBtns[0])))
+  return <div>
+    {/* <Radio.Group style={{marginTop:10}} value={selectFilterBtn} buttonStyle="solid" onChange={(e)=>{
+      setSelectFilterBtn(e.target.value)
+      setPointsColors(scatterResults.map(v=>v.data.filter(v2=>v2.filter_type==e.target.value)))
+    }}>
+      {filterTopBtns.map(v=>{
+        return <Radio.Button  value={v} key={v}>{v}</Radio.Button>
+      })}
+    </Radio.Group> */}
+    <Row>
+      {scatterResults.map((v,idx)=><Col span={24/scatterResults.length} key={idx}>
+        {/*将原来的multScatter竖向排列， 几个任务对比就分成几列，每个multScatter占1列，必须是24的约数列 */}
+        {/* {v.data.map((v2,idx2)=><div key={idx2} style={{  width:650,height:710, overflow:"visible",marginTop:14}}>
+          {pointsColors[idx][idx2]?.visual_type+" "+v.taskNum}
+          <ScatterChart tableResult={{data:v2,tips:v2.tips}} />
+        </div>)} */}
+        <MultScatter tableResult={{data:v.data,external:v.external}} span={24} />
+      </Col>)}
+    </Row>
+  </div>
+}
 
 // 测试apa格式数据的格式是否正确的页面
 const TestCharts:React.FC=()=>{

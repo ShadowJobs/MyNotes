@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { FolderOpenOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
 import { stringify } from 'querystring';
@@ -40,6 +40,13 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         setInitialState((s) => ({ ...s, currentUser: undefined }));
         loginOut();
         return;
+      }else if(key==='expand'){
+        if(localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
+          localStorage.setItem('pro-sidebar-collapsed',"false")
+        else
+          localStorage.setItem('pro-sidebar-collapsed',"true")
+        window.location.reload();
+        return 
       }
       history.push(`/account/${key}`);
     },
@@ -87,6 +94,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       <Menu.Item key="logout">
         <LogoutOutlined />
         退出登录
+      </Menu.Item>
+      <Menu.Item key="expand">
+        <FolderOpenOutlined />
+        展开关闭菜单
       </Menu.Item>
     </Menu>
   );

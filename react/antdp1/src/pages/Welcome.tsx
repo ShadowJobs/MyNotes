@@ -65,19 +65,11 @@ const Welcome: React.FC = () => {
   
   return (
     <PageContainer>
-      画一个圆环
-      <div style={{border:"10px solid blue",borderRadius:20,width:40,height:40}}></div>
       <Space>
         <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
         <a href={`${FrontendPre}/LinYing/JsTest`}>测试Helmet</a>
         <Button><a href={`${FrontendPre}/responsiveTest`}>响应式原理</a></Button>
-        <Button type="primary" onClick={()=>{
-          if(localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
-            localStorage.setItem('pro-sidebar-collapsed',"false")
-          else
-            localStorage.setItem('pro-sidebar-collapsed',"true")
-          window.location.reload();
-        }} >显、隐菜单</Button>
+        <Button><a href={`${FrontendPre}/webgltest.html`}>webgl</a></Button>
         <Modal open={visible} onCancel={()=>setVisible(false)} onOk={()=>setVisible(false)}>
           <div>部署时的现状：跟同学共同租了一个云服务，他先部署了自己的服务在域名根目录下，可以通过域名直接定位。所以我的服务需要通过路由
             来做转发定位。需要做如下工作：

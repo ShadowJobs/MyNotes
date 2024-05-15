@@ -1,4 +1,0 @@
-curl的安装
-1,curl7.49.1里的configure命令的参数：http://blog.chinaunix.net/uid-20568163-id-1632905.html
-2，configure的--host参数取值范围：https://gcc.gnu.org/install/specific.html  （搜darwin,x86_64等）
-3，

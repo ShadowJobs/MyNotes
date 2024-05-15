@@ -16,6 +16,7 @@ const Settings: LayoutSettings & {
   pwa: false,
   logo: '/a.jpg',
   iconfontUrl: '',
+  // splitMenus:true,
 };
 
 export default Settings;
