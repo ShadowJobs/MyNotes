@@ -3,6 +3,62 @@ const TestMesObjData={
   "code": 0,
   "data":[
     {
+      "data": {
+        "colors": {
+          "absolute_position_xy_dt_traj": "green",
+          "absolute_position_xy_gt_traj": "red"
+        },
+        "max_x": 1,
+        "max_y": 2.953605059204573,
+        "min_x": -0.32309820836751474,
+        "min_y": 0,
+        "points": [
+          {
+            "label": "absolute_position_xy_dt_traj",
+            "time": 1706551713.669999,
+            "x": -0.32281856327437203,
+            "y": 0.007868343451709413,
+            "link":"/user-group"
+          },
+          {
+            "label": "absolute_position_xy_gt_traj",
+            "time": 1706551714.669999,
+            "x": -0.275128824141546,
+            "y": 0.005043234083659237
+          },
+          {
+            "label": "absolute_position_xy_dt_traj",
+            "time": 1706551714.709998,
+            "x": -0.3227865667448169,
+            "y": 0.007868541217325112
+          },
+          {
+            "label": "absolute_position_xy_gt_traj",
+            "time": 1706551714.709998,
+            "x": -0.27427019148891796,
+            "y": 0.0053347552827535056
+          }
+        ],
+        "tips": [
+          "x",
+          "y",
+          "time",
+          "label",
+          'link'
+        ],
+        "width":0.2
+      },
+      "order": "A",
+      "title": "ABSOLUTE_POSITION_XY_GT_DT_TRAJ",
+      "type": "scatter",
+      "x_label": "x",
+      "y_label": "y",
+      external:{
+        filterKey:"time",
+        highlightColor:"blue"
+      }
+    },
+    {
       "data": [
         {
           "color": "#381BC2",

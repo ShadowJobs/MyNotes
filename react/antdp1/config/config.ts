@@ -93,6 +93,22 @@ export default defineConfig({
     });
     return memo;
   },
+
+  // externals: {
+  //   'react': 'window.React',
+  //   'react-dom': 'window.ReactDOM',
+  // },
+
+  // // 引入被 external 库的 scripts
+  // // 区分 development 和 production，使用不同的产物
+  // scripts: process.env.NODE_ENV === 'development' ? [
+  //   'https://gw.alipayobjects.com/os/lib/react/18.2.0/umd/react.development.js',
+  //   'https://gw.alipayobjects.com/os/lib/react-dom/18.2.0/umd/react-dom.development.js',
+  // ] : [
+  //   'https://gw.alipayobjects.com/os/lib/react/18.2.0/umd/react.production.min.js',
+  //   'https://gw.alipayobjects.com/os/lib/react-dom/18.2.0/umd/react-dom.production.min.js',
+  // ],
+  
   devtool:"source-map", //默认关掉，不然会很慢
   devServer:{
     //注意devServer是umi的配置，不是webpack的配置，修改之后umi会自动合并到webpack的配置中，并且需要重启

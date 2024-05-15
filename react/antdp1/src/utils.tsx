@@ -524,7 +524,7 @@ export function generateRandomWords(length) {
   return result;
 }
 
-const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const chars = '0123456789abcdefghijkl mnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 // 转换为62进制0-9,a-z,A-Z
 function toBase62(n) {
     if (n === 0) return '0';
@@ -536,6 +536,16 @@ function toBase62(n) {
     return s;
 }
   // console.log(toBase62(123456789)); // 输出: '8M0kX'
+export const downloadFile = (url, name) => {
+  fetch(url).then(response => response.blob()).then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click(); 
+  })
+  .catch(e => console.error(e));
+}
 
 export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall,toBase62 }
 

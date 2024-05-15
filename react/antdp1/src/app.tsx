@@ -12,6 +12,7 @@ import React from 'react';
 import * as allIcons from '@ant-design/icons';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import confirm from 'antd/lib/modal/confirm';
+import { Button } from 'antd';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -90,7 +91,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // menuRender:false,隐藏整个菜单
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
+    waterMarkProps: { //水印
       content: initialState?.currentUser?.name,
     },
     footerRender: () => <Footer />,
@@ -101,8 +102,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         history.push(loginPath);
       }
     },
-    links: isDev
+    links: [<Button type="primary" onClick={()=>{
+      if(localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
+        localStorage.setItem('pro-sidebar-collapsed',"false")
+      else
+        localStorage.setItem('pro-sidebar-collapsed',"true")
+      window.location.reload();
+    }} >展开/关闭</Button>,
+    ...(isDev
       ? [
+          
           <Link to="/umi/plugin/openapi" target="_blank">
             <LinkOutlined />
             <span>OpenAPI 文档</span>
@@ -112,7 +121,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
             <span>业务组件文档</span>
           </Link>,
         ]
-      : [],
+      : [])],
     // 自定义菜单渲染的写法
     // import React from 'react';
     // import { MenuDataItem } from '@ant-design/pro-layout';
@@ -244,7 +253,7 @@ const autoRefresh = () => {
               console.log('Cancel');
             },
           })
-        }, 30000);
+        }, 300000);
         needTip = false; // 关闭更新提示，防止重复提醒
     }
     if (needTip) {

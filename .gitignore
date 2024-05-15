@@ -3,6 +3,7 @@
 *.a
 *.exe
 *.o
+*.out
 C,C++/cmake/CMakeFiles/
 *.pyc
 *.dSYM/

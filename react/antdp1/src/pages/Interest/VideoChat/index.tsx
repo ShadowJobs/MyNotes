@@ -184,7 +184,7 @@ const VideoChat = () => {
   const [type, setType] = useState("rtc")
   return (
     <div>
-      <Select value={type} onChange={(value) => setType(value)}>
+      <Select disabled value={type} onChange={(value) => setType(value)}>
         <Select.Option value="rtc">RTC</Select.Option>
         <Select.Option value="peer">Peer</Select.Option>
       </Select>

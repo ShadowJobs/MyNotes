@@ -288,6 +288,7 @@ const Login: React.FC = () => {
             </Space>
           </div>
         </LoginForm>
+        <div>测试用户admin,ly2，用户名密码相同</div>
       </div>
       <Footer />
     </div>

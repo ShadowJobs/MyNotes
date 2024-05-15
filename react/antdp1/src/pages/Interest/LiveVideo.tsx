@@ -9,6 +9,7 @@ const LiveVideo = () => {
     }
   }, []);
   return <div style={{display:"grid",placeItems:"center"}}>
+    待开发
     <Button onClick={()=>{
       navigator.mediaDevices.getUserMedia({ video: true })  
       .then(stream => {  

@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Space, Tag, Tooltip, message } from "antd"
+import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Slider, Space, Tag, Tooltip, message } from "antd"
 const { Option } = Select;
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Form } from 'antd';
@@ -7,7 +7,7 @@ import { Box, Column, Pie } from "@ant-design/charts";
 import DebounceSelect from "./DebounceSelect";
 import MonacoEditor from 'react-monaco-editor';
 import DiffViewer from "react-diff-viewer";
-import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CheckOutlined, CopyOutlined } from "@ant-design/icons";
 import copy from 'copy-to-clipboard';
 import ColorTestComponent from "./ColorGenerator";
 import { deepClone } from "@/utils";
@@ -530,6 +530,11 @@ const SmallComps: React.FC = () => {
         console.log(`Selected value: ${value}`);
     };
     return <>
+        <InterceptTooltip>
+          <Tooltip title="tooltip">
+            <div>拦截Tooltip</div>
+          </Tooltip>
+        </InterceptTooltip>
         改造后的Select组件，可以在单选的前提下，同时支持1，由可选的options，2能自己输入新值
         <MySelect initOps={[{ value: 'A' }, { value: 'B' }]} />
         <br/>
@@ -684,8 +689,87 @@ const SmallComps: React.FC = () => {
     </>
 }
 
+const MultiColorProgressSegment = ({ value, color }) => {
+  const segmentStyle = {
+    width: `${value}%`,
+    backgroundColor: color,
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative', // 对于绝对定位的提示框是必需的
+    overflow: 'hidden', // 隐藏溢出的文本
+  };
+
+  return <div style={segmentStyle}/>
+};
 
 
+export const MultiColorProgress = ({ percents, endp, success, fail, allSucc }) => {
+  return (
+    <div style={{ width: '100%', height: 12,  position: 'relative', display: "flex" }}>
+      <div style={{ flex: 1 ,borderRadius: '6px', backgroundColor: '#bfbfbf', overflow: 'hidden',display:"flex",}}>
+        {percents.map(({ k, v, color }, index) => (
+          <MultiColorProgressSegment key={index} label={k} value={v} color={color} />
+        ))}
+      </div>
+      <div style={{ flexBasis: 50,marginLeft:5 }}>
+        <div style={{ position: 'absolute', right: '1px',top:-4,color: endp >= success ? 'green' : endp <= fail ? 'red' : '#000', fontSize: 13 }}>
+          { allSucc ? <CheckCircleOutlined /> :`${endp}%` }
+        </div>
+      </div>
+    </div>
+  );
+};
+// 用法如下
+{/* <Tooltip title={<div style={{width:200}}>
+  阿斯顿发生大法师</div>
+}>
+  <div style={{width:"100%",paddingTop:2}}> //必须用div包裹，否则Tooltip不显示
+    <MultiColorProgress percents={[
+      {k:"Success",v:taskInfo.success_counts/taskInfo.total_items*100,color:"#19C106"},
+      {k:"Fail",v:taskInfo.failure_counts/taskInfo.total_items*100,color:"red"},
+      {k:"Waiting",v:(1/taskInfo.total_items*100,color:"#bfbfbf"}
+    ]} success={60} fail={40} 
+    endp={80} 
+    allSucc={taskInfo.success_counts==taskInfo.total_items && taskInfo.total_items!=0} />
+  </div>
+</Tooltip> */}
 
+
+export const InterceptTooltip = ({ children }) => {
+  // 控制 Tooltip 显示的状态
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  // Tooltip 自己的鼠标移入事件处理函数
+  const handleMouseEnter = (e) => {
+    // setTooltipVisible(true);
+    e.stopPropagation(); //
+    e.nativeEvent.stopPropagation();
+  };
+
+  // Tooltip 自己的鼠标移出事件处理函数
+  const handleMouseLeave = (e) => {
+    // setTooltipVisible(false);
+    e.stopPropagation();
+    e.nativeEvent.stopPropagation();
+  };
+
+  const extendedChildren = React.Children.map(children, (child) => {
+    if (child.type === Tooltip) {
+      return React.cloneElement(child, { //覆盖tooltip的visible和onVisibleChange方法属性
+        visible: tooltipVisible,
+        onVisibleChange: () => {console.log("visiblechage");}, // 忽略任何由 Tooltip 内部触发的 visible 改变
+        afterVisibleChange: () => {console.log("afterVisibleChange");} // 忽略任何由 Tooltip 内部触发的 visible 改变
+      });
+    }
+    return child;
+  });
+
+  return (
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {extendedChildren}
+    </div>
+  );
+};
 
 export default SmallComps
