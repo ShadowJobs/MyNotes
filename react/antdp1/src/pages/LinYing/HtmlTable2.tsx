@@ -1960,7 +1960,7 @@ const HtmlTable:React.FC=()=>{
         </div>
     }
     return <div className="table2">
-        <AggregationShare node={document.getElementsByClassName('table2')[0]} path={history.location.pathname} />
+        <AggregationShare node={'table2'} path={history.location.pathname} />
       {getTable()}
       {getHtmlByData(d)}
     </div>

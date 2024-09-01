@@ -74,6 +74,9 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   chainWebpack: (memo) => {
+    memo.module //实测，这样导入的md，不会按纯文本处理，而是会生成一个module，是个函数，原因待查
+      .rule('md').test(/\.md$/).use('raw-loader').loader('raw-loader').end();
+    // memo.module .rule('js').exclude.add(/\.md$/)
     memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
       { languages: ['javascript','json','python'] },
     ]);
@@ -94,14 +97,18 @@ export default defineConfig({
     return memo;
   },
 
-  // externals: {
+  // externals:  process.env.CDN_REGION === 'EU' ? {}:{
   //   'react': 'window.React',
   //   'react-dom': 'window.ReactDOM',
   // },
 
   // // 引入被 external 库的 scripts
   // // 区分 development 和 production，使用不同的产物
-  // scripts: process.env.NODE_ENV === 'development' ? [
+  // scripts: scripts: process.env.CDN_REGION === 'EU' ? 
+  // [
+  //   'https://unpkg.com/react@18.2.0/umd/react.production.min.js',
+  //   'https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js',
+  // ]: process.env.NODE_ENV === 'development' ? [
   //   'https://gw.alipayobjects.com/os/lib/react/18.2.0/umd/react.development.js',
   //   'https://gw.alipayobjects.com/os/lib/react-dom/18.2.0/umd/react-dom.development.js',
   // ] : [

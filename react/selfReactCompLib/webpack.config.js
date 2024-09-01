@@ -128,6 +128,7 @@ module.exports = ({
             canPrint: true // 布尔值，指示插件是否可以将消息打印到控制台，默认为 true
           })
         ],
-    sideEffects: false
+    sideEffects: false,
+    // "sideEffects": ["./src/some-side-effectful-file.js"],防止被tree shaking
   }
 });

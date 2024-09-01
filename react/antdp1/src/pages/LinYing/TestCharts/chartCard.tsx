@@ -37,14 +37,12 @@ export const FreeEchart:React.FC<{result:Mynote.AggFreeEchart}>=({result})=>{
 const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team?:string}> = ({
   result,team,isMerged = false,
 }) => {
-  const [autofitY, setAutofitY] = useState(true);
-  const [noScale,setNoScale] = useState(false);
   const [isHorizontal, setIsHorizontal] = useState(result.horizontal?true:false);
   if(result.type=='feishu' && !result.content?.body?.blocks?.[0]?.preSum){
     addPreSum(result.content)
   }
   const reportMap = {
-    line: <LineChart chart={result as Mynote.ApiAggLineChart} options={{ autofitY: autofitY,noScale }} />,
+    line: <LineChart chart={result as Mynote.ApiAggLineChart} />,
     pie: <PieChart chart={result as Mynote.ApiAggPieChart} />,
     bar: <BarChart chart={result as Mynote.ApiAggBarChart}  options={{ isHorizontal}} isMerged={isMerged}/>,
     table: <SelfTable tableResult={result as Mynote.ApiAggTableResult} isMerged={isMerged}/>,
@@ -116,23 +114,6 @@ const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team
     />
   )
   const extraMap = {
-    line: (
-      <Popover
-        placement="bottom"
-        content={
-          <div>
-            {("Y轴自适应：")}
-            <Switch onChange={(checked) => setAutofitY(checked)} checked={autofitY}/>
-            <br/>
-            {("不缩放")}：
-            <Switch onChange={(checked) => setNoScale(checked)} checked={noScale}/>
-          </div>
-        }
-        trigger="hover"
-      >
-        <DownOutlined />
-      </Popover>
-    ),
     bar:(
       <Popover placement="bottom"
         content={

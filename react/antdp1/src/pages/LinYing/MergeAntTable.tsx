@@ -41,10 +41,16 @@ const columns: ProColumns<TableListItem>[] = [
     title: '应用名称',
     dataIndex: 'name',
     render: (_) => <a>{_}</a>,
-    formItemProps: {
+    formItemProps: { //顶部搜索表单的属性
       lightProps: {
         labelFormatter: (value) => `app-${value}`,
       },
+      rules: [
+        {
+          required: true,
+          message: ('不能为空'), 
+        },
+      ],
     },
     children: [{ //表头的合并使用children，
       title: 'name',

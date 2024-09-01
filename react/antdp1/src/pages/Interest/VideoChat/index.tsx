@@ -5,7 +5,7 @@ import { ExpressUrl } from '@/global';
 import { useModel } from 'umi';
 import moment from 'moment';
 import { Button, Input, Modal, Select, message } from 'antd';
-import RtcWebApiVideoChat from './RtcWebapiVideoChat'; // RTC
+import RtcWebApiVideoChat from './RtcWebApiVideoChat'; // RTC
 
 function Video({ peer }) {
   const ref = useRef();

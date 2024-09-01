@@ -22,3 +22,12 @@ declare module 'bizcharts-plugin-slider';
 declare let ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: 'site' | undefined;
 
 declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
+
+declare module '*.md' {
+  const content: string;
+  export default content;
+}
+declare module '*.txt' {
+  const content: string;
+  export default content;
+}
