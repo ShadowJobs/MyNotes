@@ -7,7 +7,7 @@ function App() {
     return <div>
       <A />
         <h1>Hello, React 18!</h1>
-      <B />
+      <B v='b des'/>
     </div>
 }
 

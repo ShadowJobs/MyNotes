@@ -7,7 +7,7 @@ import { CopyOutlined, DownloadOutlined, ShareAltOutlined } from '@ant-design/ic
 
 const { Text, Link } = Typography;
 
-const AggregationShare: React.FC<{ node: Node; path?: string }> = ({ node, path }) => {
+const AggregationShare: React.FC<{ node: string; path?: string }> = ({ node, path }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [imgData, setImgData] = useState<string>();
 
@@ -22,10 +22,16 @@ const AggregationShare: React.FC<{ node: Node; path?: string }> = ({ node, path 
 
   useEffect(() => {
     if (isModalVisible && node) {
+      let _node = document.getElementsByClassName(node)[0] as HTMLElement;
       domtoimage
-        .toPng(node)
-        .then((dataUrl) => {
-          setImgData(dataUrl);
+        .toPng(_node)
+        .then((_dataUrl) => {
+          // setImgData(dataUrl);
+          // 直接setImgData(dataUrl)在部分浏览器里，会有图片显示不全（主要是css动画的部分,实测antChart里的饼图等会显示不出来），但是第二次toPng就可以显示。所以需要重新获取一次
+          domtoimage.toPng(_node).then((dataUrl) => {
+            setImgData(dataUrl);
+            setIsModalVisible(true);
+          });
         })
         .catch((error) => {
           message.error(`${("errr")}： ${error}`);
@@ -36,7 +42,7 @@ const AggregationShare: React.FC<{ node: Node; path?: string }> = ({ node, path 
   const handlePNGDownload = () => {
     try {
       if (!imgData) {
-        throw Error(('errr')+'!');
+        throw Error(('errr') + '!');
       }
       const link = document.createElement('a');
       link.download = 'Report.png';
@@ -50,7 +56,7 @@ const AggregationShare: React.FC<{ node: Node; path?: string }> = ({ node, path 
   const handlePDFDownload = () => {
     try {
       if (!imgData) {
-        throw Error(('err')+'!');
+        throw Error(('err') + '!');
       }
       const doc = new jsPDF();
       const imgProps = doc.getImageProperties(imgData);

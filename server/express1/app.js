@@ -49,6 +49,8 @@ app.use(limiter);
 // 官方中间件
 app.use(Express.json()) //配置接受post请求时，按json方式解析body的内容（仅针对application/json格式）
 app.use(Express.urlencoded({ extended: true })) //配置接受post请求时，针对application/x-www-form-urllencoded格式
+app.use(cors()) //允许跨域 //放到static前面，cors之前（本语句之前）的接口会被拦截
+
 app.use(Express.static("./public")
 // app.use(serveIndex("./public"))可以将public目录下的文件列出来，但是不会自动刷新，需要手动刷新（先serveIndex=require("serve-index")）
 // 缓存部分见nodeLuncheServer.js，本文件只记录一下开启的一种方式
@@ -63,7 +65,6 @@ app.use(Express.static("./public")
 app.use("/res",Express.static("./public")) //请求时，必须加上/res 才能找,当有多个资源目录且有重名时，会优先找第一个匹配，所以加/res可以起到namespace的作用 示例 http://localhost:5000/res/a.css
 // path.join(__dirname,"./public") 路径最好使用绝对路径，
 // 资源路径查找的规则：<link ref="stylesheet" href="./res/a.css" />,这是一个相对路径，在不同的页面嵌入这个<link>得到的资源路径不一样，所以要用绝对路径，即以/开头
-app.use(cors()) //允许跨域
 
 // 自定义中间件，放到所有的请求之前，那么所有的get, post等方法执行时，都会进入这个自定义的函数
 app.use((req,res,next)=>{

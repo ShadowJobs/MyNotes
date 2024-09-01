@@ -1,5 +1,7 @@
 import { message } from "antd";
 import { GaodeKey } from "./global";
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 import _ from "lodash";
 // import { Parser } from 'json2csv';
 // import { saveAs } from 'file-saver';
@@ -298,6 +300,14 @@ export var tableToExcel = (function () {
   }
 })()
 
+export const tableToExcelXlsx = (tableId: string, sheetName: string, fileName: string) => {
+  var table = document.getElementById(tableId);
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.table_to_sheet(table);
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' });
+  saveAs(new Blob([wbout], { type: "application/octet-stream" }), `${fileName}.xlsx`);
+};
 
 const clickHtmlList = async (html_list) => {
   document.getElementById("dlink").href = res.data.url?.replace("http:", "https:");
@@ -359,6 +369,10 @@ export const loadGaode = (initMap: Function) => {
   if (window.AMap) {
     initMap()
   } else {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css";
+    document.head.appendChild(link);
     const script = document.createElement("script");
     script.src = `https://webapi.amap.com/maps?v=1.4.15&key=${GaodeKey}`;
     script.async = true;

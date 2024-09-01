@@ -59,7 +59,7 @@
       { name: "图片缩放", path: "/LinYing/ScalePicCanvas", component: "./LinYing/ScalePicCanvas" },
       { name: "BirdView", path: "/LinYing/BirdView", component: "./LinYing/BirdView" },
       { name:"react json配合form表单", path: "/LinYing/react-json-form", component: "./LinYing/JsonEditorAndForm",},
-      { name:"上传文件，函数式确认框", path: "/LinYing/updload", component: "./LinYing/UploadFile",},
+      { name:"上传、下载文件，函数式确认框", path: "/LinYing/updload", component: "./LinYing/UploadFile",},
       { name:"代码编辑", path: "/LinYing/code-editor", component: "./LinYing/MonacoEditor" },
       { name:"echarts", path: "/LinYing/echarts", component: "./LinYing/AntChartEchartScatter" },
       { name:"tablemerge", path: "/LinYing/MergeAntTable", component: "./LinYing/MergeAntTable" },
@@ -79,6 +79,7 @@
       {name:"翻译",path:"translate",component:"./Interest/Translator"},
       {name: "Websocket聊天", path: "WebSocket", component: "./Interest/WebsocketPage" },
       {name: "动态生成表单", path: "AutoForm", component: "./Interest/AutoForm" },
+      {name: "Shell", path: "terminal", component: "./Interest/Shell" },
     ]
   },
   {

@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect,useCallback, useRef, useState } from 'react';
 import { Line, Pie, Column, Bar,G2, Box, Scatter } from '@ant-design/charts';
-import { Col, Collapse, Divider, Image, Row,Input, Space, Spin, Slider, Radio  } from 'antd';
+import { Col, Collapse, Divider, Image, Row,Input, Space, Spin, Slider, Radio, Switch  } from 'antd';
 import { LineConfig } from '@ant-design/charts/es/line';
 import { PieConfig } from '@ant-design/charts/es/pie';
 import { ColumnConfig } from '@ant-design/charts/es/column';
 import { isNumber, max, min } from 'lodash';
 import ReactJson from "react-json-view"
 const { registerInteraction } = G2;
-import _ from 'lodash';
+import _,{groupBy,forEach} from 'lodash';
 import { formatNumber, safeReq } from '@/utils';
 import { request } from 'umi';
 import AnchorPop from './AnchorPop';
@@ -170,9 +170,10 @@ const getAnnotationConfgs = (annotation: Mynote.ApiAggLineAnnotation) => {
 
 export const LineChart: React.FC<{
   chart: MesAPI.AggLineChart;
-  options: { autofitY: boolean,noScale:boolean 
-  mouseover?:Function};
-}> = ({ chart, options, mouseover }) => {
+  mouseover?:Function;
+}> = ({ chart, mouseover }) => {
+  const [autofitY, setAutofitY] = useState(true);
+  const [enableScale, setEnableScale] = useState(false);  
   const extraTip=chart.external?.extraTip
   const ref=useRef()
   const data = chart.data
@@ -215,8 +216,8 @@ export const LineChart: React.FC<{
       title: {
         text: chart.y_label,
       },
-      min: options.autofitY ? yMin : 0,
-      max: yMax,
+      min: isNumber(chart.external?.yMin)?chart.external.yMin:(autofitY ? yMin : 0),
+      max: isNumber(chart.external?.yMax)?chart.external.yMax:yMax,
       label:{
         rotate:chart.external?.yLabel?.rotate || 0,
         offsetX:chart.external?.yLabel?.offsetX || 0,
@@ -234,10 +235,12 @@ export const LineChart: React.FC<{
     }),
     ...(annotations && { annotations: annotations }),
     interactions: [
-      ...options.noScale?[]: [
+      // 这里从props传入noScale，如果将noScale放在本文件内，那么监听加上之后就无法移除，解决的办法是：
+      // 在 <Line key={(enableScale.toString()+autofitY.toString())}>里加一个key，这样就能触发重新渲染，从而移除监听
+      ...enableScale?[
         {type:"view-zoom"},
         {type:"view-drag"},
-      ],
+      ]:[],
     ],
     tooltip: extraTip?{
       fields: [chart.y_label,...(extraTip||[])],}
@@ -256,7 +259,14 @@ export const LineChart: React.FC<{
   },[])
   return (
     <div ref={ref}>
-      <Line {...config} onReady={(plot)=>{
+
+      <div>
+        {("Y轴自适应：")}
+        <Switch onChange={(checked) => setAutofitY(checked)} checked={autofitY}/>
+        <span style={{marginLeft:10}}>{("缩放")}：</span>
+        <Switch onChange={(checked) => setEnableScale(checked)} checked={enableScale}/>
+      </div>
+      <Line {...config} key={(enableScale.toString()+autofitY.toString())} onReady={(plot)=>{
         plot.on('element:click', (e) => {
           if(e.data.data.ptype=="url")
             e.data.data.url && window.open(e.data.data.url,"_blank")
@@ -451,6 +461,21 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     };
   });
 
+  const annotations = [];
+  forEach(groupBy(data, 'type'), (values, k) => {
+    const value = values.reduce((a, b) => a + b.value, 0);
+    annotations.push({
+      type: 'text',
+      position: [k, value], //确保 position 是一个包含 x 和 y 值的数组，如 [k, value]，其中 k 是 x 轴的值，value 是 y 轴的值。
+      content: `${value}`,
+      style: {
+        textBaseline: 'bottom',
+        textAlign: 'center',
+        fill: '#000', // 设置文本颜色
+      },
+      offsetY: -20, // 调整标注的垂直位置使用 offsetY 调整标注的垂直位置。
+    });
+  });
   const config: ColumnConfig = {
     data: data,
     // data: [...(data.map((v,idx)=>({...v,stackField:"g1"}))),...(data.map((v,idx)=>({...v,stackField:"g2"})))],
@@ -475,6 +500,7 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     scrollbar: {
       type: 'horizontal',
     },
+    label: { formatter:v=>Math.floor(v.value) }//显示整数,1.x版本写法，2.x 用text, 参考官网
   };
   // isMerged=true
   // chart.external={isStack:true}
@@ -493,6 +519,9 @@ export const BarChart: React.FC<{ chart: Mynote.ApiAggBarChart,options:{isHorizo
     }
     config.seriesField=data?.[0]?.stackField?"stackField":undefined
   }
+
+  if(config.isStack) config.annotations=annotations //注意,单个柱子的图默认带了数字，如果是堆叠图，就需要自己加数字
+
 
   return <Column {...config} />;
 };

@@ -56,7 +56,7 @@ const GaodeMap: React.FC = () => {
             }
           ]
         },
-        "func": "vicky"
+        "func": "cmp"
       },
       {
         "data": {

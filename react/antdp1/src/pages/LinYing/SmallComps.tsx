@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Input, Modal, Row, Select, Slider, Space, Tag, Tooltip, message } from "antd"
+import { Button, Card, Checkbox, Col, Image, Input, Modal, Row, Select, Slider, Space, Tag, Tooltip, message } from "antd"
 const { Option } = Select;
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Form } from 'antd';
@@ -11,6 +11,10 @@ import { CheckCircleOutlined, CheckOutlined, CopyOutlined } from "@ant-design/ic
 import copy from 'copy-to-clipboard';
 import ColorTestComponent from "./ColorGenerator";
 import { deepClone } from "@/utils";
+import domtoimage from 'dom-to-image';
+import { request } from "umi";
+import _ from "lodash";
+
 
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 // 可以搜索，又可以自己输入的select
@@ -64,6 +68,43 @@ class MySelect extends React.Component {
 }
 // CustomRadioGroup.tsx
 
+// 包装Select组件，允许输入值,优先搜索，防抖500ms，如果搜索不到，则直接将输入值填入options
+export const OneUserSelect = ({ value, onChange, width }) => {
+  const [searchedUsers,setSearchedUsers]=useState([])
+  const handleSearchUser = _.debounce(async (e) => {
+    console.log(e)
+    if (!e ) {
+      setSearchedUsers([])
+      return
+    }
+    const {name_list}= await request(`/user/fuzzy`, { query_name: e })
+
+    console.log(name_list)
+    if(name_list.length==0){
+      setSearchedUsers([{value:e,text:e}])
+      return
+    }else{
+      setSearchedUsers(name_list.map(v=>({value:v,text:v})))
+    }
+  }, 800)
+  return (
+    <Select
+      style={{ width: width || "100%" }}
+      placeholder="请选择一个选项"
+      value={value}
+      onChange={_.debounce(onChange,500)}
+      showSearch
+      onSearch={_.debounce(handleSearchUser,500)}
+      allowClear
+    >
+      {searchedUsers.map((option) => (
+        <Select.Option key={option.value} value={option.value}>
+          {option.value}
+        </Select.Option>
+      ))}
+    </Select>
+  );
+}
 interface CustomRadioGroupProps {
     value?: string | string[];
     onChange?: (value: string | null) => void;
@@ -523,6 +564,17 @@ const barBoxData=[
         "idx": 43
     }
 ]
+
+const handleCopy = (value, e) => {
+  // 阻止选择事件触发
+  e.stopPropagation();
+  navigator.clipboard.writeText(value).then(() => {
+    message.success(`Copied: ${value}`);
+  }).catch(err => {
+    message.error('Failed to copy!');
+  });
+}
+
 const SmallComps: React.FC = () => {
     const [form] = Form.useForm();
     const [sid,setSid]=useState(1)
@@ -552,6 +604,11 @@ const SmallComps: React.FC = () => {
                 { label: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb2222222222222222222222222", value: 2 }]
                     .map(v => <Select.Option {...v}>
                         <div style={{ wordBreak: "break-all", whiteSpace: "normal" }}>{v.label}</div>
+                        <Button style={{ float: "right", marginTop: -4 }}
+                          type="link"
+                          icon={<CopyOutlined />}
+                          onClick={(e) => handleCopy(v.label, e)}
+                        />
                     </Select.Option>)
             }
         </Select></div>
@@ -772,4 +829,35 @@ export const InterceptTooltip = ({ children }) => {
   );
 };
 
+export const SavePngButton: React.FC<{ node: HTMLElement }> = ({ node }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [imgData, setImgData] = useState<string>();
+  return <>
+    <Modal title={"Preview"} open={isModalVisible} onCancel={e => setIsModalVisible(false)} footer={null}>
+      <Image src={imgData} />
+      <Button type="primary" onClick={() => {
+        const link = document.createElement('a');
+        link.download = 'page.png';
+        link.href = imgData
+        link.click();
+      }}>
+        Download PNG
+      </Button>
+    </Modal>
+    <Button type="primary" onClick={() => {
+      domtoimage.toPng(node)
+        .then((dataUrl) => {
+          domtoimage.toPng(node).then((dataUrl) => {
+            setImgData(dataUrl);
+            setIsModalVisible(true);
+          });
+        })
+        .catch((error) => {
+          message.error(`save png error`);
+        });
+    }}>
+      ScreenShot
+    </Button>
+  </>
+}
 export default SmallComps

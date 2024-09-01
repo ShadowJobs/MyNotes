@@ -94,15 +94,19 @@
     "react-helmet": "^6.1.0",
     "react-helmet-async": "^1.2.0",
     "react-json-view": "^1.21.3",
+    "react-markdown": "^9.0.1",
     "react-monaco-editor": "^0.44.0",
     "react-query": "^3.39.3",
     "react-syntax-highlighter": "^15.5.0",
     "react-tiny-virtual-list": "^2.2.0",
     "recompose": "^0.30.0",
+    "rehype-highlight": "^7.0.0",
     "simple-peer": "^9.11.1",
     "socket.io-client": "^4.7.2",
     "three": "^0.142.0",
-    "umi": "^3.5.0"
+    "umi": "^3.5.0",
+    "xlsx": "^0.18.5",
+    "xterm": "^5.3.0"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.0",
