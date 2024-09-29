@@ -8,22 +8,19 @@ export const logLanguage = {
   // Define various tokens with CSS-like color rules
   tokenizer: {
     root: [
-      [/$$ERROR$$.*$/, 'custom-error'],
-      [/$$WARNING$$.*$/, 'custom-warn'],
-      [/$$INFO$$.*$/, 'custom-info'],
       [/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)/, 'custom-datetime'],
       // [06:20:22.283]
       [/(\d{2}:\d{2}:\d{2}\.\d{3})/, 'custom-datetime'],
       // [2024-08-30 06:20:23.411774]
       [/(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6})/, 'custom-datetime'],
+      // 2024-08-30T13:10:35.006254937+08:00 No user command
       [/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{9}\+\d{2}:\d{2})/, 'custom-datetime'],
-
 
       // 开头的数字颜色
       // [/^\d+/, 'custom-symbol'],
       [/[<=>]/, 'custom-symbol'],
       // 关键字颜色
-      [/(ModuleNotFoundError|File|Traceback|redis|db|export|echo)/, 'custom-keyword'],
+      [/(File|Traceback|redis|db|export|echo)/, 'custom-keyword'],
       // 文件名颜色
       [/(\s)([a-zA-Z0-9_\-\.\/]+)(,)/, 'custom-symbol'],
       // 行号颜色
@@ -33,6 +30,10 @@ export const logLanguage = {
       [/'[^']*'/, 'custom-string'],
       // library color
       [/(from|import|as)\s([a-zA-Z0-9_\-\.\/]+)/, 'custom-library'],
+      // 含有ERROR的单词，无论大小写，
+      // [/\b(?:\w*[eE][rR][rR][oO][rR]\w*)\b/, 'custom-error']
+      [/\b(?:\w*(?:ERROR|Error|error|EXCEPTION|Exception|exception)\w*)\b/, 'custom-error']
+
     ],
   },
 };

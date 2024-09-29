@@ -641,7 +641,9 @@ export const ScatterChart:React.FC<{ tableResult: MesAPI.AggScatterResult;tips:s
         onChange={setP}
       />
       <ReactEcharts 
-        onEvents={{dataZoom:zoomFunc}}
+        onEvents={{dataZoom:zoomFunc,"click":(params:any,echarts:any)=>{
+              console.log(params);
+            }}}
         option = { {
           xAxis: {min:tableResult.data.min_x,max:tableResult.data.min_x+tableResult.data.width},
           yAxis: {min:tableResult.data.min_y,max:tableResult.data.min_y+tableResult.data.width},

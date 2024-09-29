@@ -4,7 +4,7 @@ import store from "../redux/store"
 import { connect } from "react-redux"
 class ReduxPage extends React.Component{
     render(){
-        return <div>Home
+        return <div className="with-border">Home-ReduxPage<br/>
         react-redux的使用1，写reducer.js，初始值和操作都存在reducer里<br/>
         2，写store.js,只是单纯做一下管理和转发<br/>
         3，home.jsx里，constructor必须写订阅函数，change的时候必须调用dispatch<br/>

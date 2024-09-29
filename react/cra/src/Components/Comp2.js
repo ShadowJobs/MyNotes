@@ -8,7 +8,7 @@ export class Comp2 extends React.PureComponent{
     }
     render(){
         return <div className="with-border">
-            <Button onClick={()=>this.send("发送了123")}>发事件</Button>
+            组件2，发送：<Button onClick={()=>this.send("发送了123")}>发事件</Button>
         </div>
     }
 }

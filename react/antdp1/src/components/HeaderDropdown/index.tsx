@@ -10,6 +10,21 @@ export type HeaderDropdownProps = {
   placement?: 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topCenter' | 'topRight' | 'bottomCenter';
 } & Omit<DropDownProps, 'overlay'>;
 
+// classNames的用法：
+// 1，如果直接用字符串拼接的写法：
+// const extraClass = "some-extra-class";
+// const isActive = true;
+// const combinedClasses = 'base-class' + (isActive ? ' active-class' : '') + (extraClass ? ' ' + extraClass : '');
+// 2,用classNames的写法：
+// const extraClass = "some-extra-class";
+// const isActive = true;
+// const combinedClasses = classNames(
+//   'base-class',
+//   { 'active-class': isActive },
+//   extraClass
+// );
+
+
 const HeaderDropdown: React.FC<HeaderDropdownProps> = ({ overlayClassName: cls, ...restProps }) => (
   <Dropdown overlayClassName={classNames(styles.container, cls)} {...restProps} />
 );
