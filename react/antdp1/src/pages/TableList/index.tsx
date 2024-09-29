@@ -4,13 +4,13 @@ import React, { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
 import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
 import { rule, addRule, updateRule, removeRule } from '@/services/ant-design-pro/api';
+import ResizableProTable from "@/components/ResizeTable"
 
 /**
  * @en-US Add node
@@ -113,6 +113,8 @@ const TableList: React.FC = () => {
       ),
       dataIndex: 'name',
       tip: 'The rule name is the unique key',
+      ellipsis:true,
+      width:100,
       render: (dom, entity) => {
         return (
           <a
@@ -242,7 +244,7 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
+      <ResizableProTable sticky
         headerTitle={intl.formatMessage({
           id: 'pages.searchTable.title',
           defaultMessage: 'Enquiry form',
@@ -273,9 +275,11 @@ const TableList: React.FC = () => {
         request={rule}
         columns={columns}
         rowSelection={{
+          preserveSelectedRowKeys:true,
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows); //坑：本句，不可少，有bug ；如果只使用tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected })，
             // 执行时，先选一条，再筛选（条件是筛选后的结果仅1条，且是未选的），再选中筛选后的那一条，那么selectedRows里会出现一条undefined，所以这里onChange必须自定义
+            // 必须配合preserveSelectedRowKeys:true使用，否则翻页会直接清空上一页的选择
           },
         }}
       />

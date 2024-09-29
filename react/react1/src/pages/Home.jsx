@@ -25,11 +25,10 @@ class Home extends React.Component{
                 store.dispatch({type:"changeInput",value:e.target.value})
             }}/>
             inputValue={this.state.inputValue}
-            <br/>{`对于函数组件，可以用下面的写法：
-                function render(){ReactDom.render(<App/>,document.getElementById("root"))}
-                render()
-                store.subscribe(render)
-            `}
+            <div style={{whiteSpace:"pre",textAlign:'left'}}>{`对于函数组件，可以用下面的写法：
+function render(){ReactDom.render(<App/>,document.getElementById("root"))}
+render()
+store.subscribe(render)`}</div>
         </div>
     }
 }

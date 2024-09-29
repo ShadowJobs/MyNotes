@@ -74,8 +74,8 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   chainWebpack: (memo) => {
-    memo.module //实测，这样导入的md，不会按纯文本处理，而是会生成一个module，是个函数，原因待查
-      .rule('md').test(/\.md$/).use('raw-loader').loader('raw-loader').end();
+    // memo.module //实测，这样导入的md，不会按纯文本处理，而是会生成一个module，是个函数，原因待查
+    //   .rule('md').test(/\.md$/).use('raw-loader').loader('raw-loader').end();
     // memo.module .rule('js').exclude.add(/\.md$/)
     memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
       { languages: ['javascript','json','python'] },

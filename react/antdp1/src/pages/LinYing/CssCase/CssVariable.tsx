@@ -1,12 +1,58 @@
-import { Button, Divider, InputNumber, Select, Switch } from "antd";
+import { Button, Divider, Input, InputNumber, Select, Switch } from "antd";
 import "./css-variable.css"
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { generateRandomWords } from "@/utils";
 import autoAnimate from "@formkit/auto-animate";
 
 const PString = "Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. "
 const PString2 = "Cray food truck brunch, XOXO +1 keffiyeh pickled chambray waistcoat ennui. Organic small batch paleo 8-bit. Intelligentsia umami wayfarers pickled, asymmetrical kombucha letterpress kitsch leggings cold-pressed squid chartreuse put a bird on it. Listicle pickled man bun cornhole heirloom art party."
+const ResizableLayout = () => {
+  const [widths, setWidths] = useState(["calc((100% - 36px) / 3)", "calc((100% - 36px) / 3)", "calc((100% - 36px) / 3)"]);
+  const containerRef = useRef(null);
+  const startXRef = useRef(0);
+  const startWidthsRef = useRef([]);
 
+  const handleMouseDown = (index, event) => {
+    startXRef.current = event.clientX;
+    startWidthsRef.current = [...widths];
+    const onMouseMove = (e) => handleMouseMove(index, e);
+    const onMouseUp = () => handleMouseUp(onMouseMove, onMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  const handleMouseMove = (index, event) => {
+    const dx = event.clientX - startXRef.current;
+    const containerWidth = containerRef.current.offsetWidth - 54; // 减去3个18px的分隔栏宽度
+    let newWidths = [...startWidthsRef.current];
+
+    let deltaPercent = (dx / containerWidth) * 100;
+    newWidths[index] = parseFloat(newWidths[index]) + deltaPercent + "%";
+    newWidths[index+1] = parseFloat(newWidths[index+1]) - deltaPercent + "%";
+    setWidths(newWidths);
+  };
+
+  const handleMouseUp = (onMouseMove, onMouseUp) => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  useEffect(() => {
+    if(containerRef.current){
+      const containerW = containerRef.current.offsetWidth;
+      let oneW=((containerW-36)/3)/containerW*100+"%";
+      setWidths([oneW,oneW,oneW]);
+    }
+  }, [containerRef.current]);
+  return (
+    <div className="container" ref={containerRef}>
+      <div className="code-input" style={{ width: widths[0] }}>HTML{PString}</div>
+      <div className="resizer" onMouseDown={(e) => handleMouseDown(0, e)} />
+      <div className="code-input" style={{ width: widths[1] }}>CSS{PString}</div>
+      <div className="resizer" onMouseDown={(e) => handleMouseDown(1, e)} />
+      <div className="code-input" style={{ width: widths[2] }}>JS{PString2}</div>
+    </div>
+  );
+};
 const JustifyContentTest: React.FC<{}> = ({ }) => {
   const [justifyContent, setJustifyContent] = useState("flex-start")
   return <div className="gray-border">
@@ -156,6 +202,10 @@ const AlignItemsTest: React.FC<{}> = ({ }) => {
 const FlexWrapTest: React.FC<{}> = ({ }) => {
   const [flexWrap, setFlexWarp] = useState("nowrap")
   const [flexGrowShrink, setFlexGrowShrink] = useState({ flexGrow: 1, flexShrink: 1 })
+
+  const [flexBasis, setFlexBasis] = useState(["auto","auto","auto"])
+  const [flexGrows, setFlexGrows] = useState([undefined,undefined,undefined])
+  const [flexShrinks, setFlexShrinks] = useState([undefined,undefined,undefined])
   return <div className="gray-border">
     <Divider>调整flex-wrap超出屏幕换行</Divider>
     nowrap不换行，wrap换行，wrap-reverse换行，但是顺序反过来.必须是flex值为绝对值（例如200px）才能换行。
@@ -176,6 +226,35 @@ const FlexWrapTest: React.FC<{}> = ({ }) => {
     <div className="flex-layout" style={{ flexWrap }}>
       {Array.from({ length: 9 }).map((v, i) => <p key={i} style={{ flex: "200px", ...flexGrowShrink, }}>{PString}</p>)}
       <p style={{ flex: "200px", ...flexGrowShrink }}>{PString}{PString2}</p>
+    </div>
+    <Divider/>
+    <div>
+      flex的取值为grow,shrink,basis: initial 是把 flex 元素重置为 Flexbox 的初始值，它相当于 flex: 0 1 auto 
+      初始flex-basis为auto,即内容宽度,如果有width，会用width宽度，除非basis不是auto，优先级: basis&gt;width&gt;内容;
+      <br/>其中内容如果是纯文字的，会按max-content <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_flexible_box_layout/Controlling_ratios_of_flex_items_along_the_main_axis">文档</a>
+      <br/>此时可以调整basis的值，看看效果(注意必须是数字或auto)
+      <br />先调整basis为200,100,300，可看到宽度会变化，但是还是有剩余空间
+      <br/>再调整第1个flex-grow 为1，可以看到刚才剩余的空间被第1个元素占用，再调整其他flex-grow的数字，剩余空间会按比例分配.
+      <br />再看flex-shrink: 需先还原flex-grow为0,0,0,basis设置为500,1000,500，
+      此时的shrink是默认值1,1,1，那么按1:1:1来缩小，来保证不超出屏幕，（但是会以500,1000,500的初始比例缩小，也就是说，缩小幅度相同,但缩小后的结果不是1:1:1）
+      <br/>将shrink设置为0,0,0,则不会缩放，会看到超出屏幕的效果
+      <br/>将basis调整为600,600,600，shrink调整为1,0,0，那么只有第一个会缩小，另2个都是600px,保证最终宽度不超出屏幕
+      <InputNumber value={flexGrows[0]} onChange={(e) => setFlexGrows([e,flexGrows[1],flexGrows[2]])} />
+      <InputNumber value={flexGrows[1]} onChange={(e) => setFlexGrows([flexGrows[0],e,flexGrows[2]])} />
+      <InputNumber value={flexGrows[2]} onChange={(e) => setFlexGrows([flexGrows[0],flexGrows[1],e])} />
+      flex-shrink：
+      <InputNumber value={flexShrinks[0]} onChange={(e) => setFlexShrinks([e,flexShrinks[1],flexShrinks[2]])} />
+      <InputNumber value={flexShrinks[1]} onChange={(e) => setFlexShrinks([flexShrinks[0],e,flexShrinks[2]])} />
+      <InputNumber value={flexShrinks[2]} onChange={(e) => setFlexShrinks([flexShrinks[0],flexShrinks[1],e])} />
+      flex-basis：
+      <Input value={flexBasis[0]} onChange={(e) => setFlexBasis([e.target.value,flexBasis[1],flexBasis[2]])} style={{width:100}} />
+      <Input value={flexBasis[1]} onChange={(e) => setFlexBasis([flexBasis[0],e.target.value,flexBasis[2]])} style={{width:100}} />
+      <Input value={flexBasis[2]} onChange={(e) => setFlexBasis([flexBasis[0],flexBasis[1],e.target.value])} style={{width:100}} />
+    </div>
+    <div className="flex-layout">
+      <div className="gray-border" style={{flexBasis:flexBasis[0]+"px",flexGrow:flexGrows[0],flexShrink:flexShrinks[0]}}>flex1</div>
+      <div className="gray-border" style={{flexBasis:flexBasis[1]+"px",flexGrow:flexGrows[1],flexShrink:flexShrinks[1]}}>flex2</div>
+      <div className="gray-border" style={{flexBasis:flexBasis[2]+"px",flexGrow:flexGrows[2],flexShrink:flexShrinks[2],width:100}}>flex3</div>
     </div>
   </div>
 }
@@ -384,6 +463,8 @@ const CssVariable = () => {
   }, [parent])
 
   return <div ref={parent}>
+    <ResizableLayout />
+
     <Divider>变量部分<Switch checked={varPart} onChange={e => setVarPart(e)} /></Divider>
     {varPart && <>
       <div>css变量,css条件，import，</div>

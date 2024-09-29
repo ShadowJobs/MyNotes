@@ -35,6 +35,7 @@ const getUserFromCookie = (): User | null => {
   };
 };
 
+export const getAdminUsers = async () => "userly";
 const getUserFromLocalStorage = (): User | null => {
   const user = localStorage.getItem("user/info") ?? "null";
   return JSON.parse(user);

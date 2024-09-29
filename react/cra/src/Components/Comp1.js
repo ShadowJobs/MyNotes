@@ -13,7 +13,7 @@ export class Comp1 extends React.PureComponent{
     }
     render(){
         return <div className="with-border">
-            {this.state.label}
+            组件1，监听：{this.state.label}
         </div>
     }
 }

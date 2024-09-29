@@ -1,8 +1,8 @@
 import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout';
-import { SettingDrawer } from '@ant-design/pro-layout';
+import { getMenuData, SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import type { RunTimeLayoutConfig } from 'umi';
-import { history, Link } from 'umi';
+import { history, Link, NavLink, request } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
@@ -12,7 +12,9 @@ import React from 'react';
 import * as allIcons from '@ant-design/icons';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import confirm from 'antd/lib/modal/confirm';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
+import { PythonUrl } from './global';
+import routes from '../config/routes';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -23,14 +25,14 @@ export const initialStateConfig = {
 };
 
 // Notes: 根据字符串获取一个icon，用到React的createElement
-const fixMenuItemIcon = (menus: MenuDataItem[], iconType='Outlined'): MenuDataItem[] => {
+const fixMenuItemIcon = (menus: MenuDataItem[], iconType = 'Outlined'): MenuDataItem[] => {
   menus.forEach((item) => {
-    const {icon, children} = item
+    const { icon, children } = item
     if (typeof icon === 'string') {
-      let fixIconName = icon.slice(0,1).toLocaleUpperCase()+icon.slice(1) + iconType
+      let fixIconName = icon.slice(0, 1).toLocaleUpperCase() + icon.slice(1) + iconType
       item.icon = React.createElement(allIcons[fixIconName] || allIcons[icon])
     }
-    children && children.length>0 ? item.children = fixMenuItemIcon(children) : null
+    children && children.length > 0 ? item.children = fixMenuItemIcon(children) : null
   });
   return menus
 };
@@ -52,7 +54,27 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  const menuData = await (async()=>{ return []}); //动态菜单可以这样获取，并放到返回值的menuData里
+  const fetchMenu = async () => {
+    const r = await request(`${PythonUrl}/doc/file-list`)
+    const { breadcrumb, menuData } = getMenuData(
+      routes,
+    );
+    // const docMenu = {name: "Documents", path: "docs",routes:[]}
+    // for (const item of r.data) {
+    //   docMenu.routes.push({name: item,path: item,component: "./LinYing/Document",})
+    // }
+    // console.log("docMenu",docMenu)
+    // 往routes的添加，就会添加很多个，这里routes里用:file匹配所有，所以在menu里再添加多个file，实现1个route匹配多一个menuItem
+    // routes.find((item) => item.name === '2024').routes?.push(docMenu) 
+    const docRoutes = menuData.find(v => v.name == "Documents")
+    docRoutes.children = []
+    r.data?.map((item: string) => {
+      docRoutes.children.push({ name: item, path: item })
+    })
+    // console.log("menuData",menuData)
+    return menuData
+  }
+  const menuData = await fetchMenu(); //动态菜单可以这样获取，并放到返回值的menuData里
   // 如果是登录页面，不执行
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
@@ -60,12 +82,13 @@ export async function getInitialState(): Promise<{
       fetchUserInfo,
       currentUser,
       settings: defaultSettings,
+      menuData: menuData || []
     };
   }
   return {
     fetchUserInfo,
     settings: defaultSettings,
-    // menuData
+    menuData: menuData || []
   };
 }
 let _initialState = {
@@ -102,57 +125,54 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         history.push(loginPath);
       }
     },
-    links: [<Button type="primary" onClick={()=>{
-      if(localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
-        localStorage.setItem('pro-sidebar-collapsed',"false")
+    links: [<Button type="primary" onClick={() => {
+      if (localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
+        localStorage.setItem('pro-sidebar-collapsed', "false")
       else
-        localStorage.setItem('pro-sidebar-collapsed',"true")
+        localStorage.setItem('pro-sidebar-collapsed', "true")
       window.location.reload();
     }} >展开/关闭</Button>,
     ...(isDev
       ? [
-          
-          <Link to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-          <Link to="/~docs">
-            <BookOutlined />
-            <span>业务组件文档</span>
-          </Link>,
-        ]
+
+        <Link to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+        <Link to="/~docs">
+          <BookOutlined />
+          <span>业务组件文档</span>
+        </Link>,
+      ]
       : [])],
     // 自定义菜单渲染的写法
     // import React from 'react';
     // import { MenuDataItem } from '@ant-design/pro-layout';
     // import * as allIcons from '@ant-design/icons';
     // // FIX从接口获取菜单时icon为string类型
-    // const fixMenuItemIcon = (menus: MenuDataItem[], iconType='Outlined'): MenuDataItem[] => {
-    //   menus.forEach((item) => {
-    //     const {icon, children} = item
-    //     if (typeof icon === 'string') {
-    //       let fixIconName = icon.slice(0,1).toLocaleUpperCase()+icon.slice(1) + iconType
-    //       item.icon = React.createElement(allIcons[fixIconName] || allIcons[icon])
-    //     }
-    //     children && children.length>0 ? item.children = fixMenuItemIcon(children) : null
-    //   });
-    //   return menus
-    // };
-    // menuDataRender: () => fixMenuItemIcon(initialState?.menuData),
+    menuDataRender: () => fixMenuItemIcon(initialState?.menuData),
     //自定义菜单项，
-    // menuItemRender: (itemProps: MenuDataItem, defaultDom: React.ReactNode, props: BaseMenuProps) => {
-    //   if(itemProps.buttonUrl){ //这里创建2个按钮，各自控制点击
-    //     return <div >
-    //       <span onClick={() => history.push(itemProps.path!)}>{defaultDom}</span> 
-    //       <Tooltip title={getTransStr("创建新")+getTransStr(itemProps.tip)}>
-    //         <Button type="link" style={{color:"#eff2f2"}} className="button-scale" icon={<PlusOutlined />} onClick={()=>history.push(itemProps.buttonUrl)} /> 
-    //       </Tooltip>
-    //     </div>
-    //   }else
-    //     return itemProps.target==="_blank"? 
-    //       <a target='_blank' href={itemProps.path}>{defaultDom}</a>:  //注意这里，使用了<a>标签，如果只写onClick不写href，那在右键菜单里就不会有“新标签打开”，必须写href才有这一条
-    //       <NavLink to={itemProps.path} >{defaultDom}</NavLink>
-    // },
+    menuItemRender: (itemProps: MenuDataItem, defaultDom: React.ReactNode, props: BaseMenuProps) => {
+      if (itemProps.buttonUrl) {
+        return <div >
+          <span onClick={() => history.push(itemProps.path!)}>{defaultDom}</span>
+          <Tooltip title={("创建新")}>
+            <Button type="link" style={{ color: "#eff2f2" }} className="button-scale" icon={<allIcons.PlusOutlined />} onClick={() => history.push(itemProps.buttonUrl)} />
+          </Tooltip>
+        </div>
+      } else
+        if (itemProps.target === "_blank") {
+          if (itemProps.name == 'Claude 3.5 Sonnet')
+            return <>
+              {defaultDom} &nbsp;
+              <Tooltip title={("代码生成能力相比GPT4o更具优势")} >
+                <allIcons.QuestionCircleOutlined />
+              </Tooltip>
+            </>
+          else return defaultDom
+        } else
+          return <NavLink to={itemProps.path} >{defaultDom}</NavLink>
+    },
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
@@ -185,7 +205,7 @@ const queryClient = new QueryClient();
 export function rootContainer(container) { //Important ， App()的入口处
   return (
     <QueryClientProvider client={queryClient}>
-        {container}
+      {container}
     </QueryClientProvider>
   );
 }
@@ -197,67 +217,67 @@ let needTip = true; // 默认开启提示
 const scriptReg = /<script.*src=["'](?<src>[^"']+)/gm;
 const extractNewScripts = async () => {
   let result = [];
-    try {
-      const html = await fetch('/?_timestamp=' + Date.now()).then((resp) => resp.text());
-      scriptReg.lastIndex = 0;
-      let match: RegExpExecArray
-      while ((match = scriptReg.exec(html) as RegExpExecArray)) {
-          result.push(match.groups?.src)
-      }
-    } catch (error) {
-      console.error(error);
+  try {
+    const html = await fetch('/?_timestamp=' + Date.now()).then((resp) => resp.text());
+    scriptReg.lastIndex = 0;
+    let match: RegExpExecArray
+    while ((match = scriptReg.exec(html) as RegExpExecArray)) {
+      result.push(match.groups?.src)
     }
-    return result;
+  } catch (error) {
+    console.error(error);
+  }
+  return result;
 }
 
 const needUpdate = async () => {
-    const newScripts = await extractNewScripts();
-    if (!lastSrcs) {
-        lastSrcs = newScripts;
-        return false;
-    }
-    let result = false;
-    if (lastSrcs.length !== newScripts.length) {
-        result = true;
-    }
-    // 必须检测到脚本里含有/umi.xxx.js才刷新，否则可能是其他脚本的更新
-    if(!newScripts.some((src: string) => src.includes('/umi.'))){
-        console.log("没有umj.js，可能正在更新，也可能nginx报错，挂了等")
-        return false;
-    }
-    for (let i = 0; i < lastSrcs.length; i++) {
-        if (lastSrcs[i] !== newScripts[i]) {
-            result = true;
-            break
-        }
-    }
+  const newScripts = await extractNewScripts();
+  if (!lastSrcs) {
     lastSrcs = newScripts;
-    return result;
+    return false;
+  }
+  let result = false;
+  if (lastSrcs.length !== newScripts.length) {
+    result = true;
+  }
+  // 必须检测到脚本里含有/umi.xxx.js才刷新，否则可能是其他脚本的更新
+  if (!newScripts.some((src: string) => src.includes('/umi.'))) {
+    console.log("没有umj.js，可能正在更新，也可能nginx报错，挂了等")
+    return false;
+  }
+  for (let i = 0; i < lastSrcs.length; i++) {
+    if (lastSrcs[i] !== newScripts[i]) {
+      result = true;
+      break
+    }
+  }
+  lastSrcs = newScripts;
+  return result;
 }
 const DURATION = 30000;
 const autoRefresh = () => {
   setTimeout(async () => {
     const willUpdate = await needUpdate();
     if (willUpdate) {
-        // 延时更新，防止部署未完成用户就刷新空白
-        setTimeout(() => {
-          confirm({
-            title: '检测到页面有内容更新，为了功能的正常使用，是否立即刷新？',
-            icon: <allIcons.ExclamationCircleOutlined />,
-            content: '页面有更新',
-            onOk() {
-              console.log('click reload');
-              window.location.reload();
-            },
-            onCancel() {
-              console.log('Cancel');
-            },
-          })
-        }, 300000);
-        needTip = false; // 关闭更新提示，防止重复提醒
+      // 延时更新，防止部署未完成用户就刷新空白
+      setTimeout(() => {
+        confirm({
+          title: '检测到页面有内容更新，为了功能的正常使用，是否立即刷新？',
+          icon: <allIcons.ExclamationCircleOutlined />,
+          content: '页面有更新',
+          onOk() {
+            console.log('click reload');
+            window.location.reload();
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
+        })
+      }, 300000);
+      needTip = false; // 关闭更新提示，防止重复提醒
     }
     if (needTip) {
-        autoRefresh();
+      autoRefresh();
     }
   }, DURATION)
 }

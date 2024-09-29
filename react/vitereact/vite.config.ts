@@ -12,12 +12,13 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
+    port: 6002,
     headers: {
       "Access-Control-Allow-Origin": "*"
     },
     proxy: {
       "/api/v1": {
-        target: "https://gt-pipeline-dev.mon.works",
+        target: "https://gt-pipe-dev.mon.works",
         changeOrigin: true
       }
     }

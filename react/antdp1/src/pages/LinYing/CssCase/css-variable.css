@@ -87,3 +87,20 @@
     "a a b"
     "c . b";
 }
+
+.container {
+  display: flex;
+  height: 30vh;
+  width: 100%;
+}
+
+.code-input {
+  background-color: lightblue;
+  /* transition: width 0.2s; */
+}
+
+.resizer {
+  width: 18px;
+  background-color: #ccc;
+  cursor: col-resize;
+}

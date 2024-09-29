@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import './a.css'
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
@@ -15,8 +14,6 @@ import { Login } from './pages/login';
 import { ReactSetState } from './pages/ReactSetState';
 import { NativeEventPage } from './pages/NativeEvent';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import { ReactQueryComp } from './pages/ReactQueryComp';
-
 
 const queryClient = new QueryClient();
 window.queryClient=queryClient
@@ -71,27 +68,14 @@ function App() {
       </div>
       <br/>
       <div className='with-border'>
-        mobx模块化<br/>
+        mobx模块化,下面两个组件数据是通的<br/>
+        <CounterPage3/>
         <CounterPage3/>
       </div>
       <br/>
       <ReactSetState></ReactSetState>
       <NativeEventPage></NativeEventPage>
       </QueryClientProvider>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js  </code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
     </div>
   );
 }
