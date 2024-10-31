@@ -13,7 +13,7 @@ import {
 
 
 import { loader as layoutLoader } from "@/components/layout/loader";
-import ProductList from "@/pages/ProductList";
+import Welcome from "@/pages/Welcome";
 import ProductEfficient from "@/pages/ProductEfficient";
 
 const rootLoader: LoaderFunction = async ({ request }) => {
@@ -26,10 +26,13 @@ const router = createBrowserRouter(
     <Route path="/" loader={rootLoader} element={<Root />} errorElement={<NotFound />}>
       <Route index loader={() => redirect(DEFAULT_ROUTE_PATH)} />
       <Route loader={layoutLoader} element={<SidebarLayout />}>
-        <Route path="/product-list" errorElement={<ErrorAlert />} element={<ProductList/>}/>
-        <Route path="/product-efficiency" errorElement={<ErrorAlert />} element={<ProductEfficient/>}/>
-        <Route path="/data-management/release-version" errorElement={<ErrorAlert />}>
-          <Route index loader={() => redirect("/data-management/release-version/dlp")} />
+        <Route path="/welcome" errorElement={<ErrorAlert />} element={<Welcome/>}/>
+        <Route path="/react1" errorElement={<ErrorAlert />}/>
+        <Route path="/react1/:u" errorElement={<ErrorAlert />}/>
+        <Route path="/vue" errorElement={<ErrorAlert />}/>
+        <Route path="/vue/:u" errorElement={<ErrorAlert />}/>
+        <Route path="/data-management" errorElement={<ErrorAlert />}>
+          <Route index loader={() => redirect("/")} />
         </Route>
       </Route>
     </Route>

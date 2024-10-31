@@ -17,4 +17,33 @@ nvm use 16 && npm run build
 # 方法2
 rsync -avz ./dist/ root@$SERVER_IP:~/ly/running/antdp1
 
+# build react1
+cd ../react1
+# pnpm install
+pnpm build
+rsync -avz ./build/ root@$SERVER_IP:~/ly/running/qiankun-react1
+
+build_project() {
+    local project=$1
+    local build_dir=$2
+    local dest_dir=$3
+
+    echo "开始构建 $project..."
+    cd "$build_dir"
+    # pnpm install
+    # pnpm build
+    rm -rf "$dest_dir"
+    rsync -avz ./dist/ "root@$SERVER_IP:$dest_dir"
+    echo "$project 构建完成"
+}
+
+# 并行执行2个构建过程
+build_project "vitereact" "../vitereact" "~/ly/running/vitereact" &
+build_project "vue3" "../vues/myvue-vue3" "~/ly/running/qiankun-vue3" &
+
+# 等待所有后台作业完成
+wait
+
+# cp -r ./conf/server.conf root@$SERVER_IP:/etc/nginx/conf.d/main.conf
+# nginx -s reload
 echo "Deployment completed."

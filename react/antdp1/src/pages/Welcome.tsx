@@ -34,6 +34,7 @@ const CreateElementTest=({render,props})=>{
 }
 const Welcome: React.FC = () => {
   const intl = useIntl();
+  // 对于轮询任务非常适合用react-query
   const { data, status } = useQuery('todos', fetchReQuery,{
     enabled:true, //默认为true，也就是开启了缓存，加载时会请求1次
     staleTime: 1000 * 3, // 数据在3秒后会陈旧
@@ -65,6 +66,11 @@ const Welcome: React.FC = () => {
   
   return (
     <PageContainer>
+      <h2>
+        <a style={{textDecoration:"underline"}} href={
+          window.location.hostname === "localhost"?"http://localhost:6002":(window.location.protocol+'//'+window.location.hostname+':39003')
+        } target='_blank'>Monorepo项目,主vite+react,子1:react,子2:vue3</a>
+      </h2>
       <Space>
         <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
         <a href={`${FrontendPre}/LinYing/JsTest`}>测试Helmet</a>

@@ -3,6 +3,7 @@ const Button: React.FC<{ onClick?: () => void, children?: any }> = ({ onClick, c
     border: "1px solid #ccc",
     borderRadius: 6,
     padding: 3,
+    cursor: "pointer",
   }}>{children}</button>
 );
 

@@ -1,3 +1,4 @@
+import './index.css';
 import './App.css';
 import './a.css'
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
@@ -13,7 +14,9 @@ import AuthComponent from './pages/AuthComponent';
 import { Login } from './pages/login';
 import { ReactSetState } from './pages/ReactSetState';
 import { NativeEventPage } from './pages/NativeEvent';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Page4 } from './pages/Page4Provider';
+import { QiankunMsg } from './pages/QiankunMsg';
 
 const queryClient = new QueryClient();
 window.queryClient=queryClient
@@ -22,7 +25,8 @@ function App() {
   return (
     <div className="App">
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={window.__POWERED_BY_QIANKUN__ ? '/app-react' : '/'}>
+      <BrowserRouter basename={window.__POWERED_BY_QIANKUN__ ? '/react1' : '/'}>
+      {window.__POWERED_BY_QIANKUN__ && <QiankunMsg/>}
       <ul>
         <li>最简路由，多级路由的简单使用</li>
         <li>第一种跨组件的通信方式：mobx,可以模块化store</li>
@@ -73,11 +77,13 @@ function App() {
         <CounterPage3/>
       </div>
       <br/>
+      <Page4/>
+      <br/>
+      <br/>
       <ReactSetState></ReactSetState>
       <NativeEventPage></NativeEventPage>
       </QueryClientProvider>
     </div>
   );
 }
-
 export default App;

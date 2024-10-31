@@ -116,7 +116,7 @@ export default defineConfig({
   //   'https://gw.alipayobjects.com/os/lib/react-dom/18.2.0/umd/react-dom.production.min.js',
   // ],
   
-  devtool:"source-map", //默认关掉，不然会很慢
+  devtool:REACT_APP_ENV==='dev'?"source-map":undefined,//线上关掉，不然会很慢
   devServer:{
     //注意devServer是umi的配置，不是webpack的配置，修改之后umi会自动合并到webpack的配置中，并且需要重启
     // 重启后在浏览器里还需要清空缓存，disable cache，并手动刷新才能生效

@@ -26,7 +26,7 @@ export const initialStateConfig = {
 
 // Notes: 根据字符串获取一个icon，用到React的createElement
 const fixMenuItemIcon = (menus: MenuDataItem[], iconType = 'Outlined'): MenuDataItem[] => {
-  menus.forEach((item) => {
+  menus?.forEach((item) => {
     const { icon, children } = item
     if (typeof icon === 'string') {
       let fixIconName = icon.slice(0, 1).toLocaleUpperCase() + icon.slice(1) + iconType
@@ -162,10 +162,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         </div>
       } else
         if (itemProps.target === "_blank") {
-          if (itemProps.name == 'Claude 3.5 Sonnet')
+          if (itemProps.name == 'WorkerTest+fullScreen')
             return <>
-              {defaultDom} &nbsp;
-              <Tooltip title={("代码生成能力相比GPT4o更具优势")} >
+              <NavLink to={itemProps.path} >{defaultDom}</NavLink> &nbsp;
+              <Tooltip title={("附加了tip")} >
                 <allIcons.QuestionCircleOutlined />
               </Tooltip>
             </>

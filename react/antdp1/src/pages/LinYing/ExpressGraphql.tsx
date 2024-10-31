@@ -12,13 +12,12 @@ const ExpressGraphql = () => {
     python:"python api",
     express:"express api"
   })
-  useEffect(async () => {
+  useEffect(() => {
     console.log('ExpressGraphql')
-    const data = await fetch(`${ExpressUrl}/graphql/client?query={ hello }`, {
+    fetch(`${ExpressUrl}/graphql/client?query={ hello }`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' },
-    }).then(r => r.json())
-    console.log(data.data.hello);
+    }).then(r => r.json().then(r => console.log(r)))
   }, [])
   console.log(expressResult);
 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^5.21.5",
     "mobx": "^6.6.0",
     "mobx-react-lite": "^3.4.0",
     "react": "^17.0.2",
@@ -14,7 +15,7 @@
   },
   "scripts": {
     "start": "rescripts start",
-    "dev": "rescripts start",
+    "dev": "PORT=39005 rescripts start",
     "build": "rescripts build",
     "test": "rescripts test"
   },

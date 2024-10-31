@@ -25,16 +25,6 @@
     icon: 'crown',
     routes: [
       // {name: "Test", path: "/LinYing/Test", component: "./LinYing/Test" },
-      {
-        name: "WorkerTest+fullScreen", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest",
-        target: "_blank",
-        layout: {
-          hideMenu: true,
-          hideNav: true,
-          hideFooter: true,
-        }
-      },
-      { name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
       { name: "Express+graphql", path: "/LinYing/express-graphql", component: "./LinYing/ExpressGraphql" },
       {
         name: "Css例子", path: "css", routes: [
@@ -54,7 +44,6 @@
           { name: "GoogleHeatMap", path: "/LinYing/map/GoogleHeatMap", component: "./LinYing/Map/GoogleHeatMap" },
         ]
       },
-      { name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest", menuRender: false },
       { name: "log+分段加载", path: "/LinYing/log", component: "./LinYing/LogInfo" },
       { name: "小组件", path: "/LinYing/SmallComps", component: "./LinYing/SmallComps" },
       { name: "Zip测试", path: "/LinYing/ZipTest", component: "./LinYing/ZipTest" },
@@ -70,6 +59,17 @@
       { name: "htmlTable", path: "/LinYing/HtmlTable", component: "./LinYing/HtmlTable" },
       { name: "htmlTable2-feishu", path: "/LinYing/HtmlTable2", component: "./LinYing/HtmlTable2" },
       { name: "图文混排", path: "PicAndWord", component: "./LinYing/PicAndWord" },
+      {
+        name: "WorkerTest+fullScreen", path: "/LinYing/WorkerTest", component: "./LinYing/Workers/WorkerTest",
+        target: "_blank",
+        layout: {
+          hideMenu: true,
+          hideNav: true,
+          hideFooter: true,
+        }
+      },
+      { name: "Jsondiff+ErrorBoundary", path: "/LinYing/JsonDiff", component: "./LinYing/JsonDiff" },
+      { name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest", menuRender: false },
     ]
   },
   {
@@ -77,6 +77,7 @@
     routes:[
       {name: "Graphin", path: "Graphin", component: "./2024/Graphin"},
       {name: "SvgDraw", path: "SvgDraw", component: "./2024/SvgDraw"},
+      {name: "Hook1", path: "Hook1", component: "./2024/Hook1"},
     ]
   },
   {name: "Documents",icon:"FilePdf",path: "docs",routes:[

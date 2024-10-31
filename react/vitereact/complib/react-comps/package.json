@@ -1,8 +1,10 @@
 {
   "name": "react-comps",
   "version": "1.0.0",
-  "files": ["dist","types"],
-
+  "files": [
+    "dist",
+    "types"
+  ],
   "type": "module",
   "main": "./dist/react-comps.umd.js",
   "module": "./dist/react-comps.es.js",
@@ -24,5 +26,10 @@
     "@types/react": "^18.0.0",
     "@vitejs/plugin-react": "^2.0.0",
     "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "antd": "^5.20.0",
+    "sdlin-utils": "workspace:^"
   }
 }

@@ -17,3 +17,4 @@ package-lock.json
 *.rdb
 venv/
 pnpm-lock.yaml
+*log.log

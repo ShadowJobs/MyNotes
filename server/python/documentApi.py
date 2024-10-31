@@ -1,6 +1,5 @@
 from flask import request, jsonify
 from flask import Blueprint
-import json
 
 documentRouter = Blueprint("document",__name__,url_prefix="/doc")
 @documentRouter.route("/file/<path:filename>", methods=['GET', 'POST'])
