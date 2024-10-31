@@ -15,7 +15,13 @@
     // 如果第三方库之间的类型定义有冲突，这些冲突也不会阻碍编译。
 
     "strict": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "node", //解决antd找不到的问题。 这一行是关键，不配置的话，会报错，找不到外部模块antd等，
+    // 但是react, react-dom找的到，因为vite.config.js里配置了rollupOptions.output.globals,所以会忽略这些找不到的库，但是实际上最终还是找不到。
+    // 所以即使在globals里加了antd，最终还是找不到。而配置了这个，就可以找到了。
+    // "esModuleInterop": true
+    
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules","**/*.test.ts"] 
 }

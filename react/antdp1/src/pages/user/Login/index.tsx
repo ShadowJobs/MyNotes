@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-  const [regist,setRegist]=useState(false)
+  const [regist, setRegist] = useState(false)
 
   const intl = useIntl();
 
@@ -50,7 +50,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
-      const data = await (regist?registAccount:login)({ ...values, type });
+      const data = await (regist ? registAccount : login)({ ...values, type });
       if (data.code === 0) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
         <LoginForm
           submitter={{
             searchConfig: {
-              submitText: regist?"注册":"登录"
+              submitText: regist ? "注册" : "登录"
             },
             render: (_, dom) => dom.pop(),
             submitButtonProps: {
@@ -195,15 +195,16 @@ const Login: React.FC = () => {
           {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
-              <ProFormText
+              <ProFormText disabled
                 fieldProps={{
                   size: 'large',
                   prefix: <MobileOutlined className={styles.prefixIcon} />,
                 }}
                 name="mobile"
                 placeholder={intl.formatMessage({
-                  id: 'pages.login.phoneNumber.placeholder',
-                  defaultMessage: '手机号',
+                  // id: 'pages.login.phoneNumber.placeholder',
+                  id: 'notAvailable',
+                  defaultMessage: '手机登录暂不支持',
                 })}
                 rules={[
                   {
@@ -282,9 +283,9 @@ const Login: React.FC = () => {
             <ProFormCheckbox noStyle name="autoLogin">
               <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
             </ProFormCheckbox>
-            <Space style={{float: 'right',}}>
-            <Switch checkedChildren="注册" unCheckedChildren="登录" checked={regist} onChange={()=>setRegist(pre=>!pre)} />
-            <a> <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" /></a>
+            <Space style={{ float: 'right', }}>
+              <Switch checkedChildren="注册" unCheckedChildren="登录" checked={regist} onChange={() => setRegist(pre => !pre)} />
+              <a><FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" /></a>
             </Space>
           </div>
         </LoginForm>

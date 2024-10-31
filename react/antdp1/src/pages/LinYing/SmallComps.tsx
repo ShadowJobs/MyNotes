@@ -870,6 +870,8 @@ export const SavePngButton: React.FC<{ node: HTMLElement }> = ({ node }) => {
   </>
 }
 
+// 第一种markdown组件 react-markdown+rehype-highlight，问题：在ant design pro项目里（aep，epl），报错 react-markdown 依赖的vfile里的
+// 找不到 #minpath in ./node_modules/react-markdown/node_modules/vfile/lib/index.js 
 export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
   return <div style={
     { border: "1px solid #EFF0F2", backgroundColor: "#F5F6F5", borderRadius: 8, padding: 5, width: "100%", }
@@ -877,4 +879,42 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
     <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{content}</ReactMarkdown>
   </div>
 }
+// 第二种markdown组件 import Markdown from 'markdown-to-jsx'; 【推荐】第三种方法的python高亮有问题
+// export const MarkdownContent = ({ content }) => {
+//   return <Markdown>{content}</Markdown>;
+// };
+// 第二种方法的高亮做法：
+// import hljs from 'highlight.js';
+// import 'highlight.js/styles/github.css'; // 选择你喜欢的样式
+// const applyHighlight = () => {
+//   document.querySelectorAll('pre code').forEach((block) => {
+//     hljs.highlightBlock(block);
+//   });
+// };
+// 在数据更新时，调用 applyHighlight() 即可。 useEffect(() => { applyHighlight(); }, [content]);
+
+
+
+// 第三种markdown组件 remarkable
+// import { Remarkable } from 'remarkable';
+// const MarkdownContent = ({ content }) => {
+//   const md = new Remarkable(
+    // { //加高亮时使用如下的配置：
+    // 先 import Prism from 'prismjs';import 'prismjs/themes/prism.css'
+    // highlight: function(str, lang) {
+    //   if (lang && Prism.languages[lang]) {
+    //     try {
+    //       return Prism.highlight(str, Prism.languages[lang], lang);
+    //     } catch (_) {}
+    //   }
+      
+    //   return ''; // 使用默认的转义
+    // }
+// );
+//   const htmlContent = md.render(content);
+//   return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+// };
+
+
+
 export default SmallComps

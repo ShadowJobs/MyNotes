@@ -48,3 +48,14 @@ package.json里加上tsc
 }
 
 ```
+
+### 6, pnpm-workspace.yaml
+如果你的工作区配置非常基础，可能只用 package.json 就足够了。注意，并非所有的包管理工具都支持 pnpm-workspace.yaml 文件，但 "workspaces" 字段在如 npm 和 yarn 等其他包管理器中也有广泛支持。
+```yaml
+packages:
+  - sub
+  - complib/*
+  - ly-utils
+  - "!**/test/**" # 忽略test目录
+```
+请参阅最新的 [PNPM 文档](https://pnpm.io/workspaces) 获取最准确的信息。

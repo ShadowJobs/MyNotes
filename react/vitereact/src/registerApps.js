@@ -1,37 +1,34 @@
 import { registerMicroApps, start,initGlobalState } from 'qiankun';
+
+// 自己写的qiankun 
+// import { registerMicroApps, start,initGlobalState } from '../myqiankun/qiankun';
+
+import microActions from './hooks/microActions';
 const loader = (loading) => {
     console.log('加载状态', loading)
 }
-const actions = initGlobalState({
+const initSt= {
     name:'jw',
-    age:30
-})
-actions.onGlobalStateChange((newVal,oldVal)=>{
-    console.log('parent',newVal,oldVal)
-})
-
+    age:30,
+    qkm:0
+}
+const actions = initGlobalState(initSt)
+microActions.mainAppMounted(actions,initSt);
+const host = window.location.hostname
 registerMicroApps([
-    // {
-    //     name: 'reactApp',
-    //     entry: '//localhost:9102', // 默认react启动的入口是10000端口
-    //     activeRule: '/react',
-    //     container: '#container',
-    //     loader,
-    //     props: { a: 1, util: {} }
-    // },
     {
         name: 'vueApp',
-        entry: '//localhost:9101',
+        entry: `//${host}:39004`,
         activeRule: '/vue',
-        container: '#container',
+        container: '#qiankuncontainer',
         loader,
         props: { a: 1, util: {} }
     },
     {
         name: 'react my',
-        entry: '//localhost:9102',
+        entry: `//${host}:39005`,
         activeRule: '/react1',
-        container: '#container', 
+        container: '#qiankuncontainer', 
         loader,
         props: { a: 1, util: {} }
     }
@@ -41,9 +38,11 @@ registerMicroApps([
     },
     beforeMount() {
         console.log('before mount')
+        // microActions.setGlobalState(microActions.states)
     },
     afterMount() {
         console.log('after mount')
+        microActions.setGlobalState(microActions.states)
     },
     beforeUnmount() {
         console.log('before unmount')
@@ -60,7 +59,7 @@ start({
         // CSS in js
         // shadowDOM 严格的隔离
 
-        // strictStyleIsolation:true,
+        strictStyleIsolation:true,
         //experimentalStyleIsolation:true // 缺点 就是子应用中的dom元素如果挂在到了外层，会导致样式不生效
     }
 })

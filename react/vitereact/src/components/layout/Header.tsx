@@ -1,8 +1,9 @@
 import useUser from "@/hooks/useUser";
-import { LinkOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Breadcrumb, Button, Dropdown, Layout, message, theme } from "antd";
+import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Breadcrumb, Button, Dropdown, Layout, message, Space, theme } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import useQiankunState from "@/hooks/useQiankunState";
+import microActions from "@/hooks/microActions";
 export default function Header() {
   const {
     token: { colorBgContainer }
@@ -11,6 +12,7 @@ export default function Header() {
 
   const { data: user } = useUser();
   const navigate = useNavigate();
+  const [qkm] = useQiankunState();
 
   const handleLogout = () => {
     localStorage.removeItem("user/info");
@@ -34,24 +36,30 @@ export default function Header() {
             .map((item) => ({ title: item }))
         ]}
       />
-      <Dropdown
-        trigger={["click", "hover"]}
-        menu={{
-          items: [
-            {
-              key: "logout",
-              label: "Logout",
-              icon: <LogoutOutlined />,
-              onClick: handleLogout
-            }
-          ]
-        }}
-      >
-        <Button type="text" className="flex items-center !py-6">
-          <Avatar icon={<UserOutlined />} />
-          <span className="ml-4">{user?.user_name ?? "anonymous"}</span>
-        </Button>
-      </Dropdown>
+      <Space>
+        <Button type="primary" onClick={() => {
+          let newQkm: number = qkm + 1
+          microActions.setGlobalState!({ qkm: newQkm })
+        }}>qiankun msg {qkm}</Button>
+        <Dropdown
+          trigger={["click", "hover"]}
+          menu={{
+            items: [
+              {
+                key: "logout",
+                label: "Logout",
+                icon: <LogoutOutlined />,
+                onClick: handleLogout
+              }
+            ]
+          }}
+        >
+          <Button type="text" className="flex items-center !py-6">
+            <Avatar icon={<UserOutlined />} />
+            <span className="ml-4">{user?.user_name ?? "anonymous"}</span>
+          </Button>
+        </Dropdown>
+      </Space>
     </Layout.Header>
   );
 }

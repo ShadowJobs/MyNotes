@@ -57,7 +57,10 @@ engines：指定项目所需要的node.js版本
 
 browserslist：支持的浏览器 
 ```json
-"type":"module"//对于import的使用个，需要添加这个参数才行
+"type":"module"//对于import的使用个，需要添加这个参数才行。因为node环境下默认是require，如果不加这个参数，
+//等价的方式1： 也可以将.js改成.mjs，node也能找到，否则使用import的地方会找不到。
+//等价的方式3： 在使用的<script>里加上type="module"
+
 "types": "dist/index.d.ts"
 "typings": "dist/index.d.ts" 同types
 //指定ts的类型文件，注意，这里不用./开头（antd的package.json中的typings字段就是这样的）
@@ -125,5 +128,23 @@ eslint 的配置可以写在单独的配置文件. eslintrc.json 中，也可以
   "parserOptions": {
     "parser": "babel-eslint"
   },
+}
+```
+
+# imports 
+```json
+{
+  "imports": {
+    "#minpath": { //import {minpath} from '#minpath' 会自动查找到default （浏览器环境）别名必须以 # 开头，以便与常规的 npm 包或内置模块区分开。
+// 路径映射可以指向文件或目录，而且可以使用通配符。
+// 导入时使用的别名需要与 package.json 中定义的别名完全匹配。
+      "node": "./lib/minpath.js",
+      "default": "./lib/minpath.browser.js"
+    },
+    "#minproc": {
+      "node": "./lib/minproc.js",
+      "default": "./lib/minproc.browser.js"
+    }
+  }
 }
 ```

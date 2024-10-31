@@ -1,7 +1,7 @@
 import { DEFAULT_OPEN_PATH, DEFAULT_SELECTED_PATH, navigation } from "@/config/navigation";
 import { Card, Layout, Menu, Skeleton } from "antd";
-import { Suspense, useState } from "react";
-import { Link, Outlet, useLoaderData, useLocation } from "react-router-dom";
+import { Suspense, useEffect, useState } from "react";
+import { Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { useCreation } from "ahooks";
 
 import Footer from "./Footer";
@@ -22,7 +22,10 @@ export default function SidebarLayout() {
 
   const { isSidebarCollapsed } = useLoaderData() as LayoutLoaderData;
   const [isCollapsed, setIsCollapsed] = useState(isSidebarCollapsed);
-
+  useEffect(() => {
+    // @ts-ignore
+    // import("../../registerApps.js")
+  },[])
   return (
     <>
       <Layout.Sider
@@ -40,8 +43,9 @@ export default function SidebarLayout() {
         data-collapsed={isCollapsed}
         data-theme-override
       >
-        <div className="flex items-center justify-center px-2 py-8">
-        </div>
+        <h1 className="flex items-center justify-center px-2 py-8" style={{color:"white"}}>
+          Vite+React+qiankun
+        </h1>
         <Menu
           theme="dark"
           mode="inline"
@@ -72,6 +76,7 @@ export default function SidebarLayout() {
             }
           >
             <Outlet />
+            <div id="qiankuncontainer"></div>
           </Suspense>
         </Layout.Content>
 

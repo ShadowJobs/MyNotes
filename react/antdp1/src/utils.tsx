@@ -561,5 +561,13 @@ export const downloadFile = (url, name) => {
   .catch(e => console.error(e));
 }
 
+export const delay=(ms:number):void => {
+  let startTime=Date.now()
+  let i=1e9
+  while(Date.now()-startTime<ms){
+    i*=2;i/=2
+  }
+}
+
 export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall,toBase62 }
 
