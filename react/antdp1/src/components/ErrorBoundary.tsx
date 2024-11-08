@@ -1,3 +1,4 @@
+import { sendErrorToServer } from "@/startItems";
 import { WarningTwoTone } from "@ant-design/icons";
 import { Card } from "antd";
 import React from "react";
@@ -16,6 +17,16 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
       // 这里你也可以将错误记录到一些报告服务中
       console.log(error, errorInfo);
+
+      const errorData = {
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+        type: 'react_comp'
+      };
+      
+      // 发送错误信息到服务器
+      sendErrorToServer(errorData);
   }
 //   上2个函数只能捕获生命周期里的钩子里的错误，一般是render的错误
 

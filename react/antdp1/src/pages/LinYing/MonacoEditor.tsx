@@ -6,9 +6,11 @@ import * as _ from 'lodash'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import 'monaco-editor/esm/vs/basic-languages/python/python.contribution'; // 1,语法高亮，这么import可以使生成的时候引用的代码只有python的包
 import "./hightlight11.8.0.min.css" //react-markdown的代码高亮样式,必须配合hightlight.js库
-import md from './markdown.txt'
+// import md from './markdown.txt'
 //各种参数配置：https://microsoft.github.io/monaco-editor/docs.html#enums/editor.EditorOption.html
-// import md from './markdown.md' //实测用md会报错，webpack导入的时候即使用了memo.module.rule('md').test(/\.md$/).use('raw-loader').loader('raw-loader').end();也不会按纯文本导入
+import md from '!!raw-loader!./markdown.md'
+// 这里前提是安装了raw-loader库，否则会报错，仅需-D，在devDependencies里即可
+console.log(md)
 
 import { LogCard } from './MonacoEditorReact';
 import { MarkdownComp } from './SmallComps';
@@ -117,7 +119,7 @@ const CodeEditor = () => {
         <MonacoEditor />
       </Collapse.Panel>
       <Collapse.Panel header="markdown展示" key="2">
-        <MarkdownComp content={md} />
+        <MarkdownComp content={md.toString()} />
       </Collapse.Panel>
       <Collapse.Panel header="用monaco-editor-react" key="3">
         <LogCard curLog={`

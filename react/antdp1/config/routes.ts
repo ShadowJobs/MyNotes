@@ -78,6 +78,10 @@
       {name: "Graphin", path: "Graphin", component: "./2024/Graphin"},
       {name: "SvgDraw", path: "SvgDraw", component: "./2024/SvgDraw"},
       {name: "Hook1", path: "Hook1", component: "./2024/Hook1"},
+      {name: "ErrorStatistic", path: "ErrorStatistic", component: "./2024/ErrorStatistic"},
+      {name: "AvatarUpdate", path: "AvatarUpdate", component: "./2024/AvatarUpdate"},
+      {name: "BigFileUpload", path: "BigFileUpload", component: "./2024/BigFileUpload"},
+
     ]
   },
   {name: "Documents",icon:"FilePdf",path: "docs",routes:[

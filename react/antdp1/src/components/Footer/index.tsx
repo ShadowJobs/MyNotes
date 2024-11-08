@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
   }, []);
   return (
     <DefaultFooter
-      copyright={`${currentYear} ${defaultMessage}`}
+      copyright={`${currentYear} ${defaultMessage} 津ICP备2023004690号-1`}
       links={[
         {
           key: 'shadowjobs',

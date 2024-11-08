@@ -32,8 +32,39 @@ ALTER TABLE user ADD UNIQUE (name);
 alter table user add COLUMN ip varchar(30) not null default '' comment 'ip';
 UPDATE user SET ip = name;
 ALTER TABLE user ADD UNIQUE (ip);
+CREATE TABLE front_end_errors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    stack TEXT,
+    source VARCHAR(255),
+    lineno INT,
+    colno INT,
+    component_stack TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user CHAR(50) NULL
+);
 
+CREATE TABLE `api_log` (
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) DEFAULT NULL,
+  `host` varchar(128) DEFAULT NULL,
+  `start_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `execute_ms` int(11) DEFAULT NULL,
+  `succeed` int(11) DEFAULT '0',
+  `user` varchar(100) DEFAULT NULL,
+  `payload` json DEFAULT NULL,
+  `error_info` json DEFAULT NULL,
+  `header` json DEFAULT NULL,
+  `error` json DEFAULT NULL,
+  PRIMARY KEY (`log_id`),
+  KEY `api_log_start_time_index` (`start_time`),
+  KEY `api_log_succeed_index` (`succeed`),
+  KEY `api_log_url_index` (`url`),
+  KEY `api_log_host_index` (`host`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+alter table user add column avatar_path varchar(255) default '' comment '头像路径';
 
 -- execute in shell： mysql -u yourusername -p -h localhost < init.sql
 

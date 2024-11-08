@@ -227,4 +227,13 @@ userRouter.get('/currentUser',async (req, res) => {
   }
 });
 
+userRouter.post('/logout',async (req, res) => {
+  let token = req.headers['authorization'];
+  if (!token) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  redisClient.del(token);
+  return res.json({ msg: 'Logout successful', code: 0 });
+})
+
 module.exports = userRouter

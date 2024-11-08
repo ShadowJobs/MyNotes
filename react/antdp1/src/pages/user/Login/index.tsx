@@ -2,9 +2,8 @@ import {
   AlipayCircleOutlined,
   LockOutlined,
   MobileOutlined,
-  TaobaoCircleOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
+  WechatOutlined,
 } from '@ant-design/icons';
 import { Alert, Button, message, Space, Switch, Tabs } from 'antd';
 import React, { useState } from 'react';
@@ -15,6 +14,7 @@ import { login, registAccount } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
+import { useForm } from 'antd/lib/form/Form';
 
 const LoginMessage: React.FC<{
   content: string;
@@ -34,6 +34,7 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const [regist, setRegist] = useState(false)
+  const [form] = useForm()
 
   const intl = useIntl();
 
@@ -91,12 +92,25 @@ const Login: React.FC = () => {
         {SelectLang && <SelectLang />}
       </div>
       <div className={styles.content}>
-        <LoginForm
+        <LoginForm form={form}
           submitter={{
             searchConfig: {
-              submitText: regist ? "注册" : "登录"
+              submitText: regist ? "注册" : "登录",
             },
-            render: (_, dom) => dom.pop(),
+            render: (_, dom) => {
+              dom.push(
+                <Button type="primary" htmlType="submit" style={{ width: '100%', flexGrow: 1 }}>
+                  {regist ? "注册" : "登录"}
+                </Button>)
+              !regist && dom.push(
+                <Button type="primary" onClick={() => {
+                  form.setFieldsValue({ username: 'guest', password: 'guest' })
+                  form.submit()
+                }} style={{ width: '100%', flexGrow: 1 }}>
+                  游客登录
+                </Button>)
+              return dom
+            },
             submitButtonProps: {
               size: 'large',
               style: {
@@ -111,18 +125,18 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
+            <FormattedMessage key="loginWith" id="pages.login.loginWith" defaultMessage="其他登录方式" />,
+            <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon}
+              style={{ marginLeft: 10, transform: "scale(1.4)", color: "#1677FF" }} />,
+            <WechatOutlined key="AlipayCircleOutlined" className={styles.icon}
+              style={{ marginLeft: 10, transform: "scale(1.4)", color: "#12C25F", cursor: "pointer" }}
+              onClick={() => { message.error("暂不支持微信登录") }}
             />,
-            <AlipayCircleOutlined key="AlipayCircleOutlined" className={styles.icon} />,
-            <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={styles.icon} />,
-            <WeiboCircleOutlined key="WeiboCircleOutlined" className={styles.icon} />,
           ]}
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}
+          onReset={() => form.resetFields()}
         >
           <Tabs activeKey={type} onChange={setType}>
             <Tabs.TabPane
@@ -289,10 +303,10 @@ const Login: React.FC = () => {
             </Space>
           </div>
         </LoginForm>
-        <div>测试用户admin,ly2，用户名密码相同</div>
-      </div>
+        <div>测试用户admin,用户名密码相同</div>
+      </div >
       <Footer />
-    </div>
+    </div >
   );
 };
 

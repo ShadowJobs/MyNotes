@@ -74,9 +74,15 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
   chainWebpack: (memo) => {
-    // memo.module //实测，这样导入的md，不会按纯文本处理，而是会生成一个module，是个函数，原因待查
-    //   .rule('md').test(/\.md$/).use('raw-loader').loader('raw-loader').end();
-    // memo.module .rule('js').exclude.add(/\.md$/)
+    // memo.module.rule('js').exclude.add(/\.md$/)
+    // memo.module.rule('jsx').exclude.add(/\.md$/)
+    // memo.module.rule('ts').exclude.add(/\.md$/)
+    // memo.module.rule('tsx').exclude.add(/\.md$/)
+    // memo.module.rule("markdown").test(/\.md$/).use('raw-loader').loader('raw-loader').options({ esModule: false });
+// 实测，上述内容都不会生效，生效的方法是在import时候加上!!raw-loader!前缀，import md from '!!raw-loader!./markdown.md'
+// 要安装raw-loader库，否则会报错，仅需-D，在devDependencies里即可
+
+// vite里的做法是，import md from 'markdown.md?raw'，这个是vite的内置语法
     memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
       { languages: ['javascript','json','python'] },
     ]);

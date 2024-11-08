@@ -879,10 +879,16 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
     <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{content}</ReactMarkdown>
   </div>
 }
-// 第二种markdown组件 import Markdown from 'markdown-to-jsx'; 【推荐】第三种方法的python高亮有问题
+// 第二种markdown组件 import Markdown from 'markdown-to-jsx';  【推荐】
+// 第三种方法的python高亮有问题
+// const CustomCode = ({ children, ...props }) => (
+//   <pre {...props}>
+//     <code>{children}</code>
+//   </pre>
+// );
 // export const MarkdownContent = ({ content }) => {
-//   return <Markdown>{content}</Markdown>;
-// };
+  // <Markdown options={{ overrides: { code: { component: CustomCode } } }}>{diagnosisData.data}</Markdown>
+  // };
 // 第二种方法的高亮做法：
 // import hljs from 'highlight.js';
 // import 'highlight.js/styles/github.css'; // 选择你喜欢的样式
@@ -895,7 +901,7 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
 
 
 
-// 第三种markdown组件 remarkable
+// 第三种markdown组件 remarkable ; 有高亮问题？？？待尝试
 // import { Remarkable } from 'remarkable';
 // const MarkdownContent = ({ content }) => {
 //   const md = new Remarkable(

@@ -6,3 +6,7 @@
 # 简单的vite项目搭建
 必须以要有index.html ,注意<script>标签的type="module"
 默认支持es6模块化, ts, jsx, 
+
+# loader 
+类似webpack，vite里的rollup读取文件内容的rawloader写法如下
+import md from 'a.md?raw';
