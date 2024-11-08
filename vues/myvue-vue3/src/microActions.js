@@ -22,7 +22,8 @@ class MicroActions {
     onGlobalStateChange?.((newState, prevState) => {
       console.log('mainApp', newState, prevState);
       // 弹出状态变化框
-      alert('mainApp' + JSON.stringify(newState));
+      // alert('mainApp' + JSON.stringify(newState));
+      window.__GOT_QIANKUN_NEW_STATE__=newState
     })
   }
 }

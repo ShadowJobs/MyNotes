@@ -8,6 +8,7 @@ C,C++/cmake/CMakeFiles/
 *.pyc
 *.dSYM/
 .vscode/
+!server/python/.vscode/
 */node_modules/
 */dist/
 */**/dist
@@ -18,3 +19,4 @@ package-lock.json
 venv/
 pnpm-lock.yaml
 *log.log
+uploads/

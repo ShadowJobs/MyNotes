@@ -3,6 +3,7 @@ import { GaodeKey } from "./global";
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import _ from "lodash";
+import SparkMD5 from 'spark-md5';
 // import { Parser } from 'json2csv';
 // import { saveAs } from 'file-saver';
 
@@ -541,33 +542,81 @@ export function generateRandomWords(length) {
 const chars = '0123456789abcdefghijkl mnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 // 转换为62进制0-9,a-z,A-Z
 function toBase62(n) {
-    if (n === 0) return '0';
-    let s = '';
-    while (n > 0) {
-        s = chars[n % 62] + s;
-        n = Math.floor(n / 62);
-    }
-    return s;
+  if (n === 0) return '0';
+  let s = '';
+  while (n > 0) {
+    s = chars[n % 62] + s;
+    n = Math.floor(n / 62);
+  }
+  return s;
 }
-  // console.log(toBase62(123456789)); // 输出: '8M0kX'
+// console.log(toBase62(123456789)); // 输出: '8M0kX'
 export const downloadFile = (url, name) => {
   fetch(url).then(response => response.blob()).then(blob => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = name;
-    a.click(); 
+    a.click();
   })
-  .catch(e => console.error(e));
+    .catch(e => console.error(e));
 }
 
-export const delay=(ms:number):void => {
-  let startTime=Date.now()
-  let i=1e9
-  while(Date.now()-startTime<ms){
-    i*=2;i/=2
+export const delay = (ms: number): void => {
+  let startTime = Date.now()
+  let i = 1e9
+  while (Date.now() - startTime < ms) {
+    i *= 2; i /= 2
   }
 }
 
-export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall,toBase62 }
+export const getFileMd5 = async (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+      chunkSize = 2097152,                             // Read in chunks of 2MB
+      chunks = Math.ceil(file.size / chunkSize),
+      currentChunk = 0,
+      spark = new SparkMD5.ArrayBuffer(),
+      fileReader = new FileReader();
+
+    fileReader.onload = function (e) {
+      // console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+      spark.append(e.target.result);                   // Append array buffer
+      currentChunk++;
+
+      if (currentChunk < chunks) {
+        loadNext();
+      } else {
+        console.log('finished loading');
+        const hash=spark.end()
+        console.info('computed hash', hash);  // Compute hash
+        resolve(hash)
+      }
+    };
+
+    fileReader.onerror = function () {
+      console.warn('oops, something went wrong.');
+    };
+
+    function loadNext() {
+      var start = currentChunk * chunkSize,
+        end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+
+      fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+    }
+
+    loadNext();
+  });
+}
+export type Chunk={blob:Blob,progress:number,finished:boolean}
+export const getFileChunks=(file:File,chunkSize:number):Chunk[]=>{
+  const chunks:Chunk[] = [];
+  let i = 0;
+  while (i < file.size) {
+    chunks.push({ blob: file.slice(i, i + chunkSize), progress: 0, finished: false });
+    i += chunkSize;
+  }
+  return chunks
+}
+export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall, toBase62 }
 

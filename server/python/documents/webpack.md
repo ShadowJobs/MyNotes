@@ -1,3 +1,34 @@
+# 1. loader
+- ant design pro项目里，使用webpackChain无效，可能内部有配置覆盖
+
+- ### 如何在代码里使用特定loader
+  - 在配置里用rule+test+use的方式配置
+  - 在import或require语句中使用loader前缀
+    - `!` 前缀会禁用所有已配置的 normal loader。
+    - `!!` 前缀会禁用所有已配置的 loader（包括 pre 和 post）。
+    - `-!` 前缀会禁用所有已配置的 pre 和 normal loader。
+    
+  import md from '!!raw-loader!./markdown.md'
+
+  所以 `!!raw-loader!` 的作用是：跳过所有其他配置的 loader，只使用 raw-loader 来处理文件。
+
+  这种方式通常用于特定情况下覆盖默认配置，不是所有 loader 都需要这样使用。
+
+- ### 常用的 loader
+  1. `babel-loader`: 转换 ES6+ 代码为 ES5。
+  2. `css-loader`: 解析 CSS 文件，处理 CSS 中的依赖。
+  3. `style-loader`: 将 CSS 插入到 DOM 中。
+  4. `sass-loader`: 将 SASS/SCSS 转换为 CSS。
+  5. `file-loader`: 处理文件导入，返回文件的 URL。
+  6. `url-loader`: 类似 file-loader，但可以返回 data URL。
+  7. `ts-loader`: 将 TypeScript 转换为 JavaScript。
+  8. `eslint-loader`: 在 Webpack 编译过程中运行 ESLint。
+  9. `vue-loader`: 处理 Vue 单文件组件。
+  10. `html-loader`: 导出 HTML 为字符串，需要时最小化 HTML。
+
+
+# 配置项
+
 ```js
 const path = require('path');
 const webpack = require('webpack');
