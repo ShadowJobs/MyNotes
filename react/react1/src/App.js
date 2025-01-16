@@ -1,6 +1,4 @@
 import './index.css';
-import './App.css';
-import './a.css'
 import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
 import Home from './pages/Home'
 import {List} from './pages/List'
@@ -23,7 +21,7 @@ window.queryClient=queryClient
 function App() {
   console.log(process.env.REACT_APP_DEVELOPMENT_P1)
   return (
-    <div className="App">
+    <div style={{textAlign:"center"}}>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename={window.__POWERED_BY_QIANKUN__ ? '/react1' : '/'}>
       {window.__POWERED_BY_QIANKUN__ && <QiankunMsg/>}

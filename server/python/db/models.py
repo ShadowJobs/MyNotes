@@ -163,6 +163,43 @@ class User(db.Model):
                 os.remove(old_avatar_path)
         return True 
 
+class UploadedFile(db.Model):
+    __tablename__ = 'uploaded_files'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    filename = Column(String(255), nullable=False)
+    md5 = Column(String(255), nullable=False)
+    chunk_num = Column(Integer, nullable=False)
+    upload_time = Column(DATETIME, default=datetime.now, nullable=False)
+    size = Column(Integer, nullable=False)
+
+    @staticmethod
+    @parse_mysql_return
+    def find_by_md5(md5: str):
+        obj = UploadedFile.query.filter_by(md5=md5).first()
+        return obj
+
+    @staticmethod
+    @parse_mysql_return
+    def find_by_user_id(user_id: int):
+        obj = UploadedFile.query.filter_by(user_id=user_id).all()
+        return obj
+    
+    @staticmethod
+    def delete(**kwargs):
+        id = kwargs.get("id")
+        md5 = kwargs.get("md5")
+        user_id = kwargs.get("user_id")
+        if id:
+          t = UploadedFile.query.filter_by(id=id).first()
+        elif md5:
+          t = UploadedFile.query.filter_by(md5=md5).first()
+        elif user_id:
+          t = UploadedFile.query.filter_by(user_id=user_id).first()
+        db.session.delete(t)
+        db.session.commit()
+        return True
+
 def to_dict(obj):
     # Convert an SQLAlchemy model instance into a dict
     from sqlalchemy.orm import class_mapper

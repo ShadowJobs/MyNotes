@@ -126,3 +126,55 @@ sc.onload=()=>{....}
   ### iframe 的特殊情况
 
   `<iframe>` 元素虽然默认为内联元素，但它同时也是一个替换元素：默认宽度：如果未指定宽度，iframe 通常会采用一个默认宽度（可能是 300px 或由浏览器决定）。
+
+# 6. 手机版调试
+1. 使用远程调试（没试过）：
+   - 将手机通过USB连接到电脑。
+   - 在手机上启用USB调试（在开发者选项中）。
+   - 在电脑的Chrome浏览器中访问 `chrome://inspect/#devices`。
+   - 你应该能看到你的设备和打开的标签页。
+   - 点击"inspect"来打开开发者工具，你可以像在桌面版一样使用控制台和网络面板。
+
+2. 使用内置日志查看器：
+   - 在你的应用中添加一个简单的日志查看器组件。
+   - 将console.log替换为自定义的日志函数，将消息存储在内存或本地存储中。
+   - 添加一个隐藏的手势或按钮来显示日志查看器。
+
+   示例代码：
+   ```javascript
+   let logs = [];
+   
+   function customLog(...args) {
+     const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
+     logs.push(message);
+     console.log(...args);  // 保留原始的console.log
+   }
+   
+   // 在组件中
+   const [showLogs, setShowLogs] = useState(false);
+   
+   // 在JSX中
+   {showLogs && (
+     <div style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', color: 'white', overflow: 'auto', zIndex: 9999}}>
+       {logs.map((log, index) => <div key={index}>{log}</div>)}
+     </div>
+   )}
+   <button onClick={() => setShowLogs(!showLogs)}>Toggle Logs</button>
+   ```
+
+3. 使用第三方工具：
+   - Eruda：一个专为手机网页前端调试的工具。
+   - 在你的页面中添加以下代码：
+     ```html
+     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+     <script>eruda.init();</script>
+     ```
+
+4. 使用云端服务：
+   - 例如 LogRocket 或 Sentry 这样的服务可以捕获和记录前端错误和网络请求。
+   - 需要在应用中集成这些服务的SDK。
+
+# 7. svg
+remix上的svg默认大小是很大的，没有设置颜色，需要设置fill,width,height, 另外水平对齐是baseline,居中需要设置vertical-align:middle
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="blue" width="20" height="20" style={{ verticalAlign: 'middle' }}>
+

@@ -175,6 +175,7 @@ export const LineChart: React.FC<{
   const [autofitY, setAutofitY] = useState(true);
   const [enableScale, setEnableScale] = useState(false);  
   const extraTip=chart.external?.extraTip
+  const acrossParams:any = chart.external?.acrossParams || {}
   const ref=useRef()
   const data = chart.data
     .map((line) => {
@@ -245,6 +246,7 @@ export const LineChart: React.FC<{
     tooltip: extraTip?{
       fields: [chart.y_label,...(extraTip||[])],}
       :{},
+    ...acrossParams
   };
   if(chart?.external?.closeAnimation) config.animation=false
 
@@ -339,6 +341,7 @@ export const PieChart: React.FC<{ chart: Mynote.ApiAggPieChart }> = ({ chart }) 
     };
   });
 
+  const acrossParams:any = chart.external?.acrossParams || {}
   const config: PieConfig = {
     appendPadding: 10,
     data: data,
@@ -353,6 +356,7 @@ export const PieChart: React.FC<{ chart: Mynote.ApiAggPieChart }> = ({ chart }) 
       content: '{name} {percentage}',
     },
     interactions: [{ type: 'pie-legend-active' }, { type: 'element-active' }],
+    ...acrossParams
   };
 
   return <Pie {...config} onReady={(plot)=>{

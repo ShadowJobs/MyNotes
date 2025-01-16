@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Alert, Typography, Button, Space, Divider, Modal,DatePicker } from 'antd';
+import { Button, Space, Divider, Modal,DatePicker } from 'antd';
 import { useIntl, FormattedMessage } from 'umi';
-import styles from './Welcome.less';
+import './Welcome.less';
 import { eliminateAsyncCall, savePageWithStyles } from '@/utils';
 import { useQuery } from 'react-query';
 import { fetchReQuery } from '@/services/myExpressApi/express1';
-import { ExpressUrl, FrontendPre } from '@/global';
+import { ExpressUrl, FrontendPre, ThinkingDeepseakUrl } from '@/global';
 
 import locale from 'antd/es/date-picker/locale/en_US';
 
@@ -48,28 +48,23 @@ const Welcome: React.FC = () => {
     // initialData: '初始数据,设置了之后，默认第一次不会请求数据，而是直接使用这个数据，点击强制获取可更新数据', 
   });
   const [visible,setVisible]=React.useState<boolean>(false)
-  const [fileTxt,setfileTxt]=React.useState<string>('')
-
-  const getBigFile=async ()=>{
-    const result =await fetch(`${ExpressUrl}/job/bigfile`) //第一次await只是head部分，第二次await res.json()才是body部分,但是json会等所有的数据都到达才返回
-    const reader = result.body?.getReader();
-    const decoder = new TextDecoder('utf-8');
-    while(true){
-      const r = await reader?.read();//这次是read的body部分
-      if(r?.done) break;
-      const txt = decoder.decode(r?.value);
-      // setfileTxt(pre=>pre+txt) //正常情况下数据应该是这种方式获取，因为每次read之后数据就会丢弃
-      setfileTxt(txt)//这里只读取最后一次的结果，方便展示的时候看到变化
-
-    }
-  }
-  
+  useEffect(() => {
+    console.log("In running time")
+    console.log(process.env.TEST_ENV)
+    console.log(process.env.TEST_ENV2)
+    console.log(process.env.NODE_ENV)
+  }, [])
   return (
     <PageContainer>
       <h2>
         <a style={{textDecoration:"underline"}} href={
           window.location.hostname === "localhost"?"http://localhost:6002":(window.location.protocol+'//'+window.location.hostname+':39003')
         } target='_blank'>Monorepo项目,主vite+react,子1:react,子2:vue3</a>
+      </h2>
+      <h2>
+        <a style={{textDecoration:"underline"}} href={ThinkingDeepseakUrl} target='_blank'>
+          My GPT
+        </a>
       </h2>
       <Space>
         <Button onClick={savePageWithStyles}>保存,导出当前页面</Button>
@@ -119,15 +114,11 @@ const Welcome: React.FC = () => {
 
         <RangePicker locale={locale} showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: "100%" }} />单独指定组件的语言，国际化
       </Space></div>
-      <div><Space>
-        <Button onClick={getBigFile}>字节流请求大文件</Button>
-
-      </Space>
+      <div>
       <div>
         {CreateElementTest({render:SelfCompTest,props:{name:"传输的data部分"}})}
         将组件作为一个函数传入，然后在函数里使用React.createElement，这样就可以在组件里使用JSX了
       </div>
-      <div style={{height:100,overflow:"scroll"}}>{fileTxt}</div>
       </div>
       <Divider/>
       <div>

@@ -97,6 +97,16 @@ def release(t):
         return
     print("done")
 
+
+    print("check typescript regular...")
+    p0=subprocess.Popen("""pnpm tsc""", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p0.wait()
+    if p0.returncode!=0:
+        print("typescript regular failed", file=sys.stderr)
+        return
+    print("ts regular passed")
+
+
     print("check if branch is clean...")
     is_clean, message = check_clean_and_get_branch_name()
     if not is_clean:

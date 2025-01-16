@@ -45,7 +45,7 @@ const needUpdate = async () => {
   lastSrcs = newScripts;
   return result;
 }
-const DURATION = 30000;
+const DURATION = 900000;
 const autoRefresh = () => {
   setTimeout(async () => {
     const willUpdate = await needUpdate();

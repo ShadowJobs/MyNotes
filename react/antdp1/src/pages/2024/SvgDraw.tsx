@@ -1,4 +1,5 @@
-import { Button, Input, InputNumber, Select } from "antd";
+import { RollbackOutlined } from "@ant-design/icons";
+import { Button, Input, InputNumber } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 
 const SvgDraw: React.FC = () => {
@@ -7,9 +8,9 @@ const SvgDraw: React.FC = () => {
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [paths, setPaths] = useState<SVGPathElement[]>([]);
   const [undoStack, setUndoStack] = useState<SVGPathElement[]>([]);
-  const [fillColor, setFillColor] = useState("none");
-  
-  const constRef = useRef({
+  const [fillColor, setFillColor] = useState("#ADD8E6");
+
+  const constRef = useRef<Record<string, any>>({
     isDrawing: false,
     currentPath: document.createElementNS("http://www.w3.org/2000/svg", "path"),
   });
@@ -104,19 +105,19 @@ const SvgDraw: React.FC = () => {
     <>
       <div>
         <Button onClick={clearCanvas}>清除画布</Button>
-        <Button onClick={undo}>撤销</Button>
-        <Button onClick={redo}>恢复</Button>
+        <Button onClick={undo} icon={<RollbackOutlined />} title="撤销" />
+        <Button onClick={redo} icon={<RollbackOutlined style={{ transform: "scaleX(-1)" }} />} title="恢复" />
         <Button onClick={saveAsImage}>保存图片图片</Button>
         <Button onClick={useEraser}>橡皮擦</Button>
-        边框色：<Input type="color" style={{width:50}} value={color} onChange={(e) => setColor(e.target.value)} />
-        填充色：<Input type="color" style={{width:50}} value={fillColor} onChange={(e) => setFillColor(e.target.value)} />
+        边框色：<Input type="color" style={{ width: 50 }} value={color} onChange={(e) => setColor(e.target.value)} />
+        填充色：<Input type="color" style={{ width: 50 }} value={fillColor} onChange={(e) => setFillColor(e.target.value)} />
         线宽：<InputNumber
           defaultValue={strokeWidth}
           onChange={(e) => setStrokeWidth(e as number)}
           style={{ width: 120, marginLeft: 8 }}
         />
       </div>
-      <div style={{border:"1px solid #000"}}>
+      <div style={{ border: "1px solid #000" }}>
         <svg id="drawingCanvas" width="100%" height="600" ref={svgRef}></svg>
       </div>
     </>

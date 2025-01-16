@@ -1,5 +1,11 @@
 trigger:
-  - refs/tags/*
+  tags:
+    include:
+      - refs/tags/dify-api-*
+  branches:
+    include:
+      - 1.2-patch
+      - '*-patch'
 
 pool: 'Default'
 

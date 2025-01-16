@@ -1,3 +1,4 @@
+import { ExpressUrl } from "@/global";
 import { Result } from "@/services";
 import axios from "@/utils/axios";
 import cookie from "@/utils/cookie";
@@ -12,6 +13,15 @@ export type LoginParams = {
   username: string;
   password: string;
 };
+
+export type UserInfo = {
+  code: number;
+  name: string;
+  user: {
+    name: string;
+    user_id: number;
+  }
+}
 
 export type LogoutStatus = {
   status: boolean;
@@ -41,7 +51,21 @@ const getUserFromLocalStorage = (): User | null => {
   return JSON.parse(user);
 };
 
+export const getToken = () => localStorage.getItem("token");
+export const setToken = (token: string) => localStorage.setItem("token", token);
+
+
 export const getUser = () => getUserFromCookie() ?? getUserFromLocalStorage();
 
-export const login = (params: LoginParams) =>
-axios.post<Result<User>>("/api/v1/login", params);
+export async function getUserInfo() {
+  const token = getToken();
+  if (!token) {
+    throw new Error("User not found!");
+  }
+  const result = await axios.get<{data:UserInfo}>(`${ExpressUrl}/user-api/currentUser`);
+  return result.data.data;
+}
+
+export async function login(body: any) {
+  return axios.post(`${ExpressUrl}/user-api/login`, body);
+}

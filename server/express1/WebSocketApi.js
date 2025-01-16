@@ -198,8 +198,8 @@ function startWebsocket() {
     });
   });
 
-  server.listen(5001, () => {
-    console.log('Listening websocket on http://localhost:5001');
+  server.listen(5005, () => {
+    console.log('Listening websocket on http://localhost:5005');
   });
 }
 module.exports = {

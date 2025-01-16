@@ -1,10 +1,6 @@
 
 # 1 Redux 的产生背景及其解决的问题
 
-## 1. Redux 产生的背景
-
-Redux 诞生于 2015 年，当时 React 生态系统还在快速发展中。虽然 React 提供了强大的组件化开发能力，但在处理复杂的应用状态管理时仍面临一些挑战。Redux 的创建者 Dan Abramov 受到 Flux 架构的启发，旨在提供一个更简单、可预测的状态管理解决方案。
-
 ## 2. useContext 和 Provider 的局限性
 
 虽然 React 的 Context API（包括 `useContext` 和 `Provider`）提供了一种在组件树中共享数据的方法，但它们主要解决了组件间传递数据的问题，而非全面的状态管理。以下是一些局限性：

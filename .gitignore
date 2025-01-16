@@ -20,3 +20,8 @@ venv/
 pnpm-lock.yaml
 *log.log
 uploads/
+**/helloWorld.js
+**/helloWorld.wasm
+dify/opensource/
+dify/backups/
+server/express1/*.log 

@@ -27,6 +27,7 @@ declare namespace API {
     phone?: string;
     /** User Status */
     userStatus?: number;
+    role?:"admin"|"user"|"guest";
   };
 
   type Tag = {

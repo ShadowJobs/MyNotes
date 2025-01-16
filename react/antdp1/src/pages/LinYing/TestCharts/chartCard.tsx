@@ -7,6 +7,23 @@ import { AntTable } from './AntTable';
 import { addPreSum, downloadData } from '@/utils';
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
 
+import * as echarts from "echarts"
+
+window.ly_echarts= echarts //这样可以将renderItem通过window传递给echarts的option
+export const loopTransJsonFunc=(data:any)=>{
+    if(typeof data==="object" && data!==null){
+      Object.keys(data).map(v=>{
+          if(typeof data[v]==="string" && data[v].includes("function")){
+            // 坑： 将所有的字符串function转换为实际的function，注意定义的function不是有()的，例如eval("(function(a,b){return a+b})")是可以的，必须将function用()包裹起来,否则拿不到
+              data[v]=eval(`(${data[v]})`)
+          }else if(typeof data[v]==="object" && data[v]!==null){
+            loopTransJsonFunc(data[v])
+          }else if(Array.isArray(data[v])){
+            data[v].map((v0:any)=>loopTransJsonFunc(v0))
+          }
+      })
+    }
+}
 const HalfColTypes=["scatter",'echart','json','line','pie','bar','StackArea','box']
 
 export const FreeEchart:React.FC<{result:Mynote.AggFreeEchart}>=({result})=>{
@@ -16,6 +33,8 @@ export const FreeEchart:React.FC<{result:Mynote.AggFreeEchart}>=({result})=>{
       return `x: ${params[0].name}<br>${params[0].marker}y: ${params[0].value}<br>提示: ${tip}`;
     }
   }
+
+  loopTransJsonFunc(result)
   return <div style={{}}>{result.data &&
       <React.Suspense fallback={<div>Loading...</div>}>
       <ReactEcharts option = { {...result.data,

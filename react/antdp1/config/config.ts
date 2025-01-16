@@ -8,8 +8,15 @@ import routes from './routes';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 const { REACT_APP_ENV } = process.env;
-
+process.env.TEST_ENV2 = "test2"
+console.log("running in compile time")
+console.log(process.env.TEST_ENV)
+console.log(process.env.NODE_ENV)
+console.log(process.env.NODE_ENV2)
 export default defineConfig({
+  define: {
+    'process.env': process.env,
+  },
   hash: true,
   antd: {},
   // publicPath: '/ly/',

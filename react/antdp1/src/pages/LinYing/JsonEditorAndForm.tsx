@@ -49,9 +49,6 @@ const DataLakeJob: React.FC<{ req: any }> = ({ req }) => {
         <Form.Item name="data_name" label="Data name" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="tags" label="标签">
-          <Select mode="tags" />
-        </Form.Item>
         <Form.List name="matrix">
           {(fields, { add, remove }) => (
             <>
@@ -62,17 +59,17 @@ const DataLakeJob: React.FC<{ req: any }> = ({ req }) => {
                     {(subFields, { add: addItem, remove: removeItem }) => (
                       <>
                         {subFields.map((subField) => (
-                          <Space direction="horizontal">
-                            <Form.Item name={[subField.name, 'x']} rules={[{ required: true, message: '请输入X' }]} >
+                          <Space direction="horizontal" style={{border:"1px dash black"}}>
+                            <Form.Item name={[subField.name, 'x']} rules={[{ required: true, message: '请输入X' }]} label="Key">
                               <Input placeholder="输入X" />
                             </Form.Item>
-                            <Form.Item name={[subField.name, 'y']} rules={[{ required: true, message: '请输入Y' }]} >
+                            <Form.Item name={[subField.name, 'y']} rules={[{ required: true, message: '请输入Y' }]} label="Value">
                               <Input placeholder="输入Y" />
                             </Form.Item>
                             <MinusCircleOutlined onClick={() => removeItem(subField.name)} />
                           </Space>
                         ))}
-                        <Button type="dashed" onClick={() => addItem()} block icon={<PlusOutlined />}>
+                        <Button type="dashed" onClick={() => addItem({"x":1,"y":2})} icon={<PlusOutlined />}>
                           添加一列
                         </Button>
                       </>
@@ -84,7 +81,7 @@ const DataLakeJob: React.FC<{ req: any }> = ({ req }) => {
               ))}
 
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                <Button type="dashed" onClick={() => add([{"x":1,"y":2}])} block icon={<PlusOutlined />}>
                   添加一行
                 </Button>
               </Form.Item>

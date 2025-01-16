@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Image, Input, Modal, Row, Select, Slider, Space, Tag, Tooltip, message } from "antd"
+import { Button, Card, Checkbox, Col, DatePicker, Image, Input, Modal, Row, Select, Slider, Space, Tag, Tooltip, message } from "antd"
 const { Option } = Select;
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Form } from 'antd';
@@ -17,6 +17,8 @@ import _ from "lodash";
 import "./hightlight11.8.0.min.css" //react-markdown的代码高亮样式,必须配合hightlight.js库
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight'
+import { NamePath } from "antd/lib/form/interface";
+import { FormInstance } from "antd/es/form";
 
 
 const ReactEcharts = React.lazy(() => import('echarts-for-react'));
@@ -898,6 +900,72 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
 //   });
 // };
 // 在数据更新时，调用 applyHighlight() 即可。 useEffect(() => { applyHighlight(); }, [content]);
+// 第二种方法坑： highlight.js占用较大空间，优化一：类似与react.lazy的懒加载，
+// import Markdown from 'react-markdown'; // 假设您使用的是react-markdown
+// export const MarkdownComp: React.FC<{ mdStr: string }> = ({ mdStr }) => {
+//   useEffect(() => {
+//     const applyHighlight = async () => {
+//       const hljs = await import('highlight.js');
+//       document.querySelectorAll('pre code').forEach((block) => {
+//         hljs.default.highlightBlock(block);
+//       });
+//     };
+//     applyHighlight();
+//   }, [mdStr]);
+//   return (
+//     <div style={{ padding: 5, width: "100%", marginBottom: -20, textAlign: "left" }} className="markdown-suggest">
+//       <Markdown>{mdStr}</Markdown>
+//     </div>
+//   );
+// };
+// 优化2： 优化一有个缺点：如果页面上多次使用MarkdownComp，那么就会多次下载highlight.js，优化方法：
+//做成provider，只下载一次highlight.js，然后在MarkdownComp里使用
+// import React, { useEffect, useRef, useState } from 'react';
+// import Markdown from 'react-markdown';
+
+// // 创建一个 context 来共享 highlight.js 实例
+// const HighlightContext = React.createContext<any>(null);
+
+// // 这个组件将包裹整个表格
+// export const HighlightProvider: React.FC = ({ children }) => {
+//   const [hljs, setHljs] = useState<any>(null);
+
+//   useEffect(() => {
+//     // 预加载 highlight.js
+//     import('highlight.js').then(module => {
+//       setHljs(module.default);
+//     });
+//   }, []);
+
+//   return (
+//     <HighlightContext.Provider value={hljs}>
+//       {children}
+//     </HighlightContext.Provider>
+//   );
+// };
+
+// export const MarkdownComp: React.FC<{ mdStr: string }> = ({ mdStr }) => {
+//   const hljs = React.useContext(HighlightContext);
+//   const codeRef = useRef<HTMLDivElement>(null);
+
+//   useEffect(() => {
+//     if (hljs && codeRef.current) {
+//       // 使用 requestIdleCallback 在浏览器空闲时执行高亮
+//       requestIdleCallback(() => {
+//         codeRef.current!.querySelectorAll('pre code').forEach((block) => {
+//           hljs.highlightBlock(block);
+//         });
+//       });
+//     }
+//   }, [mdStr, hljs]);
+
+//   return (
+//     <div ref={codeRef} style={{ padding: 5, width: "100%", marginBottom: -20, textAlign: "left" }} className="markdown-suggest">
+//       <Markdown>{mdStr}</Markdown>
+//     </div>
+//   );
+// };
+
 
 
 
@@ -921,6 +989,50 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
 //   return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
 // };
 
+
+// export const RecentButtons: React.FC<{ form: FormInstance, name: string }> = ({ form, name }) => {
+//   return <Space>
+//     <Button type="primary" size="small" onClick={() => {
+//       // 当前时间往前1年
+//       const start = dayjs().subtract(1, 'years')
+//       const end = dayjs()
+//       form.setFieldsValue({ [name]: [start, end] })
+//     }}>
+//       Last Year
+//     </Button>
+//     <Button type="primary" size="small" onClick={() => {
+//       // 当前时间往前推1个月
+//       const start = dayjs().subtract(1, 'months')
+//       const end = dayjs()
+//       form.setFieldsValue({ [name]: [start, end] })
+//     }}>Last Month</Button>
+//     <Button type="primary" size="small" onClick={() => {
+//       const start = dayjs().subtract(1, 'weeks')
+//       const end = dayjs()
+//       form.setFieldsValue({ [name]: [start, end] })
+//     }}>
+//       Last Week
+//     </Button>
+//     <Button type="primary" size="small" onClick={() => {
+//       // 今天0点到24点
+//       const start = dayjs().startOf('day')
+//       const end = dayjs().endOf('day')
+//       form.setFieldsValue({ [name]: [start, end] })
+//     }}>
+//       Today
+//     </Button>
+//   </Space>
+// }
+
+export const TimeRangePickerWithExtra: React.FC<{
+  name: NamePath, label: React.ReactNode,
+  form: FormInstance<any>,
+  value?: any, onChange?: Function
+}> = ({ name, label, form }) => {
+  return <DatePicker.RangePicker style={{ width: "100%" }} 
+  // renderExtraFooter={() => <RecentButtons form={form} name="start_at" />} 
+  />
+}
 
 
 export default SmallComps

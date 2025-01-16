@@ -27,7 +27,7 @@
   10. `html-loader`: 导出 HTML 为字符串，需要时最小化 HTML。
 
 
-# 配置项
+# 2. 配置项
 
 ```js
 const path = require('path');
@@ -166,3 +166,46 @@ module.exports = ({
 });
 
 ```
+
+# 3. node 功能注入
+
+  前端打包工具（如Webpack、Vite等）会在构建过程中，识别并替换所有`process.env.NODE_ENV`为部署时确定的环境变量。这是通过`DefinePlugin`插件来实现的。
+
+  ### 配置Webpack中的DefinePlugin
+
+  在Webpack配置文件中，可以使用`DefinePlugin`插件注入环境变量。以下是一些基本配置的示例：
+
+  ```javascript
+  const webpack = require('webpack');
+  module.exports = {
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+      })
+    ]
+  };
+  ```
+
+  ### package.json
+
+  通过`package.json`中的脚本设置不同的环境：
+
+  ```json
+  {
+    "scripts": {
+      "start": "NODE_ENV=development webpack serve",
+      "build": "NODE_ENV=production webpack"
+    }
+  }
+  ```
+
+  ### 在ant design pro项目里自定义
+  通常使用umi的功能，即 .env 文件配置，然后在代码里使用 process.env.xxx 来获取环境变量
+  
+  步骤：
+  1. 创建.env文件，内容为： TEST_ENV=SHADOW, 或者在config/config.ts里，直接使用process.env.TEST_ENV = 'SHADOW'
+  2. config/config.ts里加入：export default defineConfig({define: {'process.env': process.env,},});
+  3. 在代码里使用：process.env.TEST_ENV
+  
+  注意，如果要使用自定义的变量，第二步是必须的，默认情况下，process.env.NODE_ENV是webpack处理的，代码里(node启动 和 项目运行)都能用，但是如果不写第二步，
+  那么process.env.TEST_ENV只能在node启动时使用，运行时就没有了。有了第二步后，process.env.TEST_ENV就能在运行时使用了。

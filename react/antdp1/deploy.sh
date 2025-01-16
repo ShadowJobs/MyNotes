@@ -17,11 +17,15 @@ nvm use 16 && npm run build
 # 方法2
 rsync -avz ./dist/ root@$SERVER_IP:~/ly/running/antdp1
 
+# exit 0
 # build react1
 cd ../react1
 # pnpm install
 pnpm build
 rsync -avz ./build/ root@$SERVER_IP:~/ly/running/qiankun-react1
+
+cd ../vitereact
+emcc src/cpp/helloWorld.cpp src/cpp/math.cpp -o public/helloWorld.js -s EXPORTED_FUNCTIONS='["_main", "_add"]' -s MODULARIZE=1 -s 'EXPORT_NAME="createModule"'
 
 build_project() {
     local project=$1
@@ -31,7 +35,7 @@ build_project() {
     echo "开始构建 $project..."
     cd "$build_dir"
     # pnpm install
-    # pnpm build
+    pnpm build
     rm -rf "$dest_dir"
     rsync -avz ./dist/ "root@$SERVER_IP:$dest_dir"
     echo "$project 构建完成"

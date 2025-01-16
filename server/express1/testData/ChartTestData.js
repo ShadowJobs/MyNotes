@@ -270,7 +270,7 @@ const TestMesObjData={
       type:"embeddedPage",
       title:"内嵌html iframe",
       external:{},
-      data:{url:`/api-ly/helloworld`}
+      data:{url:`/`}
     },
     {
       "category": null,
@@ -288,8 +288,235 @@ const TestMesObjData={
           ]
       },
       "external": {"span":12,"echartHeight":1000,"annotation":"echart折线图自定义高度",},
-      "title": "Test",
+      "title": "Test echart",
       "type": "echart"
+    },
+    {
+      //样例： https://echarts.apache.org/examples/zh/editor.html?c=custom-profile
+      "type": "echart",
+      "category": null,
+      "title": "Profile",
+      "data": {
+          "tooltip": {},
+          "title": {
+              "text": "Profile",
+              "left": "center"
+          },
+          "dataZoom": [
+              {
+                  "type": "slider",
+                  "filterMode": "weakFilter",
+                  "showDataShadow": false,
+                  "top": 400,
+                  "labelFormatter": ""
+              },
+              {
+                  "type": "inside",
+                  "filterMode": "weakFilter"
+              }
+          ],
+          "grid": {
+              "height": 300
+          },
+          "xAxis": {
+              "min": 1733381020225,
+              "scale": true
+          },
+          "yAxis": {
+              "data": [
+                  "categoryA",
+                  "categoryB"
+              ]
+          },
+          "series": [
+              {
+                  "type": "custom",
+                  "renderItem": "(function (params, api) {    var categoryIndex = api.value(0);    var start = api.coord([api.value(1), categoryIndex]);    var end = api.coord([api.value(2), categoryIndex]);    var height = api.size([0, 1])[1] * 0.6;    var rectShape = ly_echarts.graphic.clipRectByRect({        x: start[0],        y: start[1] - height / 2,        width: end[0] - start[0],        height: height    }, {        x: params.coordSys.x,        y: params.coordSys.y,        width: params.coordSys.width,        height: params.coordSys.height    });    return (rectShape && {        type: 'rect',        transition: ['shape'],        shape: rectShape,        style: api.style()    });})",
+                  "itemStyle": {
+                      "opacity": 0.8
+                  },
+                  "encode": {
+                      "x": [
+                          1,
+                          2
+                      ],
+                      "y": 0
+                  },
+                  "data": [
+                      {
+                          "name": "GPU",
+                          "value": [
+                              0,
+                              1733381021761,
+                              1733381029174,
+                              7413
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#72b362"
+                              }
+                          }
+                      },
+                      {
+                          "name": "GPU",
+                          "value": [
+                              0,
+                              1733381030036,
+                              1733381032810,
+                              2774
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#72b362"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Listeners",
+                          "value": [
+                              0,
+                              1733381033576,
+                              1733381035784,
+                              2208
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#e0bc78"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Documents",
+                          "value": [
+                              0,
+                              1733381044692,
+                              1733381051350,
+                              6658
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#bd6d6c"
+                              }
+                          }
+                      },
+                      {
+                          "name": "GPU",
+                          "value": [
+                              0,
+                              1733381051519,
+                              1733381053946,
+                              2427
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#72b362"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Listeners",
+                          "value": [
+                              0,
+                              1733381056034,
+                              1733381058388,
+                              2354
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#e0bc78"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Listeners",
+                          "value": [
+                              0,
+                              1733381058419,
+                              1733381062079,
+                              3660
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#e0bc78"
+                              }
+                          }
+                      },
+                      {
+                          "name": "GPU",
+                          "value": [
+                              1,
+                              1733381020225,
+                              1733381027370,
+                              7145
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#72b362"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Documents",
+                          "value": [
+                              1,
+                              1733381028156,
+                              1733381028928,
+                              772
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#bd6d6c"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Documents",
+                          "value": [
+                              1,
+                              1733381030351,
+                              1733381036191,
+                              5840
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#bd6d6c"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Listeners",
+                          "value": [
+                              1,
+                              1733381037419,
+                              1733381042755,
+                              5336
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#e0bc78"
+                              }
+                          }
+                      },
+                      {
+                          "name": "Listeners",
+                          "value": [
+                              1,
+                              1733381048033,
+                              1733381053645,
+                              5612
+                          ],
+                          "itemStyle": {
+                              "normal": {
+                                  "color": "#e0bc78"
+                              }
+                          }
+                      }
+                  ]
+              }
+          ]
+      },
+      "external": {},
+      "widget_order": 0
     },
     {
       "category": null,

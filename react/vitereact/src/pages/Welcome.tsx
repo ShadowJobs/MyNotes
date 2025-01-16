@@ -1,15 +1,39 @@
 import { Divider, Form, Input } from "antd"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Button, FormSaver } from "react-comps"
 const Welcome: React.FC<{}> = ({ }) => {
   const isLocalhost = window.location.hostname === "localhost"
   const [form] = Form.useForm()
   const [curFormValues, setCurFormValues] = useState<any>()
+  const [addResult, setAddResult] = useState<number>()
+
+  useEffect(() => {
+    // wasm 演示
+    fetch('/helloWorld.js')
+    .then(response => response.text())
+    .then(scriptText => {
+      const blob = new Blob([scriptText], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = () => {
+        // @ts-ignore 
+        window.createModule().then(moduleInstance => {
+          moduleInstance._main();
+          setAddResult(moduleInstance._add(1, 2));
+        });
+      };
+      document.body.appendChild(script);
+    });
+    
+  }, []);
+
   return <>
     <div>
       <Button>
         来自自研组件库的按钮
       </Button>
+      <div>WASM 调用c++ add()结果：{addResult}</div>
     </div>
     <Divider />
     <FormSaver form={form} dbName="form" curFormValues={{ user: "sdlin", age: 18 }} />

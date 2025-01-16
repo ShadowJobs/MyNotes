@@ -1,5 +1,5 @@
 ```json
-vite配置
+// tsconfig.json 配置
 {
   "compilerOptions": { // 编译器选项
     "target": "ESNext",  // 指定ECMAScript目标版本 "ES3"（默认）， "ES5"，"ES6"/ "ES2015"， "ES2016"， "ES2017"或 "ESNext"

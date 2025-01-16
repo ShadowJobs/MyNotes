@@ -4,7 +4,7 @@ def redis_client():
     global rdb
     try:
         if rdb is None:
-            rdb = redis.Redis(host="127.0.0.1", port=6379)
+            rdb = redis.Redis(host="127.0.0.1", port=6379, password="difyai123456")
         return rdb
     except redis.RedisError as e:
         print(f"Redis error: {e}")

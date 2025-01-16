@@ -18,7 +18,6 @@
     ],
   },
   { path: '/welcome', name: 'welcome', icon: 'smile', component: './Welcome' },
-  { name: 'ProTable', icon: 'table', path: '/list', component: './TableList' },
   {
     path: '/LinYing',
     name: 'LinYing',
@@ -50,13 +49,10 @@
       { name: "图片缩放", path: "/LinYing/ScalePicCanvas", component: "./LinYing/ScalePicCanvas" },
       { name: "BirdView", path: "/LinYing/BirdView", component: "./LinYing/BirdView" },
       { name: "react json配合form表单", path: "/LinYing/react-json-form", component: "./LinYing/JsonEditorAndForm", },
-      { name: "上传、下载文件，函数式确认框", path: "/LinYing/updload", component: "./LinYing/UploadFile", },
       { name: "代码编辑", path: "/LinYing/code-editor", component: "./LinYing/MonacoEditor" },
       { name: "echarts", path: "/LinYing/echarts", component: "./LinYing/AntChartEchartScatter" },
-      { name: "tablemerge", path: "/LinYing/MergeAntTable", component: "./LinYing/MergeAntTable" },
       { name: "charts", path: "/LinYing/Charts", component: "./LinYing/TestCharts/Charts" },
       { name: "nesting", icon: "smile", path: "/LinYing/NestingForm", component: "./LinYing/NestingForm" },
-      { name: "htmlTable", path: "/LinYing/HtmlTable", component: "./LinYing/HtmlTable" },
       { name: "htmlTable2-feishu", path: "/LinYing/HtmlTable2", component: "./LinYing/HtmlTable2" },
       { name: "图文混排", path: "PicAndWord", component: "./LinYing/PicAndWord" },
       {
@@ -72,16 +68,34 @@
       { name: "JsTest+helmet", path: "/LinYing/JsTest", component: "./LinYing/JsTest/JsTest", menuRender: false },
     ]
   },
+
+  {
+    path: '/2025', name: "2025 GPT",
+    routes:[
+      {name: "MyGpt", path: "mygpt", component: "./2025/MyGpt"},
+    ]
+  },
   {
     path: '/2024', icon: "twitter", name: "2024",
     routes:[
+      {name: "MyGpt", path: "mygpt", component: "./2025/MyGpt"},
       {name: "Graphin", path: "Graphin", component: "./2024/Graphin"},
       {name: "SvgDraw", path: "SvgDraw", component: "./2024/SvgDraw"},
       {name: "Hook1", path: "Hook1", component: "./2024/Hook1"},
       {name: "ErrorStatistic", path: "ErrorStatistic", component: "./2024/ErrorStatistic"},
       {name: "AvatarUpdate", path: "AvatarUpdate", component: "./2024/AvatarUpdate"},
       {name: "BigFileUpload", path: "BigFileUpload", component: "./2024/BigFileUpload"},
+      {name: "Http缓存分类", path: "Http", component: "./2024/HttpCache"},
+      {name: "俄罗斯方块", path: "tetris", component: "./2024/Tetris"},
+      {name: "中国象棋", path: "chess", component: "./2024/ChessCN/ChessGame"},
+      {name: "2048", path: "2048", component: "./2024/Game2048"},
+    ]
+  },
 
+  {
+    path: '/management', icon: "lock", name: "Management",
+    routes:[
+      {name: "Users", path: "users", component: "./management/Users"},
     ]
   },
   {name: "Documents",icon:"FilePdf",path: "docs",routes:[

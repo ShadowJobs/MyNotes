@@ -9,31 +9,43 @@ const { log } = require("console")
 const etag = require("etag")
 const exptime="2023-09-17 19:21:40"
 const relativeTime=3
-const rootPath="./react/antdp1/public"
-const serverPath="/server/express1/public"
+
+const currentDirectory = process.cwd();
+const isProduction = process.argv.includes('--prod');
+console.log("isProduction",isProduction)
+const rootPath=isProduction?`${currentDirectory}/../antdp1`:"../../react/antdp1/public"
+const serverPath="/public"
+const nodeLunchPort = 5005
+const nodeLunchUrl = `http://localhost:${nodeLunchPort}`
 const server=http.createServer((req,res)=>{
   console.log(req.method,req.url)
   const {pathname,query}=url.parse(req.url,true)
   try {
   if(pathname==="/"){
     res.setHeader("Content-Type","text/html;charset=utf-8")
-    res.write(`<div><h1>hello world
-    </h1>
-    <br/>
+    res.write(`
+      <html>
+        <head>
+          <base href="${isProduction?"/api-node-server/":"/"}"/>
+        </head>
+      <div>
+      <br/>
+      <h1>坑1：base必须以/结尾，否则base规则不生效</h1>
       网页里的图片会使用缓存策略 （这里会自动请求到下面的/img）,但是直接在浏览器里输入http://localhost:5002/img是不会使用缓存策略的
       在chrome,edge里，浏览器会自动在请求头里加上max-age=0，即使server设置了强制缓存，也无效
       在safari里不会自动加max-age=0，但是依然不会使用缓存，每次都是重新请求，
       猜测原理是：直接输入url，浏览器会认为是用户主动输入，所以不会使用缓存策略
       <br/>
-      <img src="/img" alt="tang" width="200" height="200"/>
+      <img src="img" alt="tang" width="200" height="200"/>
       强制缓存，固定${exptime}过期<br/>
-      <img src="/img2" alt="girl" width="200" height="280"/>
+      <img src="img2" alt="girl" width="200" height="280"/>
       相对缓存，${relativeTime}秒内不会再次请求<br/>
-      <img src="/img3" alt="ljr" width="200" height="220"/>
-      lastmodified协商<br/>
-      <img src="/etagpic" alt="etag" width="150" height="150"/>
+      <img src="img3" alt="ljr" width="200" height="220"/>
+      lastmodified协商+max-age相对<br/>
+      <img src="etagpic" alt="etag" width="150" height="150"/>
       etag协商<br/>
-    </div>`)
+    </div>
+    </html>`)
     res.end()
   }else if(pathname==="json"){
     res.setHeader("Content-Type","application/json")
@@ -48,8 +60,7 @@ const server=http.createServer((req,res)=>{
     res.writeHead(200,{"Expires":new Date("2023-09-17 19:21:40").toUTCString()})
     res.end(data)
   }else if(pathname==="/img2"){ //
-    const currentDirectory = process.cwd();
-console.log(currentDirectory);
+    console.log(currentDirectory);
     const data=fs.readFileSync(`${currentDirectory}${serverPath}/img2.jpg`) //坑：tang.jpg能访问，img2.jpg访问不到
     res.writeHead(200,{"Cache-Control":`max-age=${relativeTime}`}) //相对与第一次请求的时间，3秒内不会再次请求
     //max-age和s-maxage的区别是，s-maxage只对代理服务器有效,必须先设置public，max-age对浏览器和代理服务器都有效
@@ -109,7 +120,7 @@ console.log(currentDirectory);
     res.end()
   }else if(pathname==="/cors"){
     res.setHeader("Content-Type","application/json")
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:5001")
+    res.setHeader("Access-Control-Allow-Origin",nodeLunchUrl)
     res.write(JSON.stringify({name:"lin"}))
     res.end()
   }else if(pathname==="/cors2"){
@@ -119,20 +130,20 @@ console.log(currentDirectory);
     res.end()
   }else if(pathname==="/cors3"){
     res.setHeader("Content-Type","application/json")
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:5001")
+    res.setHeader("Access-Control-Allow-Origin",nodeLunchUrl)
     res.setHeader("Access-Control-Allow-Headers","X-Token,Content-Type")
     res.write(JSON.stringify({name:"lin"}))
     res.end()
   }else if(pathname==="/cors4"){
     res.setHeader("Content-Type","application/json")
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:5001")
+    res.setHeader("Access-Control-Allow-Origin",nodeLunchUrl)
     res.setHeader("Access-Control-Allow-Headers","X-Token,Content-Type")
     res.setHeader("Access-Control-Allow-Methods","PUT")
     res.write(JSON.stringify({name:"lin"}))
     res.end()
   }else if(pathname==="/cors5"){
     res.setHeader("Content-Type","application/json")
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:5001")
+    res.setHeader("Access-Control-Allow-Origin",nodeLunchUrl)
     res.setHeader("Access-Control-Allow-Headers","X-Token,Content-Type")
     res.setHeader("Access-Control-Allow-Methods","PUT")
     res.setHeader("Access-Control-Allow-Credentials",true)
@@ -140,7 +151,7 @@ console.log(currentDirectory);
     res.end()
   }else if(pathname==="/cors9"){
     res.setHeader("Content-Type","application/json")
-    res.setHeader("Access-Control-Allow-Origin","http://localhost:5001")
+    res.setHeader("Access-Control-Allow-Origin",nodeLunchUrl)
     res.setHeader("Access-Control-Allow-Headers","X-Token,Content-Type")
     res.setHeader("Access-Control-Allow-Methods","PUT")
     res.setHeader("Access-Control-Allow-Credentials",true)
@@ -155,8 +166,6 @@ console.log(currentDirectory);
   } catch (error) {
     console.log(error)
   }
-  // res.writeHead(200,{"Expires":new Date("2023-09-17 10:45:50").toUTCString()}) //强制缓存
-  // res.write(JSON.stringify({name:"lin"}))
 }).listen(5002,()=>{
   console.log("node without express server is running at port 5002")
 })

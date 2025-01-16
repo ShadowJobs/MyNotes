@@ -8,7 +8,7 @@ import redis
 
 from db.redisCon import redis_client
 
-DETECT_SERVER_EXPIRE_TIME=5,
+DETECT_SERVER_EXPIRE_TIME=5
 WAIT_RES_KEY='wait_res_key'
 
 class RedisLock:

@@ -7,6 +7,7 @@ import { useCreation } from "ahooks";
 import Footer from "./Footer";
 import Header from "./Header";
 import type { LayoutLoaderData } from "./loader";
+import "./layout.css"
 
 export default function SidebarLayout() {
   const location = useLocation();
@@ -43,10 +44,10 @@ export default function SidebarLayout() {
         data-collapsed={isCollapsed}
         data-theme-override
       >
-        <h1 className="flex items-center justify-center px-2 py-8" style={{color:"white"}}>
-          Vite+React+qiankun
-        </h1>
-        <Menu
+        <div className="flex items-center justify-center px-2 h-[64px] text-white">
+          <h1>Vite+React+qiankun</h1>
+        </div>
+        <div className="menu-container" style={{ height: "calc(100vh - 112px)"}}><Menu
           theme="dark"
           mode="inline"
           inlineIndent={12}
@@ -56,7 +57,7 @@ export default function SidebarLayout() {
           }
           selectedKeys={state?.keys ?? DEFAULT_SELECTED_PATH}
           className="bg-[#0051dd]"
-        />
+        /></div>
       </Layout.Sider>
 
       <Layout className="ml-56 data-[collapsed=true]:ml-20 3xl:ml-96" data-collapsed={isCollapsed}>
@@ -79,7 +80,6 @@ export default function SidebarLayout() {
             <div id="qiankuncontainer"></div>
           </Suspense>
         </Layout.Content>
-
         <Footer />
       </Layout>
     </>

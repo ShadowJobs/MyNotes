@@ -21,6 +21,6 @@ attrs==23.1.0
 apscheduler
 requests
 werkzeug
-flasgger==0.9.5
+flasgger==0.9.7.1
 cryptography
 Flask-Migrate>=4.0.4

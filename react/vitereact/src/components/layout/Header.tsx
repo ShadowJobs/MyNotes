@@ -15,9 +15,9 @@ export default function Header() {
   const [qkm] = useQiankunState();
 
   const handleLogout = () => {
-    localStorage.removeItem("user/info");
+    localStorage.removeItem("token");
     message.info("User logged out!");
-    navigate("/user/login");
+    navigate(`/user/login?redirect=${pathname}`);
   };
 
   return (
@@ -56,7 +56,7 @@ export default function Header() {
         >
           <Button type="text" className="flex items-center !py-6">
             <Avatar icon={<UserOutlined />} />
-            <span className="ml-4">{user?.user_name ?? "anonymous"}</span>
+            <span className="ml-4">{user?.name ?? "anonymous"}</span>
           </Button>
         </Dropdown>
       </Space>

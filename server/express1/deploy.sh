@@ -32,17 +32,27 @@ ssh root@$SERVER_IP << EOF
     cd ~/ly/running/express
     nohup node app.js > output.log 2>&1 & # nohup使得命令在后台以持续运行的方式执行；> output.log 2>&1表示将标准输出（stdout）和错误输出（stderr）都重定向到output.log文件中；末尾的&表示将该命令放入后台运行。
 EOF
+
+
+
+
 else
+ssh root@$SERVER_IP << EOF
+    echo "rm old express and python files"
+    # rm -rf ~/ly/running/express
+    # rm -rf ~/ly/running/python
+EOF
     rsync -avz --exclude 'node_modules' --exclude '.node-persist' --exclude '*.rdb' --exclude "*.mp4" ./ root@$SERVER_IP:~/ly/running/express
-    rsync -avz --exclude 'venv' ../python/* root@$SERVER_IP:~/ly/running/python/
+    rsync -avz --exclude 'venv' --exclude 'uploades' ../python/* root@$SERVER_IP:~/ly/running/python/
 ssh root@$SERVER_IP << EOF
     pkill -f "node app.js"  # 杀死所有包含node app.js的进程
     cd ~/ly/running/express
     echo "npm i"
     # npm i --legacy-peer-deps
-    nohup node app.js > output.log 2>&1 & # nohup使得命令在后台以持续运行的方式执行；> output.log 2>&1表示将标准输出（stdout）和错误输出（stderr）都重定向到output.log文件中；末尾的&表示将该命令放入后台运行。
+    nohup node app.js --prod > output.log 2>&1 & # nohup使得命令在后台以持续运行的方式执行；> output.log 2>&1表示将标准输出（stdout）和错误输出（stderr）都重定向到output.log文件中；末尾的&表示将该命令放入后台运行。
     cd ../python
     pip3 install -r requirements.txt
+    pkill -f "python3 main.py"
     nohup python3 main.py > pyout.log 2>&1 &
 EOF
 fi

@@ -1,0 +1,134 @@
+# Commit: 1fa66405c5e89acfbb031142e49ae2ffa5e67efb
+# Date: Thu Jan 16 16:36:10 CST 2025
+# Description: 
+diff --git a/api/controllers/web/__init__.py b/api/controllers/web/__init__.py
+index 50a04a625..675f09753 100644
+--- a/api/controllers/web/__init__.py
++++ b/api/controllers/web/__init__.py
+@@ -16,3 +16,4 @@ api.add_resource(RemoteFileInfoApi, "/remote-files/<path:url>")
+ api.add_resource(RemoteFileUploadApi, "/remote-files/upload")
+ 
+ from . import app, audio, completion, conversation, feature, message, passport, saved_message, site, workflow
++from .lin import message as lin_message
+diff --git a/docker/docker-compose.middleware.yaml b/docker/docker-compose.middleware.yaml
+index 11f530219..930873463 100644
+--- a/docker/docker-compose.middleware.yaml
++++ b/docker/docker-compose.middleware.yaml
+@@ -1,7 +1,8 @@
+ services:
+   # The postgres database.
+   db:
+-    image: postgres:15-alpine
++    # image: postgres:15-alpine
++    image: postgres:15
+     restart: always
+     env_file:
+       - ./middleware.env
+diff --git a/web/app/components/base/chat/chat-with-history/chat-wrapper.tsx b/web/app/components/base/chat/chat-with-history/chat-wrapper.tsx
+index 724ef78e7..852162029 100644
+--- a/web/app/components/base/chat/chat-with-history/chat-wrapper.tsx
++++ b/web/app/components/base/chat/chat-with-history/chat-wrapper.tsx
+@@ -17,6 +17,7 @@ import {
+ } from '@/service/share'
+ import AnswerIcon from '@/app/components/base/answer-icon'
+ 
++const ChatWidth = 1200
+ const ChatWrapper = () => {
+   const {
+     appParams,
+@@ -127,7 +128,7 @@ const ChatWrapper = () => {
+           />
+           {
+             !currentConversationId && (
+-              <div className={`mx-auto w-full max-w-[720px] ${isMobile && 'px-4'}`}>
++              <div className={`mx-auto w-full max-w-[${ChatWidth}px] ${isMobile && 'px-4'}`}>
+                 <div className='mb-6' />
+                 <ConfigPanel />
+                 <div
+@@ -172,9 +173,9 @@ const ChatWrapper = () => {
+         config={appConfig}
+         chatList={chatList}
+         isResponding={isResponding}
+-        chatContainerInnerClassName={`mx-auto pt-6 w-full max-w-[720px] ${isMobile && 'px-4'}`}
++        chatContainerInnerClassName={`mx-auto pt-6 w-full max-w-[${ChatWidth}px] ${isMobile && 'px-4'}`}
+         chatFooterClassName='pb-4'
+-        chatFooterInnerClassName={`mx-auto w-full max-w-[720px] ${isMobile && 'px-4'}`}
++        chatFooterInnerClassName={`mx-auto w-full max-w-[${ChatWidth}px] ${isMobile && 'px-4'}`}
+         onSend={doSend}
+         inputs={currentConversationId ? currentConversationItem?.inputs as any : newConversationInputs}
+         inputsForm={inputsForms}
+diff --git a/web/app/components/base/chat/chat-with-history/header.tsx b/web/app/components/base/chat/chat-with-history/header.tsx
+index d269b9776..6dc39765c 100644
+--- a/web/app/components/base/chat/chat-with-history/header.tsx
++++ b/web/app/components/base/chat/chat-with-history/header.tsx
+@@ -1,5 +1,6 @@
+ import type { FC } from 'react'
+ import { memo } from 'react'
++import Share from '../lin-chat-share/share'
+ 
+ type HeaderProps = {
+   title: string
+@@ -18,6 +19,8 @@ const Header: FC<HeaderProps> = ({
+       `}
+     >
+       {title}
++      <Share/>
++
+     </div>
+   )
+ }
+diff --git a/web/app/components/base/chat/embedded-chatbot/index.tsx b/web/app/components/base/chat/embedded-chatbot/index.tsx
+index 703dde107..df8e131f5 100644
+--- a/web/app/components/base/chat/embedded-chatbot/index.tsx
++++ b/web/app/components/base/chat/embedded-chatbot/index.tsx
+@@ -84,7 +84,7 @@ const Chatbot = () => {
+             <Loading type='app' />
+           )}
+           {chatReady && !appChatListDataLoading && (
+-            <div className='relative h-full pt-8 mx-auto w-full max-w-[720px]'>
++            <div className='relative h-full pt-8 mx-auto w-full max-w-[1200px]'>
+               {!isMobile && (
+                 <div className='absolute top-2.5 right-3 z-20'>
+                   <Tooltip
+diff --git a/web/middleware.ts b/web/middleware.ts
+index e0f8f3782..60dd2fa32 100644
+--- a/web/middleware.ts
++++ b/web/middleware.ts
+@@ -65,7 +65,10 @@ export const config = {
+      */
+     {
+       // source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+-      source: '/((?!_next/static|_next/image|favicon.ico).*)',
++      source: '/((?!api|_next|favicon.ico).*)',
++      // source: '/((?!_next/static|_next/image|favicon.ico).*)',
++      // source: '/((?!api|favicon.ico).*)',
++
+       // source: '/(.*)',
+       // missing: [
+       //   { type: 'header', key: 'next-router-prefetch' },
+diff --git a/web/package.json b/web/package.json
+index 64721051a..179654e3b 100644
+--- a/web/package.json
++++ b/web/package.json
+@@ -6,7 +6,7 @@
+     "node": ">=18.17.0"
+   },
+   "scripts": {
+-    "dev": "next dev",
++    "dev": "next dev -p 8006",
+     "build": "next build",
+     "start": "cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public && cross-env PORT=$npm_config_port HOSTNAME=$npm_config_host node .next/standalone/server.js",
+     "lint": "next lint",
+diff --git a/web/service/share.ts b/web/service/share.ts
+index 0e46e30d0..b8785e749 100644
+--- a/web/service/share.ts
++++ b/web/service/share.ts
+@@ -13,7 +13,7 @@ import type {
+ import type { ChatConfig } from '@/app/components/base/chat/types'
+ import type { SystemFeatures } from '@/types/feature'
+ 
+-function getAction(action: 'get' | 'post' | 'del' | 'patch', isInstalledApp: boolean) {
++export function getAction(action: 'get' | 'post' | 'del' | 'patch', isInstalledApp: boolean) {
+   switch (action) {
+     case 'get':
+       return isInstalledApp ? consoleGet : get

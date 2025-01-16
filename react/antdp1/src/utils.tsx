@@ -611,12 +611,29 @@ export const getFileMd5 = async (file: File): Promise<string> => {
 export type Chunk={blob:Blob,progress:number,finished:boolean}
 export const getFileChunks=(file:File,chunkSize:number):Chunk[]=>{
   const chunks:Chunk[] = [];
+  if(!file) return chunks
   let i = 0;
   while (i < file.size) {
     chunks.push({ blob: file.slice(i, i + chunkSize), progress: 0, finished: false });
     i += chunkSize;
   }
   return chunks
+}
+
+
+export const downloadFromObs = async (getUrlFunc,fileName) => {
+  const result = await getUrlFunc()
+  const fileData = await fetch(result.data).then(r => r.text());
+  const blob = new Blob([fileData], { type: 'text/plain' });
+  const a = document.createElement('a');
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.style = 'display: none';
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
 }
 export { safeReq, tryGetJson, tableUnitRender, clickHtmlList, formatNumber, eliminateAsyncCall, toBase62 }
 

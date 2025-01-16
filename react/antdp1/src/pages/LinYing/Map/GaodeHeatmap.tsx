@@ -1,6 +1,7 @@
 // 打开docoment.ejs里的这一样，即可显示。注意版本号：需要2.0版本的才能打开这种热力图
 {/* <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=xxxx"></script> */ }
 
+import { loadGaode } from "@/utils";
 import { Button } from "antd";
 import { useEffect, useState } from "react"
 // declare var Loca:any
@@ -8,6 +9,7 @@ const Gaode: React.FC = () => {
     const [heatmap, setheatmap] = useState()
     const [heatMapData, setHeatMapData] = useState([])
     useEffect(() => {
+      const refreshMap=()=>{
         var map = new AMap.Map('gaodemap', {
             resizeEnable: true, center: [116.410588, 39.940089], zoom: 11
         })
@@ -77,6 +79,9 @@ const Gaode: React.FC = () => {
             });
         });
         // 热力图-----
+      }
+      if(!window.AMap){ loadGaode(refreshMap) }
+      else refreshMap()
     }, [])
     return <div>
         <div id="gaodemap"></div>

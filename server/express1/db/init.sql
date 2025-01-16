@@ -64,7 +64,25 @@ CREATE TABLE `api_log` (
   KEY `api_log_host_index` (`host`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
-alter table user add column avatar_path varchar(255) default '' comment '头像路径';
+
+create table uploaded_files (
+    id int primary key auto_increment,
+    user_id int,
+    filename varchar(255),
+    md5 varchar(255),
+    chunk_num int COMMENT 'total chunk number',
+    upload_time datetime,
+    size int COMMENT 'file size'
+);
+
+alter table user 
+  add column clear_psw tinyint not null default 0 comment '清除密码标记',
+  add column email varchar(255) default '' comment '邮箱',
+  add column role varchar(30) default '' comment '权限',
+  add column avatar_path varchar(255) default '' comment '头像路径';
+-- ALTER TABLE user ADD UNIQUE (email);
+-- ALTER TABLE user add column email varchar(255) default '' comment '邮箱' unique; 这样可以一句实现add column和unique
+
+
 
 -- execute in shell： mysql -u yourusername -p -h localhost < init.sql
-

@@ -1,14 +1,15 @@
 import os
-from flask import request, jsonify, send_file, g
+from flask import request, jsonify, send_file, g, Response
 from flask import Blueprint
 from werkzeug.utils import secure_filename
 import uuid
-from db.models import User
+from db.models import User, UploadedFile
 from db.mysqlCon import Session
 import functools
 from db.redisCon import redis_client
 import json
 import redis
+import re
 
 filetransRouter = Blueprint("filetrans", __name__, url_prefix="/file-trans")
 
@@ -49,6 +50,18 @@ def upload_avatar():
     user_id = request.form.get('user_id')
     if file.filename == '':
         return jsonify({"status": "error", "msg": "No selected file"}), 400
+    # 文件大小不能超过2M
+    # if len(file.read()) > 2 * 1024 * 1024: #这种方法有问题，因为file.read()会把文件读取完，指针移动到了文件末尾
+    #     return jsonify({"status": "error", "msg": "File size too large"}), 400
+    # 检查文件大小
+    file.seek(0, os.SEEK_END)
+    file_size = file.tell()
+    file.seek(0)  # 重置文件指针到开头
+    
+    if file_size > 2 * 1024 * 1024:  # 2MB
+        return jsonify({"status": "error", "msg": "File size too large"}), 400
+    
+    
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         # 使用UUID作为文件名以避免冲突
@@ -78,22 +91,36 @@ def get_avatar(user_id):
     
 def merge_chunks(file_md5, filename, chunk_num,dir):
     # 合并文件分片
-    with open(os.path.join(dir, filename), 'wb') as destination:
+    with open(os.path.join(dir, file_md5+"_"+filename), 'wb') as destination:
+        size = 0
         for i in range(chunk_num):
             chunk_path = os.path.join(dir, f"{filename}_{file_md5}_{i}")
             with open(chunk_path, 'rb') as source:
-                destination.write(source.read())
+                d = source.read()
+                destination.write(d)
+                size += len(d)
             os.remove(chunk_path)  # 删除已合并的分片
+        return size
 
 @filetransRouter.route("/bigfile/upload-chunk", methods=['POST'])
 def upload_chunk():
     if 'file' not in request.files:
         return jsonify({"status": "error", "msg": "No file part"}), 400
-    file = request.files['file']
+
     user_id = request.form.get('user_id')
+    # 一个用户最多上传10个文件
+    session = Session()
+    uploaded_files = session.query(UploadedFile).filter_by(user_id=user_id).all()
+    if len(uploaded_files) >= 10:
+        return jsonify({"status": "error", "msg": "Too many files uploaded", "code": 11}), 200
+
+    file = request.files['file']
     md5 = request.form.get('md5')
     index = int(request.form.get('index'))
-    chunk_num = int(request.form.get('chunk_num'))
+    chunk_num = int(request.form.get('chunk_num')) # 一个分片5M
+    # 大于500M的禁止上传
+    if chunk_num > 100:
+        return jsonify({"status": "error", "msg": "File size too large","code":10}),200
     rdb = redis_client()
     print(f"index: {index}, chunk_num: {chunk_num}")
 
@@ -150,7 +177,13 @@ def upload_chunk():
                 continue
 
     if uploadedFile['finished'] == 1:
-        merge_chunks(md5, filename, chunk_num, UPLOAD_BIGFILE_FOLDER)
+        sz=merge_chunks(md5, filename, chunk_num, UPLOAD_BIGFILE_FOLDER)
+        session = Session()
+        uploaded_file = UploadedFile(user_id=user_id, filename=filename, md5=md5, chunk_num=chunk_num, size=sz)
+        session.add(uploaded_file)
+        session.commit()
+        session.close()
+
         return jsonify({"status": "success", "msg": "File uploaded and merged successfully", "finished": 1}), 200
     else:
         return jsonify({"status": "success", "msg": "Chunk uploaded successfully"}), 200
@@ -188,3 +221,80 @@ def last_upload_info():
             return jsonify({"status": "success", "msg": "File not found", "code":1,"data":None}), 200
     except Exception as e:
         return jsonify({"status": "error", "msg": str(e)}), 500
+
+
+@filetransRouter.route("/bigfile/uploaded-list", methods=['GET'])
+def uploaded_list():
+    session = Session()
+    user_id = request.args.get("user_id")
+    uploaded_files = session.query(UploadedFile).filter_by(user_id=user_id).all()
+    session.close()
+    data = []
+    for file in uploaded_files:
+        data.append({"filename": file.filename, "md5": file.md5, "chunk_num": file.chunk_num, 
+                     "upload_time": file.upload_time,"id":file.id,"size":file.size})
+    return jsonify({"status": "success", "data": data, "code":1}), 200
+
+@filetransRouter.route("/bigfile/download/<int:file_id>", methods=['GET'])
+def download_file(file_id):
+    session = Session()
+    uploaded_file = session.query(UploadedFile).filter_by(id=file_id).first()
+    session.close()
+    
+    if not uploaded_file:
+        return jsonify({"status": "error", "msg": "File not found"}), 404
+    
+    file_path = os.path.join(UPLOAD_FOLDER, "bigfile", f"{uploaded_file.md5}_{uploaded_file.filename}")
+    file_size = os.path.getsize(file_path)
+    
+    range_header = request.headers.get('Range', None)
+    if range_header:
+        byte1, byte2 = 0, None
+        match = re.search(r'bytes=(\d+)-(\d*)', range_header)
+        groups = match.groups()
+
+        if groups[0]:
+            byte1 = int(groups[0])
+        if groups[1]:
+            byte2 = int(groups[1])
+
+        if byte2 is None or byte2 >= file_size:
+            byte2 = file_size - 1
+        
+        length = byte2 - byte1 + 1
+
+        def generate():
+            with open(file_path, 'rb') as f:
+                f.seek(byte1)
+                data = f.read(length)
+                yield data
+
+        resp = Response(generate(), 206, mimetype='application/octet-stream',
+                        content_type='application/octet-stream', direct_passthrough=True)
+        resp.headers.add('Content-Range', f'bytes {byte1}-{byte2}/{file_size}')
+        resp.headers.add('Accept-Ranges', 'bytes')
+        resp.headers.add('Content-Length', str(length))
+        resp.headers.add('Content-Disposition', f'attachment; filename="{uploaded_file.filename}"')
+        return resp
+
+    else:
+        return send_file(file_path, as_attachment=True, attachment_filename=uploaded_file.filename)
+
+
+@filetransRouter.route("/bigfile/<int:file_id>", methods=['DELETE'])
+def delete_bigfile(file_id):
+    session = Session()
+    uploaded_file = session.query(UploadedFile).filter_by(id=file_id).first()
+    if not uploaded_file:
+        return jsonify({"status": "error", "msg": "File not found"}), 404
+    session.delete(uploaded_file)
+    session.commit()
+    session.close()
+
+    rdb = redis_client()
+    uploaded_file_key = f"{uploaded_file.md5}_{uploaded_file.filename}"
+    rdb.delete(uploaded_file_key)
+    rdb.delete(f"last_upload_info_{uploaded_file.user_id}")
+    file_path = os.path.join(UPLOAD_FOLDER, "bigfile", f"{uploaded_file.md5}_{uploaded_file.filename}")
+    os.remove(file_path)
+    return jsonify({"status": "success", "msg": "File deleted successfully","code":1}), 200

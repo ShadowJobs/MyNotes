@@ -98,4 +98,5 @@ export const PythonUrl="/api-python"
 // 做域名共用时的/ly/转发，现在有独立的端口，不需要转发了
 // export const FrontendPre=window.location.host.includes("localhost")?"":"/ly"
 export const FrontendPre=""
-export const WebsocketUrl=window.location.host.includes("localhost")?"ws://localhost:5001":"wss://www.xyccstudio.cn:8009/ws" //线上通过/ws转发
+export const WebsocketUrl=window.location.host.includes("localhost")?"ws://localhost:5005":"wss://www.xyccstudio.cn:8009/ws" //线上通过/ws转发
+export const ThinkingDeepseakUrl = "https://www.xyccstudio.cn:39006/chat/jNvz7t7z3qRqjzoG"

@@ -74,20 +74,20 @@ const Footer: React.FC = () => {
   return (
     <DefaultFooter
       copyright={`${currentYear} ${defaultMessage} 津ICP备2023004690号-1`}
-      links={[
-        {
-          key: 'shadowjobs',
-          title: 'ShadowJobs的git仓库',
-          href: 'https://github.com/ShadowJobs/MyNotes',
-          blankTarget: true,
-        },
-        {
-          key: 'github',
-          title: <GithubOutlined />,
-          href: 'https://github.com/ShadowJobs/MyNotes',
-          blankTarget: true,
-        }
-      ]}
+      // links={[
+      //   {
+      //     key: 'shadowjobs',
+      //     title: 'ShadowJobs的git仓库',
+      //     href: 'https://github.com/ShadowJobs/MyNotes',
+      //     blankTarget: true,
+      //   },
+      //   {
+      //     key: 'github',
+      //     title: <GithubOutlined />,
+      //     href: 'https://github.com/ShadowJobs/MyNotes',
+      //     blankTarget: true,
+      //   }
+      // ]}
     />
   );
 };

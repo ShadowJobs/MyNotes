@@ -1,8 +1,7 @@
 //注意的点，见下注释
 //特别提示，monaco和plugin的
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Card, Row, Col, Space, Button, Select, Collapse } from 'antd';
-import * as _ from 'lodash'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import 'monaco-editor/esm/vs/basic-languages/python/python.contribution'; // 1,语法高亮，这么import可以使生成的时候引用的代码只有python的包
 import "./hightlight11.8.0.min.css" //react-markdown的代码高亮样式,必须配合hightlight.js库
@@ -14,6 +13,10 @@ console.log(md)
 
 import { LogCard } from './MonacoEditorReact';
 import { MarkdownComp } from './SmallComps';
+// import { MonacoDiffEditor } from 'react-monaco-editor';
+const MonacoDiffEditor = React.lazy(() => import('react-monaco-editor').then(module => ({
+  default: module.MonacoDiffEditor
+})));
 
 let getTransStr = function (v) { return v }
 class MonacoEditor extends React.Component {
@@ -113,6 +116,9 @@ class MonacoEditor extends React.Component {
   }
 }
 const CodeEditor = () => {
+  const editorDidMount = (editor, monaco) => {
+    console.log('editorDidMount', editor);
+  };
   return <div>
     <Collapse defaultActiveKey={['1']}>
       <Collapse.Panel header="仅用monaco-editor " key="1">
@@ -121,7 +127,7 @@ const CodeEditor = () => {
       <Collapse.Panel header="markdown展示" key="2">
         <MarkdownComp content={md.toString()} />
       </Collapse.Panel>
-      <Collapse.Panel header="用monaco-editor-react" key="3">
+      <Collapse.Panel header="用monaco-editor-react显示日志" key="3">
         <LogCard curLog={`
 2024-08-30T06:19:20.402077691Z ++ /usr/local/bin/fixuid
 2024-08-30T06:19:20.404716481Z fixuid: updating user 'dock2er' to UID '12
@@ -135,6 +141,26 @@ const CodeEditor = () => {
 2024-08-30T06:19:20.406544965Z /usr/sbin/sshd -p 8890;
 2024-08-30T06:19:20.406547737Z sleep 1m && cat /tmp/.mpir
       `} />
+      </Collapse.Panel>
+
+      <Collapse.Panel header="用monaco-editor-react做代码diff" key="4">
+
+        <Suspense fallback={<div>Loading Editor...</div>}>
+        <MonacoDiffEditor
+          height="500"
+          language="cpp"
+          theme="vs-dark"
+          options={{
+            selectOnLineNumbers: true,
+            automaticLayout: true,
+            readOnly:true,
+            lineNumbers: (lineNumber) => `${lineNumber + 100 - 1}`,
+          }}
+          original={`#include <stdio>\nint main();`}
+          value={`#include <iostream>\nint main();`}
+          editorDidMount={editorDidMount}
+        />
+        </Suspense>
       </Collapse.Panel>
     </Collapse>
   </div>
