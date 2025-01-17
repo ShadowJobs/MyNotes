@@ -1,6 +1,7 @@
 const path = require('path');
 const { whenProd, getPlugin, pluginByName } = require('@craco/craco')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 
 //craco的使用：在不eject的情况下修改webpack的功能。
@@ -10,7 +11,10 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 module.exports = {
   webpack: {
     alias: { "@": path.resolve(__dirname, 'src') },
+    plugins:[
+      ...(process.env.BUNDLE_ANALYZE ? [new BundleAnalyzerPlugin()] : []),
 
+    ],
     configure: (webpackConfig) => {
       // webpackConfig自动注入的webpack配置对象
       // 可以在这个函数中对它进行详细的自定义配置

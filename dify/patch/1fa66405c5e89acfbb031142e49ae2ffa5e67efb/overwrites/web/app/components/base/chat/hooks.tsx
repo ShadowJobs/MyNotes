@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { getPrevChatList } from '../utils'
 import {
-  fetchSharedChatListMmt,
+  fetchSharedChatListLin,
 } from '@/service/linservice'
 
 export const useConversationWithoutAuth = () => {
@@ -15,16 +15,16 @@ export const useConversationWithoutAuth = () => {
     setCurrentConversationId(new URLSearchParams(window.location.search).get('conversationid'))
   }, [])
 
-  const { data: mmtSharedData } = useSWR(
+  const { data: linSharedData } = useSWR(
     currentConversationId ? [true, currentConversationId, app_id] : null,
-    () => fetchSharedChatListMmt(currentConversationId as string, app_id),
+    () => fetchSharedChatListLin(currentConversationId as string, app_id),
   )
 
   const appPrevChatList = useMemo(
-    () => (currentConversationId && mmtSharedData?.data.length)
-      ? getPrevChatList(mmtSharedData.data)
+    () => (currentConversationId && linSharedData?.data.length)
+      ? getPrevChatList(linSharedData.data)
       : [],
-    [mmtSharedData, currentConversationId],
+    [linSharedData, currentConversationId],
   )
 
   return { appPrevChatList }

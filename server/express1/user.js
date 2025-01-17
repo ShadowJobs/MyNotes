@@ -243,11 +243,10 @@ userRouter.get('/currentUser', async (req, res) => {
   }
   try {
     const username = await redisClient.get(token)
-    console.log(username)
+    console.log("get user info: "+username)
     if (username === null) {
       return res.status(200).json({ msg: 'Invalid token', code: 3 });
     }
-    console.log("username", username)
     db.query('SELECT id, name,gender,role FROM user WHERE name = ?', [username], (error, results) => {
       if (error || results.length === 0) {
         return res.status(404).json({ error: 'User not found' });

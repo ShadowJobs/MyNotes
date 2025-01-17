@@ -78,7 +78,6 @@
   {
     path: '/2024', icon: "twitter", name: "2024",
     routes:[
-      {name: "MyGpt", path: "mygpt", component: "./2025/MyGpt"},
       {name: "Graphin", path: "Graphin", component: "./2024/Graphin"},
       {name: "SvgDraw", path: "SvgDraw", component: "./2024/SvgDraw"},
       {name: "Hook1", path: "Hook1", component: "./2024/Hook1"},

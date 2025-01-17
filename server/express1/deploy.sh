@@ -49,7 +49,8 @@ ssh root@$SERVER_IP << EOF
     cd ~/ly/running/express
     echo "npm i"
     # npm i --legacy-peer-deps
-    nohup node app.js --prod > output.log 2>&1 & # nohup使得命令在后台以持续运行的方式执行；> output.log 2>&1表示将标准输出（stdout）和错误输出（stderr）都重定向到output.log文件中；末尾的&表示将该命令放入后台运行。
+    # nohup node app.js --prod > output.log 2>&1 & # nohup使得命令在后台以持续运行的方式执行；> output.log 2>&1表示将标准输出（stdout）和错误输出（stderr）都重定向到output.log文件中；末尾的&表示将该命令放入后台运行。
+    pm2 start app.js --name "myapp" -- --prod
     cd ../python
     pip3 install -r requirements.txt
     pkill -f "python3 main.py"

@@ -67,9 +67,9 @@ app.use("/res",Express.static("./public")) //请求时，必须加上/res 才能
 // 资源路径查找的规则：<link ref="stylesheet" href="./res/a.css" />,这是一个相对路径，在不同的页面嵌入这个<link>得到的资源路径不一样，所以要用绝对路径，即以/开头
 
 // 自定义中间件，放到所有的请求之前，那么所有的get, post等方法执行时，都会进入这个自定义的函数
+log("self define middleware")
 app.use((req,res,next)=>{
-  log("self define middleware")
-  log(req.method,req.url,Date.now())
+  log(req.method,req.url,new Date().toLocaleString()) //用年-月-日 时:分:秒
   next()
 })
 // app.use(morgan("tiny")) //官方提供的自动打印日志的中间件

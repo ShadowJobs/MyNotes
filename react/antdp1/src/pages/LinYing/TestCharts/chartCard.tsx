@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Col, Collapse, Input, Popover, Switch } from 'antd';
-import { LineChart, PieChart, BarChart, ScatterChart, DividerChart, MmtImage, AntBox, } from './Charts';
+import { LineChart, PieChart, BarChart, ScatterChart, DividerChart, LinImage, AntBox, } from './Charts';
 import SelfTable from './Table2';
 import { DownloadOutlined, DownOutlined } from '@ant-design/icons';
 import { AntTable } from './AntTable';
@@ -75,7 +75,7 @@ const ChartCard: React.FC<{ result: Mynote.ApiAggResult; isMerged?: boolean,team
       scrolling="auto"
     />))),
     no_show: <></>,
-    image: <MmtImage tableResult={result as Mynote.ApiAggImageResult}/>,
+    image: <LinImage tableResult={result as Mynote.ApiAggImageResult}/>,
     echart:<FreeEchart result={result as Mynote.ApiAggFreeEchart}/>,
     embeddedPage:<iframe src={result?.data?.url} width={"100%"} height={300}/>,
   };

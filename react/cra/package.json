@@ -19,13 +19,15 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.4.3",
-    "html-webpack-plugin": "^5.5.0"
+    "html-webpack-plugin": "^5.5.0",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "scripts": {
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "analyze": "BUNDLE_ANALYZE=true craco build"
   },
   "eslintConfig": {
     "extends": [

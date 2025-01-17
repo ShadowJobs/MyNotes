@@ -159,7 +159,7 @@ ps aux | grep -E "node|npm" #查看node和npm进程
 ```
 
 # 11. nginx 
-# 11.1 启动,停止
+## 11.1 启动,停止
 ```shell
 #mac
 brew services start nginx
@@ -175,7 +175,7 @@ See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for det
 原因：1， nginx.conf配置错误，2，nginx要用的端口被占用
 
 ```
-# 11.2 安装nginx 
+## 11.2 安装nginx 
 centos: 
 输入：yum  install nginx -y
 nginx 启动  加-t可以测试nginx配置能否正常启动
@@ -205,7 +205,7 @@ index index.html
  默认的access_log里没有请求中附带的参数值，如果要这些值，需要加入变量$request_body，这里能取到Post的信息
 默认log位置 /var/log/nginx/error.log
 
-# 11.3 nginx证书配置 mac
+## 11.3 nginx证书配置 mac
 主要有三种方案：
 - 使用 Let's Encrypt 免费证书（推荐）
 - 自签名证书（测试环境使用）
@@ -239,6 +239,165 @@ server{
     # SSL 配置
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
+
+
+    access_log /var/log/nginx/access-dify.log;
+    error_log /var/log/nginx/error-dify.log;
+  # 这里log会自动分割，因为ubuntu默认安装了logrotate
+  # logrotate 的配置文件通常位于 /etc/logrotate.conf， 而具体的服务配置文件会在 /etc/logrotate.d/ 目录下。
+  # cat /etc/logrotate.d/nginx 可以看到如何分割文件
+    
+    
 ```
-访问前先修改host 127.0.0.1 a.sd.com
+访问前先修改host文件，添加：  127.0.0.1 a.sd.com
 重启nginx 
+
+# 12 ubunt查是否安装过包
+dpkg -l | grep mysql
+
+# 13. 反向代理，使用公司电脑当网络跳板
+
+1. 从公司电脑连接到云服务器，同时设置动态端口转发：
+   ```
+   ssh -D 1080 -f -C -q -N root@$SERVER_IP
+   ```
+   这里的1080是在您公司电脑上开放的本地端口，用于SOCKS代理。 （端口大于1024即可，小于1024的端口通常需要root权限）
+
+2. 在华为云服务器上，设置环境变量以使用这个SOCKS代理：
+   ```
+   export ALL_PROXY=socks5://your-company-computer-ip:1080
+   ```
+   请将 `your-company-computer-ip` 替换为您公司电脑的实际IP地址。内网ip即可。外网ip可能会变化的
+
+3. 如果您希望取消代理设置，可以运行： unset ALL_PROXY
+
+注意事项：
+- 这个方法只在当前SSH会话中有效。当您关闭SSH连接时，代理设置会自动失效。
+
+如果您想验证代理是否正常工作，可以在设置代理后尝试：
+```
+curl ifconfig.me
+```
+这应该会显示您公司电脑的公网IP，而不是云服务器的IP。
+
+# 14. **PM2**
+## 14.1 安装，简介
+ubuntu 自带了(不确定是否是别人装的)
+没有的话 : npm install pm2 -g
+
+PM2 (Process Manager 2) 是一个非常强大的Node.js应用程序管理工具。
+
+1. 进程管理：
+   - PM2 可以启动、停止、重启和删除进程
+   - 支持集群模式，可以轻松实现负载均衡
+   - 可以监控 CPU 和内存使用情况
+
+2. 日志管理：
+   - PM2 自动捕获标准输出和错误输出
+   - 支持日志轮转
+   - 提供实时日志查看功能
+
+3. 自动重启：
+   - 可以在应用崩溃时自动重启
+   - 支持定时重启
+   - 可以在文件更改时重启应用
+
+4. 负载均衡：
+   - 在集群模式下自动进行负载均衡
+   - 可以根据 CPU 核心数自动扩展实例数量
+
+5. 环境管理：
+   - 支持不同环境（开发、生产等）的配置
+
+6. 监控和性能分析：
+   - 提供内置的监控工具
+   - 可以与第三方监控工具集成
+
+## 14.2 常用命令
+```shell
+  pm2 start app.js --name "myapp"
+
+  pm2 start app.js --name "myapp" -- --prod
+  - 这条命令启动app.js，给进程命名为"myapp"，并传递--prod参数给应用。
+
+# - 查看进程列表：`pm2 list`
+# - 停止应用：`pm2 stop myapp`
+# - 重启应用：`pm2 restart myapp`
+# - 删除应用：`pm2 delete myapp`
+
+  #  PM2还支持集群模式，可以利用多核CPU：
+   pm2 start app.js -i max
+  #  这会根据CPU核心数启动多个实例。
+
+```
+- **显示特定进程的信息**
+    pm2 describe myapp
+    显示名称为 `myapp` 的详细信息。
+
+### 日志管理
+将标准输出和错误输出保存到文件中。   日志文件默认保存在~/.pm2/logs/目录下。
+
+- **查看所有日志**
+    pm2 logs
+- **查看特定应用程序的日志**
+    pm2 logs myapp
+    显示最后100行日志：`pm2 logs --lines 100`
+   PM2还支持日志轮转，可以在pm2的配置文件中设置：
+   ```json
+   {
+     "apps": [{
+       "name": "myapp",
+       "script": "app.js",
+       "log_date_format": "YYYY-MM-DD HH:mm Z",
+       "out_file": "/var/log/myapp/out.log",
+       "error_file": "/var/log/myapp/err.log",
+       "max_size": "10M",
+       "rotate_interval": "1d"
+     }]
+   }
+   ```
+- **清除所有日志**
+    pm2 flush
+### 进程管理
+- **监控所有进程**
+    pm2 monit
+- **重新加载所有进程（平滑重启）**
+    pm2 reload all
+    平滑地重启所有进程，不会中断现有连接。
+- **重启崩溃或关闭的应用程序**
+    pm2 resurrect
+    从保存的快照中恢复进程。
+### 配置和设置
+- **生成启动脚本**
+    pm2 startup
+    生成系统启动脚本，以便在服务器重启时自动启动 PM2 和其管理的进程。
+- **保存当前进程列表**
+    pm2 save
+    保存当前运行的进程列表，以便后续使用 `pm2 resurrect` 恢复。
+- **导出配置文件**
+    pm2 ecosystem
+    创建包含当前进程配置的 `ecosystem.config.js` 文件。
+- **杀掉所有进程**
+    pm2 kill
+
+## 14.3 重启
+
+   PM2提供了多种自动重启机制：
+
+   - 崩溃重启：默认情况下，如果应用崩溃，PM2会自动重启它。
+
+   - 基于资源的重启：可以设置内存或CPU阈值，超过时自动重启：
+     ```
+     pm2 start app.js --max-memory-restart 1G
+     ```
+
+   - 定时重启：可以设置定期重启应用：
+     ```
+     pm2 start app.js --cron-restart="0 0 * * *"
+     ```
+     这会每天午夜重启应用。
+
+   - 文件更改时重启：使用watch模式，当文件变化时自动重启：
+     ```
+     pm2 start app.js --watch
+     ```
