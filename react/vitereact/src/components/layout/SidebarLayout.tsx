@@ -38,8 +38,8 @@ export default function SidebarLayout() {
         }}
         className="group !fixed inset-y-0 left-0 h-screen !w-56 !min-w-[14rem] !max-w-[14rem]
                   !flex-none !basis-[14rem] overflow-hidden !bg-[#0068eb] !transition-none
-                  data-[collapsed=true]:!w-20 data-[collapsed=true]:!min-w-[5rem]
-                  data-[collapsed=true]:!max-w-[5rem] data-[collapsed=true]:!basis-[5rem]
+                  data-[collapsed=true]:!w-20 data-[collapsed=true]:!min-w-[3rem]
+                  data-[collapsed=true]:!max-w-[3rem] data-[collapsed=true]:!basis-[3rem]
                   3xl:!w-96 3xl:!min-w-[24rem] 3xl:!max-w-[24rem] 3xl:!basis-[24rem]"
         data-collapsed={isCollapsed}
         data-theme-override
@@ -53,6 +53,8 @@ export default function SidebarLayout() {
           inlineIndent={12}
           items={navigation}
           defaultOpenKeys={
+            // 这里面的 keys来自于navigation.tsx里的key
+
             !isCollapsed ? (state?.keys ? state.keys : DEFAULT_OPEN_PATH) : undefined
           }
           selectedKeys={state?.keys ?? DEFAULT_SELECTED_PATH}
@@ -60,10 +62,10 @@ export default function SidebarLayout() {
         /></div>
       </Layout.Sider>
 
-      <Layout className="ml-56 data-[collapsed=true]:ml-20 3xl:ml-96" data-collapsed={isCollapsed}>
+      <Layout className="ml-56 data-[collapsed=true]:ml-12 3xl:ml-96" data-collapsed={isCollapsed}>
         <Header />
 
-        <Layout.Content className="p-8">
+        <Layout.Content className="p-2 md:p-4">
           <Suspense
             fallback={
               <>

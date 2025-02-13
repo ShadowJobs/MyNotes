@@ -320,6 +320,9 @@ PM2 (Process Manager 2) 是一个非常强大的Node.js应用程序管理工具�
   pm2 start app.js --name "myapp" -- --prod
   - 这条命令启动app.js，给进程命名为"myapp"，并传递--prod参数给应用。
 
+# build后的dify next项目启动
+  pm2 start npm --name "dify-web" -- run start --port=5006
+
 # - 查看进程列表：`pm2 list`
 # - 停止应用：`pm2 stop myapp`
 # - 重启应用：`pm2 restart myapp`
@@ -401,3 +404,19 @@ PM2 (Process Manager 2) 是一个非常强大的Node.js应用程序管理工具�
      ```
      pm2 start app.js --watch
      ```
+
+# 15. **进程管理**
+```shell
+# 查看所有含有python的进程
+  ps aux | grep python
+  # 可以看到有 
+  root@hcss8:~/api# ps aux | grep python
+root     1655362  0.0  1.5 528100 60176 ?        Sl   Jan11   6:08 python3 main.py
+root     3124095  0.0 12.5 1141616 479408 ?      Sl   Jan16  18:48 /root/dify/opensource/api/.venv/bin/python /root/dify/opensource/api/.venv/bin/flask run --host 0.0.0.0 --port=5007
+root     3185863  0.0 12.7 1141748 487560 ?      S    Jan16   0:02 /root/dify/opensource/api/.venv/bin/python /root/dify/opensource/api/.venv/bin/flask run --host 0.0.0.0 --port=5007
+# 这里有两个进程都用了5007，可能以是父子进程
+# 查看进程树
+ps -ef | grep flask
+root     3124095       1  0 Jan16 ?        00:18:48 /root/dify/opensource/api/.venv/bin/python /root/dify/opensource/api/.venv/bin/flask run --host 0.0.0.0 --port=5007
+root     3185863 3124095  0 Jan16 ?        00:00:02 /root/dify/opensource/api/.venv/bin/python /root/dify/opensource/api/.venv/bin/flask run --host 0.0.0.0 --port=5007
+# 可以看到 3185863 的进程是进程ID为 3124095 的子进程，kill 3124095 就可以杀掉两个进程

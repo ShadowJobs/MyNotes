@@ -9,7 +9,9 @@ pip install -r requirements.txt
 使用venv环境source openai-env/bin/activate
 
 # 2. poetry
-    poetry 比 pip 提供了更好的包管理功能。主要区别如下:
+  [poetry 1.8.5 -> 2.0.1升级注意](/docs/dify升级注意.md)
+
+  poetry 比 pip 提供了更好的包管理功能。主要区别如下:
 
   ### 1. poetry install 的特点:
   ```bash

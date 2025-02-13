@@ -87,13 +87,17 @@ export async function getInitialState(): Promise<{
       fetchUserInfo,
       currentUser,
       settings: defaultSettings,
-      menuData: menuData || []
+      menuData: menuData || [],
+      collapsed: _initialState.collapsed  // 添加初始状态
+
     };
   }
   return {
     fetchUserInfo,
     settings: defaultSettings,
-    menuData: menuData || []
+    menuData: menuData || [],
+    collapsed: _initialState.collapsed  // 添加初始状态
+
   };
 }
 let _initialState = {
@@ -111,12 +115,37 @@ if (typeof window !== 'undefined') {
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    collapsed: _initialState.collapsed,
-    // onCollapse: (collapsed) => {
-    //   localStorage.setItem('pro-sidebar-collapsed', String(collapsed));
-    //   // window.location.reload();
-    // },
     // menuRender:false,隐藏整个菜单
+    // 移动端专用处理
+    headerContentRender: (_, defaultDom) => {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        return (
+          <div style={{ }}>
+            <allIcons.MenuUnfoldOutlined
+              onClick={() => {
+                localStorage.setItem('pro-sidebar-collapsed', !initialState?.collapsed ? 'true' : 'false');
+                setInitialState((preState) => ({
+                  ...preState,
+                  collapsed: !preState?.collapsed,
+                }));
+              }}
+              style={{ marginRight: 16,marginLeft:10 }}
+            />
+            {defaultDom}
+          </div>
+        );
+      }
+      return defaultDom;
+    },
+    collapsed: initialState?.collapsed,
+    onCollapse: (collapsed: boolean) => {
+      setInitialState((preState) => ({
+        ...preState,
+        collapsed
+      }));
+      localStorage.setItem('pro-sidebar-collapsed', collapsed.toString());
+    },
+
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: { //水印
@@ -129,14 +158,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
       }
+  
     },
-    links: [<Button type="primary" onClick={() => {
-      if (localStorage.getItem('pro-sidebar-collapsed')?.toLocaleLowerCase() === 'true')
-        localStorage.setItem('pro-sidebar-collapsed', "false")
-      else
-        localStorage.setItem('pro-sidebar-collapsed', "true")
-      window.location.reload();
-    }} >展开/关闭</Button>,
+    links: [<Button type="primary"
+      icon={initialState?.collapsed ? <allIcons.MenuUnfoldOutlined /> : <allIcons.MenuFoldOutlined />}
+       onClick={() => {
+      const collapsed = !initialState?.collapsed;
+      setInitialState((preState) => ({
+        ...preState,
+        collapsed
+      }));
+      localStorage.setItem('pro-sidebar-collapsed', collapsed.toString());
+    
+    }} ></Button>,
     ...(isDev
       ? [
 
@@ -178,7 +212,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         } else
           return <NavLink to={itemProps.path} >{defaultDom}</NavLink>
     },
-    menuHeaderRender: undefined,
+    // menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态

@@ -99,4 +99,4 @@ export const PythonUrl="/api-python"
 // export const FrontendPre=window.location.host.includes("localhost")?"":"/ly"
 export const FrontendPre=""
 export const WebsocketUrl=window.location.host.includes("localhost")?"ws://localhost:5005":"wss://www.xyccstudio.cn:8009/ws" //线上通过/ws转发
-export const ThinkingDeepseakUrl = "https://www.xyccstudio.cn:39006/chat/jNvz7t7z3qRqjzoG"
+export const ThinkingDeepseakUrl = "https://www.xyccstudio.cn:39006/chat/VjMVEV2wpRpAG7mX"

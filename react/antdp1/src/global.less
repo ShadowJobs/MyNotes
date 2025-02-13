@@ -64,3 +64,16 @@ body {
 .maptable td{
   padding:5px;
 }
+
+.ant-pro-sider-mobile {
+  @media (max-width: 767px) {
+    position: fixed !important;
+    height: 100vh !important;
+    z-index: 1000;
+    transition: transform 0.3s;
+    
+    &.ant-pro-sider-hide {
+      transform: translateX(-100%);
+    }
+  }
+}

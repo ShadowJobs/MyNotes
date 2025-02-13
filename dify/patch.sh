@@ -235,16 +235,22 @@ EOF
             rm -rf ~/ly/running/dify/opensource/web/.next
 EOF
 
-        rsync -avz ./opensource/web/.next root@$SERVER_IP:~/ly/running/dify/opensource/web/.next
+        rsync -avz --exclude 'cache/webpack' ./opensource/web/.next root@$SERVER_IP:~/ly/running/dify/opensource/web/.next
+        # 这种copy方式容易出现.next/.next的目录，注意登录服务器查看
 
         rsync -avz --exclude '.venv' ./opensource/api root@$SERVER_IP:~/ly/running/dify/opensource/api
         # rsync -avz ./opensource/web/* root@$SERVER_IP:~/ly/running/dify/opensource/web
 ssh root@$SERVER_IP << EOF
     cd ~/ly/running/dify/opensource/web
+
     # 杀掉旧 npm run start 进程
     # pkill -f "npm run start"
     # npm run start --port=5006
     # nohup npm run start --port=5006 > output.log 2>&1 &
+    # pm2 stop dify-web
+    # pm2 start npm --name "dify-web" -- run start --port=5006
+    # pm2 restart dify-web
+    # 若启动失败，查看日志 pm2 logs dify-web
 EOF
         ;;
         

@@ -5,7 +5,11 @@ export type LayoutLoaderData = {
 };
 
 export const loader: LoaderFunction = () => {
-  const isSidebarCollapsed = localStorage.getItem("sidebar/collapsed") === "true";
+  let isSidebarCollapsed = localStorage.getItem("sidebar/collapsed") === "true";
+  if(window.innerWidth < 600) {
+    isSidebarCollapsed = true;
+  }
+
   return {
     isSidebarCollapsed
   };

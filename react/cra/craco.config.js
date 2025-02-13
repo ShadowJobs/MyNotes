@@ -91,7 +91,14 @@ module.exports = {
       // 经过实测，这样写，能够明显减少打包体积，被拆分了
       webpackConfig.optimization.splitChunks = {
         chunks: 'all',
-        name: false,
+        // name: false,
+        // 如果配false，那么文件名就是hash值，如果要看到源文件名字，就用下面的配置
+        name: (module, chunks, cacheGroupKey) => {
+          const moduleFileName = module.identifier().split('/').reduceRight(item => item);
+          const allChunksNames = chunks.map((item) => item.name).join('~');
+          return `${cacheGroupKey}-${allChunksNames}-${moduleFileName}`;
+        },
+        
         cacheGroups: {
           vendor: {
             //   单独打包成若干个包，其中react,react-dom打包到vendor-react里,antd, @ant-design打包到vendor-antd, @antv打包到vendor-antv

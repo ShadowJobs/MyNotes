@@ -17,6 +17,7 @@ import Welcome from "@/pages/Welcome";
 import { UserService } from "@/services";
 import { lazy } from "react";
 import Tasks from "@/pages/Tasks";
+import Dashboard from "@/pages/Dashboard";
 
 const LoginPage = lazy(() => import("@/pages/user/login"));
 
@@ -61,6 +62,7 @@ const router = createBrowserRouter(
       <Route path="/user/login" element={<LoginPage />} />
       <Route index loader={() => redirect(DEFAULT_ROUTE_PATH)} />
       <Route loader={layoutLoader} element={<SidebarLayout />}>
+        <Route path="/dashboard" errorElement={<ErrorAlert />} element={<Dashboard/>}/>
         <Route path="/welcome" errorElement={<ErrorAlert />} element={<Welcome/>}/>
         <Route path="/react1" errorElement={<ErrorAlert />}/>
         <Route path="/react1/:u" errorElement={<ErrorAlert />}/>

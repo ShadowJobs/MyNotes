@@ -209,3 +209,6 @@ module.exports = ({
   
   注意，如果要使用自定义的变量，第二步是必须的，默认情况下，process.env.NODE_ENV是webpack处理的，代码里(node启动 和 项目运行)都能用，但是如果不写第二步，
   那么process.env.TEST_ENV只能在node启动时使用，运行时就没有了。有了第二步后，process.env.TEST_ENV就能在运行时使用了。
+
+# 4. webpack-chain 其他依赖于webpack的项目，如下：
+查看craco.config.js, antdp1/config/config.js,

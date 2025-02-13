@@ -1,5 +1,4 @@
 import { ExpressUrl } from "@/global";
-import { Result } from "@/services";
 import axios from "@/utils/axios";
 import cookie from "@/utils/cookie";
 

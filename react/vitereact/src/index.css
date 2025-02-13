@@ -31,7 +31,7 @@
 }
 
 [data-theme-override][data-collapsed="true"] .ant-layout-sider-trigger {
-  @apply !w-20;
+  @apply !w-12;
 }
 
 .ant-pro-form-group-title {

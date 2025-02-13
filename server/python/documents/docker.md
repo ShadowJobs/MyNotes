@@ -87,6 +87,8 @@ docker compose -f docker-compose.middleware.yaml down
 ```bash
 # 停止服务但保留容器
 docker compose -f docker-compose.middleware.yaml stop
+# 如果上面的命令报错，可以使用以下命令
+docker stop $(docker ps -q)
 ```
 
 3. 使用 docker-compose 其他相关命令
@@ -181,7 +183,22 @@ Jan 07 11:10:28 hcss-ecs-fed8 systemd[1]: Failed to start Docker Application Con
 5. Docker配置文件损坏. **我的情况是第5种，daemon.json的registry-mirrors配置没有写https://头**
 
 # 5. 架构不兼容问题
-uname -m 可以查看cpu架构， mac上的uname是arm64,ubuntu的是x86_64,这样mac通过docker save下来的image在ubuntu上运行会导致架构不匹配，
+
+uname -m 可以查看linux的cpu架构，
+
+查docker 镜像的架构用命令：
+docker run --rm <image_name_or_id> uname -m， 
+或者 docker run --rm <image_name> cat /etc/os-release
+
+查看镜像支持的架构
+docker manifest inspect langgenius/dify-sandbox:0.2.10
+
+如果两者不一样，启动会失败，会一时restarting , 此时，如果是compose.yaml启动,那么在所在的服务里加上 platform: linux/amd64 （服务器的cpu）即可，如果是命令启动，则
+执行  docker run --platform linux/amd64 <image_name> 即可
+
+
+
+mac上的uname是arm64,ubuntu的是x86_64,这样mac通过docker save下来的image在ubuntu上运行会导致架构不匹配，
 具体表现不是docker无法启动，而是node在连接docker compose里的redis服务时报错：
 
 start listen video chat ,port39001

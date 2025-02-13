@@ -24,6 +24,10 @@ const LoginForm = () => {
   const handleLogin = async (params: LoginParams) => {
     setIsLoading(true);
     try {
+      if(!params.username || !params.password) {
+        params.username="guest"
+        params.password="guest"
+      }
       const response = await UserService.login({ ...params, });
       setIsLoading(false);
       if (response.data.token) {
@@ -42,22 +46,29 @@ const LoginForm = () => {
 
   return (
     <Form name="login" onFinish={handleLogin}>
+      游客请输入guest,guest
       <Form.Item
         name="username"
         rules={[{ required: true, message: "Please input your username!" }]}
       >
-        <Input prefix={<UserOutlined />} placeholder="Username" />
+        <Input prefix={<UserOutlined />} placeholder="guest" />
       </Form.Item>
       <Form.Item
         name="password"
         rules={[{ required: true, message: "Please input your password!" }]}
       >
-        <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+        <Input prefix={<LockOutlined />} type="password" placeholder="guest" />
       </Form.Item>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={isLoading}>
-          Log in
+          Login
+        </Button>
+        &nbsp;
+        <Button type="primary" loading={isLoading} onClick={() =>{
+          handleLogin({} as LoginParams)
+        }}>
+          Guest Login
         </Button>
       </Form.Item>
     </Form>

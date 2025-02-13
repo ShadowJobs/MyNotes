@@ -26,6 +26,11 @@ export default defineConfig((cfg)=>{
       "/api/v1": {
         target: "https://gt-pipe-dev.mon.works",
         changeOrigin: true
+      },
+      "/api-ly":{
+        target: "http://10.6.64.34:5000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-ly/, "")
       }
     }
   }

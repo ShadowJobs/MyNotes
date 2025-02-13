@@ -1,5 +1,5 @@
 ﻿export default [
-  { path: '/', redirect: '/welcome' },
+  { path: '/', redirect: '/dashboard' },
   {
     path: '/user',
     layout: false,
@@ -17,7 +17,8 @@
       { component: './404', },
     ],
   },
-  { path: '/welcome', name: 'welcome', icon: 'smile', component: './Welcome' },
+  { path: '/dashboard', name: 'Dashboard', icon: 'dashboard', component: './Dashboard' },
+  { path: '/welcome', name: 'Welcome', icon: 'smile', component: './Welcome' },
   {
     path: '/LinYing',
     name: 'LinYing',
