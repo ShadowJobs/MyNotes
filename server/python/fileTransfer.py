@@ -14,27 +14,31 @@ import re
 filetransRouter = Blueprint("filetrans", __name__, url_prefix="/file-trans")
 
 
+
 def redis_cache(key_pattern, timeout=300):
     def decorator(f):
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
             rdb = redis_client()
-            days = request.args.get("days", 7)
-            redis_key = "{}".format(key_pattern.format(days))
+            path = request.args.get("path", 7)
+            redis_key = key_pattern.format(path)
             cached_stats = rdb.get(redis_key)
+            
             if cached_stats is not None:
-                return jsonify(**dict(code=0,msg="success"), data=json.loads(cached_stats))
+                return jsonify(code=0, msg="success", data=json.loads(cached_stats))
 
             # 调用实际的视图函数
-            g.days = days
             response = f(*args, **kwargs)
-            data = response.json.get("data")
-            # 把结果存储到Redis
-            rdb.set(redis_key, json.dumps(data), ex=timeout)
+            
+            # 处理返回值 - 确保我们能正确获取data
+            if hasattr(response, 'json'):
+                data = response.json.get("data")
+                # 把结果存储到Redis
+                rdb.set(redis_key, json.dumps(data), ex=timeout)
+            
             return response
         return decorated_function
     return decorator
-
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}

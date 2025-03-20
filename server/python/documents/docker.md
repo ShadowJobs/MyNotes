@@ -54,6 +54,18 @@ mac： /Users/username/.docker/daemon.json
     "https://docker.awsl9527.cn",
     "https://dockerproxy.net/"
 
+    "https://7hi2o5wy.mirror.aliyuncs.com",
+    "https://docker.registry.cyou",
+    "https://docker-cf.registry.cyou",
+    "https://dockercf.jsdelivr.fyi",
+    "https://docker.jsdelivr.fyi",
+    "https://dockertest.jsdelivr.fyi",
+    "https://mirror.aliyuncs.com",
+    "https://dockerproxy.com",
+    "https://mirror.baidubce.com",
+    "https://docker.nju.edu.cn",
+    "https://docker.mirrors.sjtug.sjtu.edu.cn",
+    "https://mirror.iscas.ac.cn"
   ]
 }
 
@@ -240,3 +252,74 @@ Could not connect to Redis at 127.0.0.1:6379: Connection refused
 
 
 
+# 7. mac docker清理
+先安装 OmniDiskSweeper 查看文件夹大小
+```bash
+查看Docker当前磁盘使用情况
+  docker system df
+  #删除未使用的容器
+  docker container prune
+
+### 删除悬空(dangling)镜像
+docker image prune
+### 删除所有未使用的镜像(包括未被任何容器使用的镜像)
+docker image prune -a
+### 删除未使用的卷
+docker volume prune
+### 删除未使用的网络
+docker network prune
+### 一键清理所有未使用的Docker资源
+docker system prune
+如果要包括未使用的卷:
+docker system prune --volumes
+```
+
+## 3. Docker Desktop特定设置
+
+### 在Docker Desktop中配置磁盘映像大小限制
+
+1. 打开Docker Desktop
+2. 点击右上角的齿轮图标(设置)
+3. 选择"Resources"(资源)选项
+4. 在"Disk image size"部分，可以设置磁盘映像的最大大小
+5. 调整完成后点击"Apply & Restart"
+
+### 重置Docker Desktop
+
+如果问题严重，可以考虑重置Docker:
+1. 在Docker Desktop中，进入Troubleshoot(故障排除)
+2. 选择"Clean / Purge data"
+3. 点击"Reset to factory defaults"
+
+## 4. 删除构建缓存
+
+构建缓存可能占用大量空间:
+```
+docker builder prune
+```
+
+## 5. 压缩Docker Desktop磁盘映像(macOS/Windows)
+
+在macOS上，Docker使用一个磁盘映像存储所有数据。即使删除了内部资源，这个映像文件也不会自动收缩。重置Docker Desktop可以解决这个问题。
+
+## 6. 限制和清理容器日志
+
+大型应用的日志可能会占用大量空间。可以在docker-compose.yml或运行容器时设置日志限制:
+
+```yaml
+services:
+  service-name:
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+```
+
+## 提示
+
+- 定期运行`docker system prune`可以保持Docker空间使用在合理范围内
+- 使用多阶段构建创建更小的镜像
+- 考虑使用Alpine基础镜像减小镜像体积
+- 在Dockerfile中减少层数和不必要的文件复制
+
+这些方法应该能有效减少Docker Desktop占用的空间。请注意，删除操作是不可恢复的，请确保不要删除重要的数据或正在使用的资源。

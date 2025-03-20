@@ -82,11 +82,24 @@ rsync --dry-run -avz ./patch/ root@$SERVER_IP:~/ly/running/dify/patch
    这将只复制源中比目标新的文件。
 
 
-# 3. vi替换
+# 3. vi: 替换,删除
+```bash
+替换
 %s/registry\.cn-hangzhou\.aliyuncs\.com/mirror\.ccs\.tencentyun\.com/g
 <!-- %s/mirror\.ccs\.tencentyun\.com/docker\.mirrors\.ustc\.edu\.cn/g -->
 %s/mirror\.aliyuncs\.com/dockerhub.icu/g
 %s/dockerhub.icu/a88uijg4.mirror.aliyuncs.com/g
+
+向前删除
+x:删除光标所在位置的字符。
+dw:删除从光标位置到单词结尾的字符（包括空格）。
+d$:删除从光标位置到行末的所有字符。
+
+向后删除
+X（大写）:删除光标前一个字符。
+db:删除从光标当前位置到当前单词的开头（不包括空格）。
+d0:删除从光标位置到行首的所有字符。
+```
 
 # 4. curl www.qq.com为什么返回302
 qq使用了重定向，可以使用`curl -L www.qq.com`来跟随重定向。
@@ -115,12 +128,12 @@ echo "Build time: $duration minutes"
 ```bash
 # 这种写法如果是在shell里就没问题，但是在docker里又会有换行的问题，而且也不能识别\n，会直接将’\n‘写入文件
 RUN cat > /etc/apt/sources.list << EOF \
-deb http://artifactory.momenta.works/artifactory/debian/ bookworm main non-free contrib \
-deb http://artifactory.momenta.works/artifactory/debian/ bookworm-updates main non-free contrib \
+deb http://artmmt.works/artifactory/debian/ bookworm main non-free contrib \
+deb http://artmmt.works/artifactory/debian/ bookworm-updates main non-free contrib \
 EOF
 # 只能分开，这样写
-RUN echo "deb http://artifactory.momenta.works/artifactory/debian/ bookworm main non-free contrib" > /etc/apt/sources.list && \
-    echo "deb http://artifactory.momenta.works/artifactory/debian/ bookworm-updates main non-free contrib" >> /etc/apt/sources.list && \
+RUN echo "deb http://artmmt.works/artifactory/debian/ bookworm main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb http://artmmt.works/artifactory/debian/ bookworm-updates main non-free contrib" >> /etc/apt/sources.list && \
 ```
 
 # 7. apt-get 安装问题

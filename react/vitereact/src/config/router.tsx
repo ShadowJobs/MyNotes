@@ -8,6 +8,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   redirect,
+  useLoaderData,
   type LoaderFunction
 } from "react-router-dom";
 
@@ -40,7 +41,7 @@ const rootLoader: LoaderFunction = async ({ request }) => {
 
 //   // 可以添加白名单路由
 //   const publicRoutes = ['/user/login', '/about', '/help'];
-  
+
 //   try {
 //     if (url.pathname === "/user/login") {
 //       if (user) return redirect("/");
@@ -55,19 +56,31 @@ const rootLoader: LoaderFunction = async ({ request }) => {
 //   }
 // };
 
+const LLMPage = () => {
+  const { url }: any = useLoaderData();
+  return (
+    <div>
+      <h2>动态应用页面</h2>
+      <div>
+        {url}
+      </div>
+    </div>
+  );
+};
+
 const router = createBrowserRouter(
   createRoutesFromElements(
-    
+
     <Route path="/" loader={rootLoader} element={<Root />} errorElement={<NotFound />}>
       <Route path="/user/login" element={<LoginPage />} />
       <Route index loader={() => redirect(DEFAULT_ROUTE_PATH)} />
       <Route loader={layoutLoader} element={<SidebarLayout />}>
-        <Route path="/dashboard" errorElement={<ErrorAlert />} element={<Dashboard/>}/>
-        <Route path="/welcome" errorElement={<ErrorAlert />} element={<Welcome/>}/>
-        <Route path="/react1" errorElement={<ErrorAlert />}/>
-        <Route path="/react1/:u" errorElement={<ErrorAlert />}/>
-        <Route path="/vue" errorElement={<ErrorAlert />}/>
-        <Route path="/vue/:u" errorElement={<ErrorAlert />}/>
+        <Route path="/dashboard" errorElement={<ErrorAlert />} element={<Dashboard />} />
+        <Route path="/welcome" errorElement={<ErrorAlert />} element={<Welcome />} />
+        <Route path="/react1" errorElement={<ErrorAlert />} />
+        <Route path="/react1/:u" errorElement={<ErrorAlert />} />
+        <Route path="/vue" errorElement={<ErrorAlert />} />
+        <Route path="/vue/:u" errorElement={<ErrorAlert />} />
         <Route path="/data-management" errorElement={<ErrorAlert />}>
           <Route index loader={() => redirect("/")} />
         </Route>
@@ -78,7 +91,7 @@ const router = createBrowserRouter(
             style={{ width: "100%", height: "calc(100vh - 90px)" }}></iframe>} />
           <Route path="AGPT">
             <Route index element={<NotFound />} />
-            <Route key={"tp-gpt-list"} path={"tasks"} element={<Tasks/>} />
+            <Route key={"tp-gpt-list"} path={"tasks"} element={<Tasks />} />
             <Route key={"tp-gpt-new"} path={"new"} element={<div>NewTask </div>} />
           </Route>
           <Route path=":appname">
@@ -87,7 +100,19 @@ const router = createBrowserRouter(
             <Route key={"ai-app-new"} path={"new"} element={<div>persGPTNew</div>} />
           </Route>
         </Route>
-
+        {/* 动态路由写法，方法二 */}
+        <Route
+          path="dynamic/:appName"
+          loader={async ({ params }) => {
+            const { appName } = params;
+            // 根据 appName 请求后端接口获得对应的 URL 数据
+            // const res = await axios.get(`/api/ai-app-url?name=${encodeURIComponent(appName)}`);
+            console.log("appname=", appName)
+            const res = { data: { url: "/dashboard" } }
+            return res.data; // 假定返回结果形如 { url: "xxx" }
+          }}
+          element={<LLMPage />}
+        />
         <Route path="lve">
           <Route path={"group"}>
             <Route path={"ci"}>

@@ -61,6 +61,7 @@ const options = {
   wordWrapColumn: 80, // 在指定列数处换行
   wordWrapMinified: true, // 是否在最小化的文件中自动启用单词包装
   wrappingIndent: "none", // 换行后要缩进的空格数。"none"代表不进行缩进；"same"代表使用与当前行相同的缩进；"indent"代表使用比当前行多一个缩进级别的缩进。
+
 };
 export const LogCard = ({ curLog }) => {
   const [monacoInited, setMonacoInited] = useState(false);
@@ -107,3 +108,41 @@ export const LogCard = ({ curLog }) => {
     />}
   </Card>
 }
+
+{/* 仅禁用Y轴滚动，保留x轴滚动
+  <MonacoEditor
+  value={JSON.stringify(data, null, 2)}
+  height="100%"
+  width="100%"
+  language="json"
+  theme="vs"
+  options={{
+    selectOnLineNumbers: true,
+    minimap: { enabled: false },
+    readOnly: true,
+    automaticLayout: true,
+    scrollbar: {
+      vertical: 'hidden',       // 隐藏垂直滚动条
+      verticalScrollbarSize: 0, // 将垂直滚动条大小设为0
+      alwaysConsumeMouseWheel: false // 允许父容器处理溢出的鼠标滚轮事件
+    },
+    scrollBeyondLastLine: false, // 防止滚动超过最后一行
+  }}
+  editorDidMount={(editor) => {
+    // 原有的editorDidMount逻辑
+    if (handleEditorDidMount) {
+      handleEditorDidMount(editor);
+    }
+
+    // 添加自定义滚动处理
+    const editorDomNode = editor.getDomNode();
+    if (editorDomNode) {
+      editorDomNode.addEventListener('wheel', (event) => {
+        // 如果是垂直滚动，阻止默认行为
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+          event.preventDefault();
+        }
+      }, { passive: false });
+    }
+  }}
+/> */}

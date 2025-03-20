@@ -72,7 +72,7 @@ export async function getInitialState(): Promise<{
     // 往routes的添加，就会添加很多个，这里routes里用:file匹配所有，所以在menu里再添加多个file，实现1个route匹配多一个menuItem
     // routes.find((item) => item.name === '2024').routes?.push(docMenu) 
     const docRoutes = menuData.find(v => v.name == "Documents")
-    docRoutes.children = []
+    docRoutes.children = docRoutes?.children.filter(v=>v.name=='私有文档')
     r.data?.map((item: string) => {
       docRoutes.children.push({ name: item, path: item })
     })
@@ -114,6 +114,10 @@ if (typeof window !== 'undefined') {
 }
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const hideHeader = searchParams.get('hideHeader') === '1';
+  const hideMenu = searchParams.get('hideMenu') === '1';
+
   return {
     // menuRender:false,隐藏整个菜单
     // 移动端专用处理
@@ -146,6 +150,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       localStorage.setItem('pro-sidebar-collapsed', collapsed.toString());
     },
 
+    headerRender: hideHeader ? false : undefined,
+    menuRender: hideMenu ? false : undefined,
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: { //水印

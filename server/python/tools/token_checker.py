@@ -4,6 +4,7 @@ import json
 import os, sys
 import logging
 
+from db.redisCon import redis_client
 from tools.cache import LRUMemCache
 
 current_path = os.path.join(os.path.abspath(os.path.dirname(__file__)))
@@ -24,7 +25,7 @@ def internal_checker():
 def token_checker(force=True):
     def __token_checker():
         token = request.headers.get("Authorization")
-        user = get_user_id_by_token(token)
+        user = get_user_name_by_token(token)
         g.user = user
         if user is not None:
             g.token = token
@@ -43,7 +44,7 @@ USER_TOKEN_CACHE = LRUMemCache(max_size=1024)
 USER_TOKEN_CACHE_LIFE = 5
 
 
-def get_user_id_by_token(token):
+def get_user_name_by_token(token):
     if token is None:
         return None
     logging.info(f"Query token: {token}")
@@ -51,23 +52,16 @@ def get_user_id_by_token(token):
     if user is not None:
         logging.info(f"Get user from cache, result {user}")
         return user
-    user = _get_user_id_by_token(token)
+    user = _get_user_name_by_token(token)
     if user is not None:
         USER_TOKEN_CACHE.put(token, user)
     return user
 
 
-def _get_user_id_by_token(token):
-    url = "%s/auth/api/v1/user/info" % settings.AUTH_SERVICE
-    header = {
-        "Authorization": token,
-    }
-    res = requests.post(url, headers=header)
-    data = json.loads(res.content.decode())
-    logging.info(f"Request {url} with result {data}")
-    if data.get("code") != 0:
-        return None
-    return data["user"]["name"]
+def _get_user_name_by_token(token):
+    rdb = redis_client()
+    username = rdb.get(token)
+    return username
 
 
 def grant_user_auth(old_user, new_name):
@@ -86,7 +80,3 @@ def check_user_by_name(user_name):
     if data.get("code") != 0:
         return False
     return True
-
-
-if __name__ == '__main__':
-    print(_get_user_id_by_token("30990044-0439-41cd-86ab-50e3350e3452"))

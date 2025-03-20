@@ -8,6 +8,72 @@ pip install -r requirements.txt
 3. python -m venv openai-env  创建虚拟环境，执行后，python命令会从openai-env文件夹里找到python来执行，pip也是在这个文件夹里，并且安装到这个文件夹，类似与node_modules
 使用venv环境source openai-env/bin/activate
 
+4. .vscode/launnch.json配置flask启动示例：
+```json
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Launch Flask and Celery",
+            "configurations": ["Python: Flask", "Python: Celery"]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Python: Flask",
+            "consoleName": "Flask",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "envFile": ".env",
+            "module": "flask",
+            "justMyCode": true,
+            "jinja": true,
+            "env": {
+                "FLASK_APP": "app.py",
+                "GEVENT_SUPPORT": "True"
+            },
+            "args": [
+                "run",
+                "--port=5021"
+            ]
+        },
+        {
+            "name": "Python: Celery",
+            "consoleName": "Celery",
+            "type": "debugpy",
+            "request": "launch",
+            "python": "${workspaceFolder}/.venv/bin/python",
+            "cwd": "${workspaceFolder}",
+            "module": "celery",
+            "justMyCode": true,
+            "envFile": ".env",
+            "console": "integratedTerminal",
+            "env": {
+                "FLASK_APP": "app.py",
+                "FLASK_DEBUG": "1",
+                "GEVENT_SUPPORT": "True"
+            },
+            "args": [
+                "-A",
+                "app.celery",
+                "worker",
+                "-P",
+                "gevent",
+                "-c",
+                "1",
+                "--loglevel",
+                "DEBUG",
+                "-Q",
+                "dataset,generation,mail,ops_trace,app_deletion"
+            ]
+        }
+    ]
+}
+
+```
+
 # 2. poetry
   [poetry 1.8.5 -> 2.0.1升级注意](/docs/dify升级注意.md)
 

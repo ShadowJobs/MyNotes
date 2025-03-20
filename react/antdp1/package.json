@@ -5,8 +5,9 @@
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
     "notes": "build命令如果报错内存不足，需要设置为：cross-env NODE_OPTIONS=--max_old_space_size=8192 umi build",
-    "analyze": "cross-env ANALYZE=1 umi build",
-    "build": "umi build",
+    "analyze": "cross-env ANALYZE=1 SOURCE_MAP=1  umi build",
+    "analyze:times": "node scripts/analyze-with-times.js",
+    "build": " umi build",
     "deploy": "npm run build && npm run gh-pages",
     "dev": "npm run start:dev",
     "gh-pages": "gh-pages -d dist",

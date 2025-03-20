@@ -245,3 +245,7 @@ docker inspect postgres:15 | grep Architecture
 这种错一般就是数据版本变化导致的，此时执行flask db upgrade即可
 
 ```
+
+# 9. 工具：
+1，vscode 里插件mysql，缺点是链接数据超过3个就要收费， 
+2，用工具，Sequel Pro， workbench,实测mac都用不了，TablePlus 可以用

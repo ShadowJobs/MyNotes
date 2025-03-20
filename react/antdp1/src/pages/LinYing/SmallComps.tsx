@@ -427,7 +427,7 @@ const FreeEchart: React.FC<{ result: Mynote.ApiAggFreeEchart }> = ({ result }) =
       />
     }</div>
 }
-
+// 方法1：
 const MonacoTest = () => {
   const [visible, setVisible] = useState(false);
   const editorCount = 2;
@@ -468,6 +468,78 @@ const MonacoTest = () => {
     </div>
   );
 };
+// 方法2：
+const MonacoTest2 = ({ }) => {
+  const editorRef = useRef(null);
+  const [isView, setIsView] = useState(false);
+  const data = {A:1,B:2}
+  const [editorMounted, setEditorMounted] = useState(false);
+  
+  // 在Modal显示后，确保编辑器正确计算尺寸
+  useEffect(() => {
+    if (isView && editorMounted && editorRef.current) {
+      // 给Monaco一点时间来正确渲染
+      const timer = setTimeout(() => {
+        // 手动触发布局更新
+        if (editorRef.current.editor) {
+          editorRef.current.editor.layout();
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isView, editorMounted]);
+
+  const handleEditorDidMount = (editor) => {
+    editorRef.current = { editor };
+    setEditorMounted(true);
+    // 监听窗口大小变化，重新计算编辑器尺寸
+    window.addEventListener('resize', () => {
+      if (editor) {
+        editor.layout();
+      }
+    });
+  };
+
+  return (
+    <Modal 
+      destroyOnClose 
+      width={750} 
+      open={isView} 
+      title="View" 
+      style={{ top: 20 }}
+      onCancel={() => setIsView(false)} 
+      onOk={() => setIsView(false)}
+      afterOpenChange={(visible) => {
+        // Modal打开后重新计算编辑器尺寸
+        if (visible && editorRef.current && editorRef.current.editor) {
+          setTimeout(() => {
+            editorRef.current.editor.layout();
+          }, 100);
+        }
+      }}
+    >
+      {data && (
+        <div style={{ width: '100%', height: '75vh' }}>
+          <MonacoEditor
+            value={JSON.stringify(data, null, 2)}
+            height="100%"
+            width="100%"
+            language="json"
+            theme="vs"
+            options={{ 
+              selectOnLineNumbers: true, 
+              readOnly: true,
+              automaticLayout: true // 启用自动布局
+            }}
+            editorDidMount={handleEditorDidMount}
+          />
+        </div>
+      )}
+    </Modal>
+  );
+};
+
 const barBoxData = [
   {
     "Bag name": "PLEBW377_event_manual_recording_20230407-102446_0.bag",
@@ -1023,6 +1095,9 @@ export const MarkdownComp: React.FC<{ content: string }> = ({ content }) => {
 //     </Button>
 //   </Space>
 // }
+
+// 第四种 dify官方MarkDown写法：
+// 参考 web/app/components/base/markdown.tsx 
 
 export const TimeRangePickerWithExtra: React.FC<{
   name: NamePath, label: React.ReactNode,

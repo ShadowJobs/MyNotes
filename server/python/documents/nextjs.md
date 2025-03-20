@@ -25,6 +25,29 @@ https://creative-tim.com/twcomponents/search?query=button
 # 5. 端口和代理配置
   - 端口：package.json里next dev -p 8005
   - 代理：.env里 NEXT_PUBLIC_API_PREFIX=http://localhost:32348, 
+  ```js
+  // next.config.js配置代理转发
+   async rewrites(){
+    return [
+      // 新增的GPT接口转发规则
+      {
+        source: "/my-gpt/:path*", // 匹配所有以 /my-gpt/ 开头的路径, 注意这里dify里要先修改.env里的NEXT_PUBLIC_API_PREFIX=/my-gpt/console/api
+        destination: "https://mymmt.works/:path*", // 保持原始路径参数
+      },
+    ]
+  },
+  async redirects() {
+    return [
+      // 原有的根路径重定向（保留原有配置）
+      {
+        source: '/',
+        destination: '/apps',
+        permanent: false,
+      },
+    ]
+  },
+
+```
 
 # 6. 路由
   - 动态路由：[id].tsx
@@ -59,6 +82,32 @@ const { data: appChatListData, isLoading: appChatListDataLoading } = useSWR(chat
 mutate('/api/user', fetchUser())
 // ...之后
 useSWR('/api/user', fetcher)
+
+设置为用不刷新
+const { data: uspDetail, mutate } = useSWR(
+    ["dvp-comps-st", job.dvp_job_id],
+    () => getJobDetail({
+      source: "TLMP",
+      user_name: userName,
+      job_id: job.dvp_job_id,
+    }),
+    {
+      //简单设置可以设置refreshInterval:86400,1天刷新一次
+      // 禁用所有自动重新验证
+      revalidateIfStale: false,  // 当缓存过期时不重新验证
+      revalidateOnFocus: false,  // 当窗口获得焦点时不重新验证
+      revalidateOnReconnect: false, // 当浏览器恢复网络连接时不重新验证
+      
+      // 设置极长的缓存时间 (大约为114年)
+      dedupingInterval: 3600000 * 24 * 365 * 100, // 100年的毫秒数
+      
+      // 永不过期的缓存
+      focusThrottleInterval: Infinity, // 焦点节流间隔设为无限
+      
+      // 可选：如果您需要设置初始数据
+      // fallbackData: initialData,
+    }
+  );
 ```
 
 # 8. 部署

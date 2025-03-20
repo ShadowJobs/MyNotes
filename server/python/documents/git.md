@@ -1,4 +1,4 @@
-git使用
+# 常用git命令
 
 git cherry-pick a8a3de0953     检出某次提交
 
@@ -75,7 +75,7 @@ git diff --stat branch1 branch2
 图形化比较 gitk branch1 branch2
 比较文件 git diff branch1 branch2 -- path/to/file 
 
-github仓库和公司内的仓库代码同步：
+# github仓库和公司内的仓库代码同步：
 1. 首先，添加 GitHub 仓库作为新的远程仓库（我们给它取名为 upstream）：
 ```bash
 git remote add upstream git@github.com:langgenius/dify.git
@@ -107,3 +107,12 @@ git push origin HEAD:你的分支名
 ```bash
 git remote remove upstream
 ```
+
+# 先用了官方的git仓库，修改后想保存到自己的fork仓库
+- 先删除远程的fork仓库：git remote remove origin
+- 添加自己的fork仓库：git remote add origin git@github.com:ShadowJobs/dify.git
+- 如果要再更新远端内容，可以按照上一节”github仓库和公司内的仓库代码同步“的add upstream方法，不过多个修改不必一个个的cherry-pick, 可以直接合并，用 git merge upstream/master
+
+# 禁用verify
+git commit -m "UPDATE:Share error" --no-verify
+可以跳过pre-commit的检查

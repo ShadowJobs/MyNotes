@@ -74,6 +74,7 @@
     path: '/2025', name: "2025 GPT",
     routes:[
       {name: "MyGpt", path: "mygpt", component: "./2025/MyGpt"},
+      {name: "G6Graph", path: "G6Graph", component: "./2025/G6Graph"},
     ]
   },
   {
@@ -99,6 +100,7 @@
     ]
   },
   {name: "Documents",icon:"FilePdf",path: "docs",routes:[
+    {path:"private",component:"./Documents/PrivateDocs",name:"私有文档"},
     {path:":file",component:"./Documents/Document"}
   ]},
   {

@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { Button, Space, Divider, Modal, DatePicker, Card } from 'antd';
-import { useQuery } from 'react-query';
-import { fetchReQuery } from '@/services/myExpressApi/express1';
-import { ExpressUrl, FrontendPre, ThinkingDeepseakUrl } from '@/global';
+import { Divider, Card } from 'antd';
+import { ThinkingDeepseakUrl } from '@/global';
 
 const ProjectCard: React.FC<{ cfg: any }> = ({ cfg }) => {
   return <div style={{ position: "relative", height: 150 }}>
@@ -41,20 +39,20 @@ const ProjectConfig = [
   },
   {
     name: "Deepseek v3 大模型",
-    url: ThinkingDeepseakUrl,
-    description: "官方 Deepseek v3 api, 自己配的thinking能力",
+    url: "https://www.xyccstudio.cn:39006/chat/051B9SgDyz6DeDue",
+    description: "官方 Deepseek v3 api",
     type: "llm"
   },
   {
     name: "Deepseek-r1 官方 api",
     url: "https://www.xyccstudio.cn:39006/chat/UPt9RAHvuEJO8dB8",
-    description: "Deepseek-r1, 官方api",
+    description: "Deepseek-r1, 官方api。（api没有钱了）",
     type: "llm"
   },
   {
     name: "腾讯云 Deepseek-r1",
     url: "https://www.xyccstudio.cn:39006/chat/8Nou6rwxxEKjF3nz",
-    description: "deepseek-r1-671b完整版, 腾讯云 ",
+    description: "deepseek-r1-671b完整版, 腾讯云 ，上下文太长会被截断",
     type: "llm"
   },
   {
@@ -80,6 +78,17 @@ const ProjectConfig = [
     url: "https://www.xyccstudio.cn:39006/workflow/ORLUWNQXVR87jYXK",
     description: "工作流agent,执行代码",
     type: "agent"
+  },
+  {
+    name: "旅游",
+    url: "https://www.xyccstudio.cn:39006/workflow/f7ccnq1vhc82w7fM",
+    description: "输入城市，根据当地天气判断是否出游，以及花费",
+    type: "agent"
+  },
+  { name:"silicon文生图",
+    url:"https://www.xyccstudio.cn:39006/workflow/5ymZwLYL00gjwZtz",
+    description:"silicon文生图,使用免费的flux和stablediffusion模型",
+    type:"agent"
   }
 
 ]

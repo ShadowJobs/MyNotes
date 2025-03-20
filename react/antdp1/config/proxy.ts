@@ -31,6 +31,25 @@ export default {
       target: 'http://localhost:5003/',
       changeOrigin: true,
       pathRewrite: { '^/api-python/': '' }, //去掉 /api-python/ 的写法
+      logLevel: 'debug', // 增加调试日志
+      onProxyReq: (proxyReq, req, res) => {
+        console.log(`原始请求: ${req.method} ${req.url}`);
+        console.log(`代理请求: ${proxyReq.method} ${proxyReq.path}`);
+        // proxyReq是会被发送到服务器的请求对象
+            // 添加 CORS 头
+        // proxyReq.headers['Access-Control-Allow-Origin'] = '*';
+        // proxyReq.headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
+        console.log('proxyReq.headers:', proxyReq.headers);
+        // 添加自定义头
+        if(!proxyReq.headers) proxyReq.headers={}
+        proxyReq.headers['Authorization']="Bearer 123sldfjlasjfwiejqrpiq"
+        // proxyReq.setHeader('Authorization', 'Bearer 123sldfjlasjfwiejqrpiq');
+      
+      },
+      onError: (err, req, res) => {
+        console.error('Proxy error:', err);
+      }
+  
     },
   },
   test: {

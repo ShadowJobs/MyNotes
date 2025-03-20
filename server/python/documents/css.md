@@ -45,6 +45,8 @@
   - `text-{color}`: 文字颜色
   - `bg-{color}`: 背景颜色
   - `border-{color}`: 边框颜色
+  - bg-[#D1E9FF]/50: 背景颜色透明度,50%
+  - rounded-2xl: 圆角从 rounded（默认较小）到 rounded-xl、rounded-2xl 等，rounded-2xl 会让元素的角更加圆润
 
   ### 5. 响应式前缀
   - `sm:`: >= 640px
@@ -270,6 +272,9 @@ Tailwind CSS 的 `group-*` 变体实际上是利用了 CSS 的**选择器优先�
     - 适用于需要覆盖第三方组件样式的情况，比如Ant Design 组件。你自定义或覆盖第三方组件的样式，同时保持 Tailwind 的语法和设计系统。
 
   3. 示例解释: 参考vitereact/index.css里的apply
+
+## 默认p-4,手机上需要设置为p-0写法： className="p-0 md:p-4" md:p-4 表示在中等屏幕及以上（≥768px）应用 1rem 的 padding
+注意顺序： 必须先写p-0，再写md:p-4，否则会被覆盖
 
 # 二. css-in-js 
 先定义一个index.css， 里面放置通用的变量等

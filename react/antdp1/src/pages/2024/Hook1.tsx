@@ -15,7 +15,7 @@ const OrdinaryComp: React.FC<{ name: string }> = ({ name }) => {
 const MemoComp: React.FC<{ count: number }> = React.memo(({ count }) => {
   console.log('MemoComp rendered')
   return <div>
-    MemoComp {count},使用了 memo，仅count变化时，会重新渲染，输出comp2 rendered
+    MemoComp {count},使用了 React.memo() ，仅count变化时，会重新渲染，输出comp2 rendered
   </div>
 })
 const UseMemoComp: React.FC<{ name: string }> = ({ name }) => {
@@ -30,10 +30,10 @@ const UseMemoComp: React.FC<{ name: string }> = ({ name }) => {
   </div>
 }
 const Comp1: React.FC<{}> = ({ }) => {
-  const [name, setName] = React.useState<string>('lin')
-  const [count, setCount] = React.useState<number>(0)
+  const [name, setName] = useState<string>('lin')
+  const [count, setCount] = useState<number>(0)
   if (count > 5) {
-    useDebugValue(count, (v) => `Debug: ${v}`);
+    useDebugValue(count, (v) => console.log(`Debug: ${v}`));
   }
   return <div>
     <Space>
@@ -58,8 +58,8 @@ const UseCallbackComp: React.FC<{ callback: () => void, type: string }> = React.
   return <Button onClick={callback}>{type}</Button>
 })
 const Comp2: React.FC<{}> = ({ }) => {
-  const [count, setCount] = React.useState<number>(0)
-  const [age, setAge] = React.useState<number>(18)
+  const [count, setCount] = useState<number>(0)
+  const [age, setAge] = useState<number>(18)
   const onClick = () => {
     console.log('not use callback onClick()')
   }
