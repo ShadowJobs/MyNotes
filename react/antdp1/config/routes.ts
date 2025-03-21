@@ -75,6 +75,7 @@
     routes:[
       {name: "MyGpt", path: "mygpt", component: "./2025/MyGpt"},
       {name: "G6Graph", path: "G6Graph", component: "./2025/G6Graph"},
+      {name: "拼接Deepseek", path: "concat-ds", component: "./2025/ConcatDeepseek"},
     ]
   },
   {

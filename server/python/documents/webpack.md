@@ -974,3 +974,19 @@ splitChunks: {
 - 使用了动态导入（如路由懒加载）
 - 依赖的 node_modules 体积超过 30KB
 - 该依赖被至少两个异步 chunk 共享
+
+```mermaid
+graph TD
+    A[是否需要首屏展示编辑器?] -->|是| B[静态导入 + 独立分包]
+    A -->|否| C[动态导入 + 独立分包]
+    B --> D{监控性能}
+    D -->|包体积 > 500KB| E[考虑改用动态导入]
+    D -->|包体积可接受| F[保持现状]
+    C --> G[获得最佳加载性能]
+```
+
+
+
+$$ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt $$
+傅里叶变换将时域信号$f(t)$转换为频域表示$F(\omega)$，其中$\omega$为角频率，$i$是虚数单位。逆变换公式为：  
+$$ f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{i\omega t} d\omega $$
